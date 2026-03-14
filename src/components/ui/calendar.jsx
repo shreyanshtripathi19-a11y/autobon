@@ -1,144 +1,66 @@
 "use client";
 
 import * as React from "react";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import { DayPicker } from "react-day-picker";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/button";
 
-function getDaysInMonth(year, month) {
-  return new Date(year, month + 1, 0).getDate();
-}
-
-function getFirstDayOfMonth(year, month) {
-  return new Date(year, month, 1).getDay();
-}
-
-const MONTH_NAMES = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
-];
-
-const DAY_NAMES = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
-
-function Calendar({
-  mode = "single",
-  selected,
-  onSelect,
-  initialFocus,
-  className,
-  ...props
-}) {
-  const today = new Date();
-  const [currentMonth, setCurrentMonth] = React.useState(
-    selected ? selected.getMonth() : today.getMonth()
-  );
-  const [currentYear, setCurrentYear] = React.useState(
-    selected ? selected.getFullYear() : today.getFullYear()
-  );
-
-  const daysInMonth = getDaysInMonth(currentYear, currentMonth);
-  const firstDay = getFirstDayOfMonth(currentYear, currentMonth);
-
-  const handlePrevMonth = () => {
-    if (currentMonth === 0) {
-      setCurrentMonth(11);
-      setCurrentYear(currentYear - 1);
-    } else {
-      setCurrentMonth(currentMonth - 1);
-    }
-  };
-
-  const handleNextMonth = () => {
-    if (currentMonth === 11) {
-      setCurrentMonth(0);
-      setCurrentYear(currentYear + 1);
-    } else {
-      setCurrentMonth(currentMonth + 1);
-    }
-  };
-
-  const handleDayClick = (day) => {
-    const date = new Date(currentYear, currentMonth, day);
-    if (onSelect) {
-      onSelect(date);
-    }
-  };
-
-  const isSelected = (day) => {
-    if (!selected) return false;
-    return (
-      selected.getDate() === day &&
-      selected.getMonth() === currentMonth &&
-      selected.getFullYear() === currentYear
-    );
-  };
-
-  const isToday = (day) => {
-    return (
-      today.getDate() === day &&
-      today.getMonth() === currentMonth &&
-      today.getFullYear() === currentYear
-    );
-  };
-
-  const days = [];
-  for (let i = 0; i < firstDay; i++) {
-    days.push(<div key={`empty-${i}`} className="h-8 w-8" />);
-  }
-  for (let day = 1; day <= daysInMonth; day++) {
-    days.push(
-      <button
-        key={day}
-        type="button"
-        onClick={() => handleDayClick(day)}
-        className={cn(
-          "h-8 w-8 rounded-md text-sm font-normal transition-colors hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-1 focus:ring-ring",
-          isSelected(day) && "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
-          isToday(day) && !isSelected(day) && "bg-accent text-accent-foreground",
-        )}
-      >
-        {day}
-      </button>
-    );
-  }
-
+function Calendar({ className, classNames, showOutsideDays = true, ...props }) {
   return (
-    <div className={cn("p-3", className)} {...props}>
-      <div className="flex items-center justify-between mb-2">
-        <Button
-          variant="outline"
-          size="icon"
-          className="h-7 w-7"
-          onClick={handlePrevMonth}
-          type="button"
-        >
-          <ChevronLeft className="h-4 w-4" />
-        </Button>
-        <span className="text-sm font-medium">
-          {MONTH_NAMES[currentMonth]} {currentYear}
-        </span>
-        <Button
-          variant="outline"
-          size="icon"
-          className="h-7 w-7"
-          onClick={handleNextMonth}
-          type="button"
-        >
-          <ChevronRight className="h-4 w-4" />
-        </Button>
-      </div>
-      <div className="grid grid-cols-7 gap-1 mb-1">
-        {DAY_NAMES.map((name) => (
-          <div
-            key={name}
-            className="h-8 w-8 flex items-center justify-center text-xs text-muted-foreground font-medium"
-          >
-            {name}
-          </div>
-        ))}
-      </div>
-      <div className="grid grid-cols-7 gap-1">{days}</div>
-    </div>
+    <DayPicker
+      showOutsideDays={showOutsideDays}
+      className={cn("p-3", className)}
+      classNames={{
+        months: "flex flex-col sm:flex-row gap-2",
+        month: "flex flex-col gap-4",
+        month_caption: "flex justify-center pt-1 relative items-center w-full",
+        caption_label: "text-sm font-medium",
+        nav: "flex items-center gap-1",
+        button_previous: cn(
+          buttonVariants({ variant: "outline" }),
+          "absolute left-1 top-0 h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100"
+        ),
+        button_next: cn(
+          buttonVariants({ variant: "outline" }),
+          "absolute right-1 top-0 h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100"
+        ),
+        month_grid: "w-full border-collapse space-x-1",
+        weekdays: "flex",
+        weekday:
+          "text-muted-foreground rounded-md w-8 font-normal text-[0.8rem]",
+        week: "flex w-full mt-2",
+        day: cn(
+          "relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-outside)]:bg-accent/50 [&:has([aria-selected].day-range-end)]:rounded-r-md",
+          props.mode === "range"
+            ? "[&:has(>.day-range-end)]:rounded-r-md [&:has(>.day-range-start)]:rounded-l-md first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md"
+            : "[&:has([aria-selected])]:rounded-md"
+        ),
+        day_button: cn(
+          buttonVariants({ variant: "ghost" }),
+          "h-8 w-8 p-0 font-normal aria-selected:opacity-100"
+        ),
+        range_end: "day-range-end",
+        range_start: "day-range-start",
+        selected:
+          "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
+        today: "bg-accent text-accent-foreground",
+        outside:
+          "day-outside text-muted-foreground aria-selected:text-muted-foreground",
+        disabled: "text-muted-foreground opacity-50",
+        range_middle:
+          "aria-selected:bg-accent aria-selected:text-accent-foreground",
+        hidden: "invisible",
+        ...classNames,
+      }}
+      components={{
+        Chevron: ({ orientation }) => {
+          const Icon = orientation === "left" ? ChevronLeft : ChevronRight;
+          return <Icon className="h-4 w-4" />;
+        },
+      }}
+      {...props}
+    />
   );
 }
 

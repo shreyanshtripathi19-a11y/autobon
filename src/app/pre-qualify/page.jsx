@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Step1 from "@/pages/PreQualify/Step1";
 import Step2PreferredVehicle from "@/pages/PreQualify/Step2";
@@ -1095,4 +1095,10 @@ function renderStepContent(step, formData, setFormData, nextStep, stepErrors = {
   }
 }
 
-export default MultiStepCarForm;
+export default function PreQualifyPage() {
+  return (
+    <Suspense fallback={<div className="text-center py-20">Loading...</div>}>
+      <MultiStepCarForm />
+    </Suspense>
+  );
+}

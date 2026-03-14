@@ -48,17 +48,17 @@ const FormField = ({ name, control, render, ...props }) => {
   );
 };
 
-const FormItem = React.forwardRef(({ className, ...props }, ref) => {
+const FormItem = React.forwardRef(({ className, children, ...props }, ref) => {
   const id = React.useId();
   return (
     <FormItemContext.Provider value={{ id }}>
-      <div ref={ref} className={cn("space-y-2", className)} {...props} />
+      <div ref={ref} className={cn("space-y-2", className)} {...props}>{children}</div>
     </FormItemContext.Provider>
   );
 });
 FormItem.displayName = "FormItem";
 
-const FormLabel = React.forwardRef(({ className, ...props }, ref) => {
+const FormLabel = React.forwardRef(({ className, children, ...props }, ref) => {
   const { formItemId } = useFormField();
   return (
     <label
@@ -66,12 +66,14 @@ const FormLabel = React.forwardRef(({ className, ...props }, ref) => {
       className={cn("text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70", className)}
       htmlFor={formItemId}
       {...props}
-    />
+    >
+      {children}
+    </label>
   );
 });
 FormLabel.displayName = "FormLabel";
 
-const FormControl = React.forwardRef(({ ...props }, ref) => {
+const FormControl = React.forwardRef(({ children, ...props }, ref) => {
   const { formItemId, formDescriptionId, formMessageId } = useFormField();
   return (
     <Slot
@@ -79,12 +81,14 @@ const FormControl = React.forwardRef(({ ...props }, ref) => {
       id={formItemId}
       aria-describedby={`${formDescriptionId} ${formMessageId}`}
       {...props}
-    />
+    >
+      {children}
+    </Slot>
   );
 });
 FormControl.displayName = "FormControl";
 
-const FormDescription = React.forwardRef(({ className, ...props }, ref) => {
+const FormDescription = React.forwardRef(({ className, children, ...props }, ref) => {
   const { formDescriptionId } = useFormField();
   return (
     <p
@@ -92,7 +96,9 @@ const FormDescription = React.forwardRef(({ className, ...props }, ref) => {
       id={formDescriptionId}
       className={cn("text-[0.8rem] text-muted-foreground", className)}
       {...props}
-    />
+    >
+      {children}
+    </p>
   );
 });
 FormDescription.displayName = "FormDescription";
