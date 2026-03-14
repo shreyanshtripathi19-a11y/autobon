@@ -8,37 +8,37 @@ const AccountDashboard = () => {
       title: "Personal Info",
       description: "Edit your personal details and contact info",
       iconName: "UserCircle",
-      href: "/accounts/profile",
+      href: "/user-account/accounts/profile",
     },
     {
       title: "My cars",
       description: "Manage offers on cars you’re selling or trading",
       iconName: "Car",
-      href: "/accounts/cars",
+      href: "/user-account/accounts/cars",
     },
     {
       title: "My orders",
       description: "View pending orders for cars you’re buying",
       iconName: "Truck",
-      href: "/accounts/orders",
+      href: "/user-account/accounts/orders",
     },
     {
       title: "Next steps",
       description: "View your tasks, whether you’re buying or selling",
       iconName: "Calendar",
-      href: "/accounts/tasks",
+      href: "/user-account/accounts/tasks",
     },
     {
       title: "Notifications",
       description: "Manage notification preferences and how we reach you",
       iconName: "Bell",
-      href: "/accounts/notifications",
+      href: "/user-account/accounts/notifications",
     },
     {
       title: "Saved searches",
       description: "View your saved car search criteria and latest results",
       iconName: "Search",
-      href: "/accounts/searches",
+      href: "/user-account/accounts/searches",
     },
   ];
   return (

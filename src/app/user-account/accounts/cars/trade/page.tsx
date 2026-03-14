@@ -147,7 +147,7 @@ export default function CarTradePage() {
   const processForm = (data: FormData) => {
     console.log("Form Data:", data);
     setFormData(data);
-    router.push("/accounts/cars");
+    router.push("/user-account/accounts/cars");
   };
 
   const nextStep = async () => {

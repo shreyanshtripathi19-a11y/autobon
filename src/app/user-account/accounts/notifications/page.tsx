@@ -25,11 +25,11 @@ const AccountCars = () => {
   const breadcrumbs = [
     {
       label: "Dashboard",
-      href: "/accounts/dashboard",
+      href: "/user-account/accounts/dashboard",
     },
     {
       label: "Notifications",
-      href: "/accounts/notifications",
+      href: "/user-account/accounts/notifications",
     },
   ];
 

@@ -26,11 +26,11 @@ const Accounts = () => {
   const breadcrumbs = [
     {
       label: "Dashboard",
-      href: "/accounts/dashboard",
+      href: "/user-account/accounts/dashboard",
     },
     {
       label: "Personal Info",
-      href: "/accounts/profile",
+      href: "/user-account/accounts/profile",
     },
   ];
 

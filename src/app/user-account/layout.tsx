@@ -1,7 +1,7 @@
 "use client";
 
-import Footer from "@/components/accounts/layouts/footer";
-import Header from "@/components/accounts/layouts/header";
+import Footer from "@/components/Footer";
+import Header from "@/components/Header";
 import type { Metadata } from "next";
 import { usePathname } from "next/navigation";
 
@@ -12,7 +12,7 @@ import { usePathname } from "next/navigation";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const hideHeader = pathname === "/accounts/cars/trade";
+  const hideHeader = pathname === "/user-account/accounts/cars/trade";
 
   return (
     <div className="bg-white">
