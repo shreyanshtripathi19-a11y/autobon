@@ -1,0 +1,118 @@
+@import "tailwindcss";
+
+:root {
+  --background: #fafafa;
+  --foreground: #171717;
+  --primary-brand: #1a6adb;
+
+  /* #1a6adb; */
+  --border: #e3e3e3;
+  --text-gray: #7b7b7b;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary-brand);
+  --color-primary-hover: #1558b4;
+  --color-text: var(--text-gray);
+  --color-border: var(--border);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --spacing-custom: 1200px;
+  --breakpoint-xs: 300px;
+  --breakpoint-smg: 400px;
+  --breakpoint-sm: 440px;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  width: 100vw;
+  min-height: 100vh;
+  font-family: "Poppins", sans-serif;
+  font-style: normal;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* Pre-qualify step transition — smooth fade + slide */
+@keyframes stepFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes stepFadeOut {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+.step-enter {
+  animation: stepFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.step-exit {
+  animation: stepFadeOut 0.2s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+.sp-shadow {
+  box-shadow: 2.8px 2.8px 44px 0px #1a6adb70;
+}
+
+/* Filters panel slide-in animation */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* Filter dropdown fade-in */
+@keyframes fdIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile bottom-sheet slide up */
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* Hide scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
