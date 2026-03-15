@@ -74,7 +74,7 @@ const LoginPage = () => {
        - Switched 'items-center' to 'lg:items-start' to move it up on desktops.
        - Added 'lg:pt-[10vh]' to give it a fixed percentage offset from the top on large screens.
     */
-    <div className="flex h-screen  md:h-[90vh] 2xl:h-max items-center lg:items-start justify-center  bg-gray-100 p-4 lg:pt-[10vh]">
+    <div className="flex min-h-screen items-center justify-center bg-gray-100 p-4 pt-[100px] lg:pt-[120px]">
       <div className="w-full ">
         <div className="p-8 max-w-lg mx-auto bg-white rounded-lg shadow-md">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -158,7 +158,7 @@ const LoginPage = () => {
         </div>
         <img
           src={top.src}
-          className="object-cover my-[4rem] object-center w-max md:max-w-4xl mx-auto"
+          className="object-contain my-[4rem] object-center w-full max-h-[300px] md:max-w-4xl md:max-h-[400px] mx-auto"
           alt="Login to Autobon"
         />
       </div>

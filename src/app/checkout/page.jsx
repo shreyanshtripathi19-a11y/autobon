@@ -161,7 +161,7 @@ const FinanceForm = () => {
 
   return (
     <div className="min-h-screen relative bg-white font-sans">
-      <a href="tel:9058003100" className="fixed right-2 md:right-20 bottom-10" aria-label="Call 905-800-3100" title="Call 905-800-3100">
+      <a href="tel:9058003100" className="fixed right-2 md:right-20 bottom-24 z-[60]" aria-label="Call 905-800-3100" title="Call 905-800-3100">
         <img
           src="/call.png"
           alt="Call"

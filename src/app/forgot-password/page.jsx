@@ -100,18 +100,19 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className="flex min-h-[80vh] 2xl:min-h-[70vh] items-center justify-center bg-[#f8f9fa] p-4">
-      <div className="w-full max-w-md rounded-[24px] bg-white p-10 shadow-sm border border-gray-100">
-        <h1 className="mb-2 text-3xl font-bold text-gray-900 tracking-tight">
+    <div className="flex min-h-screen items-center justify-center bg-gray-100 p-4 pt-[100px] lg:pt-[120px]">
+      <div className="w-full max-w-lg">
+        <div className="p-8 bg-white rounded-lg shadow-md">
+        <h1 className="mb-1 text-2xl font-bold text-gray-900">
           Forgot Password?
         </h1>
-        <p className="mb-8 text-sm text-gray-500">
+        <p className="mb-6 text-sm text-gray-500">
           {step === 1 && "Enter your email and we'll send you a verification code."}
           {step === 2 && "Enter the 6-digit code sent to your email."}
           {step === 3 && "Set your new password."}
         </p>
 
-        <div className="flex gap-2 mb-8">
+        <div className="flex gap-2 mb-6">
           {[1, 2, 3].map((s) => (
             <div
               key={s}
@@ -125,7 +126,7 @@ export default function ForgotPassword() {
         {step === 1 && (
           <form onSubmit={handleSendCode} className="space-y-6">
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">
+              <label className="text-sm font-medium text-gray-700 block">
                 Email Address
               </label>
               <input
@@ -133,14 +134,14 @@ export default function ForgotPassword() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email address"
-                className="w-full rounded-xl border-2 border-blue-500 px-4 py-3.5 outline-none transition-all focus:ring-2 focus:ring-blue-100"
+                className="w-full px-3 py-2 border rounded-md outline-none transition-all focus:ring-2 focus:ring-blue-500 border-gray-300"
                 required
               />
             </div>
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-xl bg-[#1a73e8] py-4 text-lg font-bold text-white transition-all hover:bg-blue-700 active:scale-[0.98] disabled:opacity-50"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? "Sending..." : "Send Reset Code"}
             </button>
@@ -150,7 +151,7 @@ export default function ForgotPassword() {
         {step === 2 && (
           <form onSubmit={handleVerifyCode} className="space-y-6">
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">
+              <label className="text-sm font-medium text-gray-700 block">
                 Verification Code
               </label>
               <div className="relative">
@@ -159,31 +160,31 @@ export default function ForgotPassword() {
                   value={code}
                   onChange={(e) => setCode(e.target.value)}
                   placeholder="000-000"
-                  className="w-full rounded-xl border border-gray-300 px-4 py-3.5 outline-none transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                  className="w-full px-3 py-2 border rounded-md outline-none transition-all focus:ring-2 focus:ring-blue-500 border-gray-300"
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowCode(!showCode)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 >
-                  {showCode ? <EyeOff size={20} /> : <Eye size={20} />}
+                  {showCode ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
             </div>
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-xl bg-[#1a73e8] py-4 text-lg font-bold text-white transition-all hover:bg-blue-700 active:scale-[0.98] disabled:opacity-50"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? "Verifying..." : "Verify Code"}
             </button>
-            <p className="text-center text-gray-600 font-medium">
+            <p className="text-center text-sm text-gray-600">
               Didn&apos;t get the code?{" "}
               <button
                 type="button"
                 onClick={handleSendCode}
-                className="text-blue-600 hover:underline"
+                className="text-blue-600 hover:underline font-medium"
               >
                 Resend
               </button>
@@ -194,7 +195,7 @@ export default function ForgotPassword() {
         {step === 3 && (
           <form onSubmit={handleResetPassword} className="space-y-6">
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">
+              <label className="text-sm font-medium text-gray-700 block">
                 New Password
               </label>
               <div className="relative">
@@ -203,35 +204,36 @@ export default function ForgotPassword() {
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   placeholder="Enter new password (min 6 chars)"
-                  className="w-full rounded-xl border border-gray-300 px-4 py-3.5 outline-none transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                  className="w-full px-3 py-2 border rounded-md outline-none transition-all focus:ring-2 focus:ring-blue-500 border-gray-300"
                   required
                   minLength={6}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 >
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
             </div>
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-xl bg-[#1a73e8] py-4 text-lg font-bold text-white transition-all hover:bg-blue-700 active:scale-[0.98] disabled:opacity-50"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? "Resetting..." : "Reset Password"}
             </button>
           </form>
         )}
 
-        <p className="mt-8 text-center text-sm text-gray-500">
+        <div className="text-center text-sm text-gray-600 mt-6">
           Remember your password?{" "}
           <a href="/login" className="text-blue-600 hover:underline font-medium">
             Back to Login
           </a>
-        </p>
+        </div>
+        </div>
       </div>
     </div>
   );

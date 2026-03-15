@@ -1,7 +1,7 @@
 "use client";
 
 import { Heart, Share, ChevronLeft, ChevronRight, Gauge, Eye, Maximize } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import car1 from "../../assets/car-s1.png";
 import car2 from "../../assets/car2.png";
 import car3 from "../../assets/car3.png";
@@ -11,6 +11,25 @@ const Main = () => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [view, setView] = useState("exterior");
   const [activeTab, setActiveTab] = useState("Photos");
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+
+  // Touch swipe support
+  const touchStartRef = useRef(null);
+  const handleTouchStart = (e) => {
+    touchStartRef.current = e.touches[0].clientX;
+  };
+  const handleTouchEnd = (e) => {
+    if (touchStartRef.current === null) return;
+    const diff = touchStartRef.current - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) {
+        setActiveImageIndex((prev) => (prev + 1) % thumbnails.length);
+      } else {
+        setActiveImageIndex((prev) => (prev - 1 + thumbnails.length) % thumbnails.length);
+      }
+    }
+    touchStartRef.current = null;
+  };
 
   const tabs = [
     "Photos",
@@ -88,7 +107,10 @@ const Main = () => {
         {/* MAIN CONTENT SECTION */}
         <div className="flex flex-col lg:grid lg:grid-cols-2 gap-4">
           {/* LEFT COLUMN */}
-          <div className="relative bg-[#f6f6f6] border border-gray-100 rounded-[16px] lg:rounded-[14px] p-4 lg:p-12 flex flex-col items-center justify-center min-h-[240px] sm:min-h-[300px] lg:min-h-[500px]">
+          <div className="relative bg-[#f6f6f6] border border-gray-100 rounded-[16px] lg:rounded-[14px] p-4 lg:p-12 flex flex-col items-center justify-center min-h-[240px] sm:min-h-[300px] lg:min-h-[500px]"
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+          >
             <div className="absolute top-4 lg:top-auto lg:bottom-12 bg-black rounded-full p-1 flex items-center z-10">
               <button
                 onClick={() => setView("exterior")}
@@ -112,12 +134,44 @@ const Main = () => {
               <Maximize size={18} />
             </button>
 
+            {/* Navigation arrows */}
+            <button
+              className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 lg:w-10 lg:h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-md transition-colors"
+              onClick={() => setActiveImageIndex((prev) => (prev - 1 + thumbnails.length) % thumbnails.length)}
+              aria-label="Previous image"
+            >
+              <ChevronLeft size={18} className="text-gray-700" />
+            </button>
+            <button
+              className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 lg:w-10 lg:h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-md transition-colors"
+              onClick={() => setActiveImageIndex((prev) => (prev + 1) % thumbnails.length)}
+              aria-label="Next image"
+            >
+              <ChevronRight size={18} className="text-gray-700" />
+            </button>
+
             <div className="w-full py-8 lg:py-2 flex items-center justify-center">
               <img
-                src={car1.src}
+                src={thumbnails[activeImageIndex].src}
                 alt="Car Main View"
-                className="w-full h-auto object-contain scale-110 lg:scale-100"
+                className="w-full h-auto object-contain scale-110 lg:scale-100 transition-opacity duration-300"
               />
+            </div>
+
+            {/* Dot indicators */}
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 z-10">
+              {thumbnails.map((_, idx) => (
+                <button
+                  key={idx}
+                  className={`rounded-full transition-all duration-200 ${
+                    activeImageIndex === idx
+                      ? "bg-primary w-2.5 h-2.5"
+                      : "bg-gray-400/50 w-2 h-2 hover:bg-gray-400"
+                  }`}
+                  onClick={() => setActiveImageIndex(idx)}
+                  aria-label={`View image ${idx + 1}`}
+                />
+              ))}
             </div>
           </div>
 
@@ -185,7 +239,10 @@ const Main = () => {
                 {thumbnails.map((img, i) => (
                   <div
                     key={i}
-                    className="aspect-[4/3] rounded-xl overflow-hidden bg-gray-50 border border-gray-100"
+                    className={`aspect-[4/3] rounded-xl overflow-hidden bg-gray-50 border-2 cursor-pointer transition-colors ${
+                      activeImageIndex === i ? "border-primary" : "border-gray-100 hover:border-gray-300"
+                    }`}
+                    onClick={() => setActiveImageIndex(i)}
                   >
                     <img
                       src={img.src}

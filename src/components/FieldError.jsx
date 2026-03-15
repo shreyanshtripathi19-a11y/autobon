@@ -26,7 +26,7 @@ export const FieldError = ({ error }) => {
  */
 export const inputBorderClass = (error) =>
   error
-    ? "border-red-500 focus:border-red-500 focus:ring-4 focus:ring-red-100"
-    : "border-gray-300 focus:border-blue-600 focus:ring-4 focus:ring-blue-100";
+    ? "border border-red-500 focus:border-red-500 focus:ring-4 focus:ring-red-100"
+    : "border border-gray-300 focus:border-blue-600 focus:ring-4 focus:ring-blue-100";
 
 export default FieldError;

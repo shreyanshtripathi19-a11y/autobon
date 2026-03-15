@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
@@ -443,6 +443,24 @@ export default function Home() {
   const [showBanner, setShowBanner] = useState(true);
   const [headerHeight, setHeaderHeight] = useState(50);
 
+  // Touch swipe handlers for image carousels
+  const touchStartRef = useRef(null);
+  const handleTouchStart = (e) => {
+    touchStartRef.current = e.touches[0].clientX;
+  };
+  const createTouchEndHandler = (setIndex, totalImages) => (e) => {
+    if (touchStartRef.current === null) return;
+    const diff = touchStartRef.current - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) {
+        setIndex((prev) => (prev + 1) % totalImages);
+      } else {
+        setIndex((prev) => (prev - 1 + totalImages) % totalImages);
+      }
+    }
+    touchStartRef.current = null;
+  };
+
   // Measure actual fixed header height when mobile detail view opens
   useEffect(() => {
     if (!isMobileDetailView) return;
@@ -869,7 +887,10 @@ export default function Home() {
             <aside className="hidden lg:block w-[480px] flex-shrink-0" aria-label="Car detail panel">
               <div className="sticky top-[20px] bg-white rounded-2xl overflow-hidden shadow-sm overflow-y-auto max-h-[calc(100vh-40px)] border-2 border-[#1a6adb]">
                 {/* Hero Image Carousel */}
-                <div className="relative bg-white group/detail">
+                <div className="relative bg-white group/detail"
+                  onTouchStart={handleTouchStart}
+                  onTouchEnd={createTouchEndHandler(setDetailImageIndex, CAR_IMGS.length)}
+                >
                   <div className="absolute top-3 left-3 z-10 flex items-center gap-1 px-2.5 py-1 bg-white text-green-600 text-xs font-medium rounded-full shadow-sm">
                     <IconCheck className="w-4 h-4" />
                     No accident
@@ -1031,7 +1052,10 @@ export default function Home() {
             <div className="flex-1 overflow-y-auto">
             <div className="p-4">
 
-              <div className="relative mb-4 bg-white rounded-xl overflow-hidden group/mobile">
+              <div className="relative mb-4 bg-white rounded-xl overflow-hidden group/mobile"
+                onTouchStart={handleTouchStart}
+                onTouchEnd={createTouchEndHandler(setMobileDetailImageIndex, CAR_IMGS.length)}
+              >
                 <div className="flex items-center justify-between absolute top-3 left-3 right-3 z-10">
                   {selectedCar.noAccident && (
                     <span className="flex items-center gap-1.5 px-3 py-1.5 bg-white/90 text-green-600 text-xs font-semibold rounded-full shadow-sm backdrop-blur-sm">

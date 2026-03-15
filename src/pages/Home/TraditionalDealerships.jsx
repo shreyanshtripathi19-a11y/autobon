@@ -97,7 +97,7 @@ const TraditionalDealerships = () => {
   );
 
   return (
-    <section className="w-full bg-background py-[80px] overflow-hidden">
+    <section className="w-full bg-background py-[80px]">
       <style jsx>{`
         @keyframes leaf-rotate {
           0% {
@@ -128,8 +128,8 @@ const TraditionalDealerships = () => {
         }
       `}</style>
 
-      <div className="max-w-custom mx-auto px-[0px] lg:px-0 flex flex-col items-center">
-        <div className="text-center mb-10 md:mb-20">
+      <div className="max-w-custom mx-auto px-[0px] lg:px-0 flex flex-col items-center overflow-x-hidden">
+        <div className="text-center mb-10 md:mb-20 px-4">
           <h2 className="text-[30px] lg:text-[50px] font-semibold text-black leading-tight">
             Why <span className="text-primary">Autobon</span> beats traditional
             dealerships
@@ -137,22 +137,22 @@ const TraditionalDealerships = () => {
         </div>
 
         {/* MOBILE CAROUSEL */}
-        <div className="md:hidden w-full relative overflow-visible">
+        <div className="md:hidden w-full relative">
           <div
             ref={scrollContainerRef}
-            className="flex flex-nowrap overflow-x-auto snap-x snap-mandatory no-scrollbar py-14 overflow-y-visible"
+            className="flex flex-nowrap overflow-x-auto snap-x snap-mandatory no-scrollbar py-10 px-2"
             style={{ WebkitOverflowScrolling: "touch" }}
           >
             {slides.map((slide, index) => (
               <div
                 key={index}
-                className="w-full flex-shrink-0 snap-center px-6 box-border overflow-visible"
+                className="w-full flex-shrink-0 snap-center px-8 box-border"
               >
                 <div
                   className={`flex flex-col bg-white border rounded-[12px] h-full transition-all duration-500 border-[#DDDDDD] ${
                     activeIndex === index
-                      ? `relative z-10 scale-[1.05] ${slide.type === "autobon" ? "sp-shadow" : ""}`
-                      : "scale-[0.9] opacity-40 grayscale"
+                      ? `relative z-10 ${slide.type === "autobon" ? "sp-shadow" : "shadow-lg"}`
+                      : "scale-[0.95] opacity-40 grayscale"
                   }`}
                 >
                   <div className="p-6 border-b border-[#DDDDDD] flex justify-between items-center bg-white rounded-t-[12px]">
