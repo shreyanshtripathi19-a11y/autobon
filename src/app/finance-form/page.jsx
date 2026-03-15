@@ -106,7 +106,10 @@ export default function PreQualifyPage() {
       case "streetAddress": return validators.address(formData.streetAddress);
       case "postalCode": return validators.postalCode(formData.postalCode);
       case "dobMonth": case "dobDay": case "dobYear":
-        return validators.dob(formData.dobDay, formData.dobMonth, formData.dobYear);
+        if (formData.dobDay && formData.dobMonth && formData.dobYear) {
+          return validators.dob(formData.dobDay, formData.dobMonth, formData.dobYear);
+        }
+        return "";
       case "consent": return validators.consent(formData.consent);
       default: return "";
     }
@@ -300,7 +303,7 @@ export default function PreQualifyPage() {
                   ))}
                 </select>
               </div>
-              <FieldError error={errors.dobMonth} />
+              <FieldError error={errors.dobMonth || errors.dobDay || errors.dobYear} />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-5">

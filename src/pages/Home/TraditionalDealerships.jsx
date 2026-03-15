@@ -140,7 +140,7 @@ const TraditionalDealerships = () => {
         <div className="md:hidden w-full relative">
           <div
             ref={scrollContainerRef}
-            className="flex flex-nowrap overflow-x-auto snap-x snap-mandatory no-scrollbar py-10 px-2"
+            className="flex flex-nowrap overflow-x-auto snap-x snap-mandatory no-scrollbar pt-14 pb-10 px-2"
             style={{ WebkitOverflowScrolling: "touch" }}
           >
             {slides.map((slide, index) => (

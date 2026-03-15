@@ -6,12 +6,14 @@ const DatePicker = React.forwardRef(({ value, onChange, placeholder = "Pick a da
   const handleChange = (e) => {
     const dateValue = e.target.value;
     if (dateValue) {
-      onChange(new Date(dateValue));
+      // Parse as local date to avoid timezone offset issues
+      const [year, month, day] = dateValue.split("-").map(Number);
+      onChange(new Date(year, month - 1, day));
     }
   };
 
   const formattedValue = value instanceof Date && !isNaN(value)
-    ? value.toISOString().split("T")[0]
+    ? `${value.getFullYear()}-${String(value.getMonth() + 1).padStart(2, "0")}-${String(value.getDate()).padStart(2, "0")}`
     : "";
 
   return (

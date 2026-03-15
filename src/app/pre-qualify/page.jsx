@@ -207,7 +207,7 @@ const MultiStepCarForm = () => {
   const [validationError, setValidationError] = useState("");
   const [stepErrors, setStepErrors] = useState({});
   const isTransitioning = useRef(false);
-  const totalSteps = 15;
+  const totalSteps = 16;
 
   const [formData, setFormData] = useState({
     vehicleType: "Car",
@@ -335,6 +335,15 @@ const MultiStepCarForm = () => {
             if (digitsOnly.length < 10 || digitsOnly.length > 15) return "Please enter a valid phone number";
             return "";
           },
+        });
+        if (!isValid) {
+          setStepErrors(errors);
+          return Object.values(errors).find(Boolean) || "Please fix the errors above";
+        }
+        return "";
+      }
+      case 16: {
+        const { errors, isValid } = validateAll({
           verificationCode: () => validators.verificationCode(formData.verificationCode),
         });
         if (!isValid) {
@@ -509,7 +518,7 @@ const MultiStepCarForm = () => {
             }}
             className={`${step === 1 ? "w-[380px] mx-auto" : "flex-[2]"} text-white font-medium py-3 md:py-4 rounded-none text-lg md:text-base transition-all hover:brightness-110 active:scale-[0.98]`}
           >
-            {step === totalSteps ? "Submit" : "Continue"}
+            {step >= 15 ? "Submit" : "Continue"}
           </button>
         </div>
       </main>
@@ -918,15 +927,6 @@ function renderStepContent(step, formData, setFormData, nextStep, stepErrors = {
               <FieldError error={formData.phoneError || stepErrors.phoneNumber} />
             </div>
 
-            <button
-              style={{
-                background: `linear-gradient(180deg, #3D8BFF 0%, #1B63CE 100%)`,
-              }}
-              className="w-full max-w-[300px] text-white font-medium py-4 rounded-none text-lg md:text-base transition-all hover:brightness-110 active:scale-[0.98]"
-            >
-              Send Code
-            </button>
-
             <style jsx global>{`
               .PhoneInput {
                 display: flex !important;
@@ -1054,9 +1054,19 @@ function renderStepContent(step, formData, setFormData, nextStep, stepErrors = {
               }
             `}</style>
 
-            <h3 className="text-md md:text-lg font-semibold text-[#8E8E93] my-6">
-              Please enter the verification code sent to you
-            </h3>
+          </div>
+        </div>
+      );
+    case 16:
+      return (
+        <div className="w-full text-center mx-auto px-0">
+          <h2 className="text-xl md:text-2xl font-bold mb-2 text-[#4A4A4A] uppercase">
+            Verification Code
+          </h2>
+          <h3 className="text-md md:text-lg font-semibold text-[#8E8E93] my-6">
+            Please enter the verification code sent to you
+          </h3>
+          <div className="full mx-auto space-y-5 mb-8">
             <div>
               <FloatingLabelInput
                 label="Verification Code"
