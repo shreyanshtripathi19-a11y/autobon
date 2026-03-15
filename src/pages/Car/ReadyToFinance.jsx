@@ -27,7 +27,7 @@ const ReadyToFinance = () => {
             </p>
 
             <Link
-              href={"/checkout"}
+              href={"/finance-form"}
               className="bg-white text-[13px] sm:text-[14px] flex justify-center items-center text-black font-semibold py-2 sm:py-2.5 px-10 sm:px-15 rounded-full hover:bg-gray-100 transition-all duration-300 shadow-lg active:scale-95"
             >
               Get pre-qualified

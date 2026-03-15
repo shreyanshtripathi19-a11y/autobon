@@ -1,16 +1,35 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { Menu } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { validators, formatPhone, formatCurrency, formatPostalCode, validateAll } from "@/lib/validators";
 import { FieldError, inputBorderClass } from "@/components/FieldError";
 import AddressAutocomplete from "@/components/AddressAutocomplete";
 
 export default function PreQualifyPage() {
+  return (
+    <Suspense fallback={null}>
+      <PreQualifyForm />
+    </Suspense>
+  );
+}
+
+function PreQualifyForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Read selected car info from query params (if user came from shop "Get Approved")
+  const selectedCar = searchParams.get("carId")
+    ? {
+        id: searchParams.get("carId"),
+        title: searchParams.get("carTitle") || "",
+        price: searchParams.get("carPrice") || "",
+      }
+    : null;
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [formData, setFormData] = useState({
@@ -138,6 +157,17 @@ export default function PreQualifyPage() {
     setErrors(newErrors);
     if (!isValid) return;
 
+    // Build submission payload including selected car info
+    const submissionData = {
+      ...formData,
+      ...(selectedCar && {
+        selectedCarId: selectedCar.id,
+        selectedCarTitle: selectedCar.title,
+        selectedCarPrice: selectedCar.price,
+      }),
+    };
+    console.log("Finance form submission:", submissionData);
+
     setIsProcessing(true);
     setTimeout(() => {
       setIsProcessing(false);
@@ -220,7 +250,30 @@ export default function PreQualifyPage() {
         </div>
 
         {/* Form Card */}
-        <div className="w-full lg:w-[55%] max-w-[640px] border border-blue-200 rounded-2xl p-8 lg:p-8 bg-white shadow-[0_10px_30px_rgba(37,99,235,0.03)]">
+        <div className="w-full lg:w-[55%] max-w-[640px]">
+          {/* Selected Car Banner */}
+          {selectedCar && (
+            <div className="mb-4 border border-blue-200 rounded-2xl p-4 bg-blue-50/50 flex items-center gap-3">
+              <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <svg className="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10m10 0H3m10 0h2m4 0a1 1 0 001-1v-4a1 1 0 00-.4-.8l-3-2.25A1 1 0 0016 7.5H13" />
+                </svg>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[11px] font-semibold text-blue-600 uppercase tracking-wide">Selected Vehicle</p>
+                <p className="text-[14px] font-bold text-gray-800 truncate">{selectedCar.title}</p>
+              </div>
+              {selectedCar.price && (
+                <div className="text-right flex-shrink-0">
+                  <p className="text-[11px] text-gray-400 font-medium">Price</p>
+                  <p className="text-[15px] font-bold text-gray-800">${Number(selectedCar.price).toLocaleString()}</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          <div className="border border-blue-200 rounded-2xl p-8 lg:p-8 bg-white shadow-[0_10px_30px_rgba(37,99,235,0.03)]">
           <p className="text-[12px] font-semibold text-gray-400 mb-6 leading-tight tracking-wide">
             <span className="text-gray-700 uppercase font-bold">
               IMPORTANT:
@@ -447,6 +500,7 @@ export default function PreQualifyPage() {
               {isProcessing ? "Processing..." : "Continue"}
             </button>
           </form>
+        </div>
         </div>
       </main>
 

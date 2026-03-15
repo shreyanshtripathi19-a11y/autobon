@@ -6,7 +6,6 @@ import Step2PreferredVehicle from "@/pages/PreQualify/Step2";
 import Step3Budget from "@/pages/PreQualify/Step3";
 import PhoneInput from "react-phone-number-input";
 import Link from "next/link";
-import top from "../../assets/top2.png";
 import { validators, validateAll } from "@/lib/validators";
 import { FieldError, inputBorderClass } from "@/components/FieldError";
 import AddressAutocomplete from "@/components/AddressAutocomplete";
@@ -451,9 +450,9 @@ const MultiStepCarForm = () => {
             </span>
           </p>
           <img
-            src={top.src}
-            className="object-cover  object-center w-full "
-            alt="Login to Autobon"
+            src="/autobon approved.png"
+            className="object-contain object-center w-full my-4"
+            alt="Autobon Approved"
           />
           <div className="pt-4 border-t border-gray-100 mb-6">
             <p className="text-xs text-center  sm:text-sm font-semibold text-gray-400 uppercase tracking-widest mb-3">

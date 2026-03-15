@@ -945,7 +945,7 @@ export default function Home() {
                     <button className="flex-1 px-4 py-3 text-sm font-semibold text-white bg-[#1a6adb] rounded-full hover:bg-blue-700 transition-colors" onClick={() => setIsAvailabilityModalOpen(true)}>
                       Check availability
                     </button>
-                    <button onClick={() => router.push("/checkout")} className="flex-1 px-4 py-3 text-sm font-semibold text-[#1a6adb] border-2 border-[#1a6adb] rounded-full hover:bg-blue-50 transition-colors">
+                    <button onClick={() => router.push(`/finance-form?carId=${selectedCar.id}&carTitle=${encodeURIComponent(selectedCar.title)}&carPrice=${selectedCar.price}`)} className="flex-1 px-4 py-3 text-sm font-semibold text-[#1a6adb] border-2 border-[#1a6adb] rounded-full hover:bg-blue-50 transition-colors">
                       Get Approved
                     </button>
                   </div>
@@ -1098,7 +1098,7 @@ export default function Home() {
               {/* Action Buttons */}
               <div className="flex gap-3 mb-6">
                 <button className="flex-1 px-4 py-3.5 text-sm font-semibold text-white bg-[#1a6adb] rounded-full hover:bg-blue-700 transition-colors" onClick={() => setIsAvailabilityModalOpen(true)}>Check availability</button>
-                <button className="flex-1 px-4 py-3.5 text-sm font-semibold text-[#1a6adb] border-2 border-[#1a6adb] rounded-full hover:bg-blue-50 transition-colors" onClick={() => router.push("/checkout")}>Get Approved</button>
+                <button className="flex-1 px-4 py-3.5 text-sm font-semibold text-[#1a6adb] border-2 border-[#1a6adb] rounded-full hover:bg-blue-50 transition-colors" onClick={() => router.push(`/finance-form?carId=${selectedCar.id}&carTitle=${encodeURIComponent(selectedCar.title)}&carPrice=${selectedCar.price}`)}>Get Approved</button>
               </div>
 
               {/* Title */}

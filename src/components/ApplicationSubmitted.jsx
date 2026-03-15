@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import Link from "next/link";
-import top from "../assets/top2.png";
 
 const ApplicationSubmitted = ({ email }) => {
   return (
@@ -21,9 +20,9 @@ const ApplicationSubmitted = ({ email }) => {
         </p>
 
         <img
-          src={top.src}
-          className="object-cover object-center w-full"
-          alt="Application Submitted"
+          src="/autobon approved.png"
+          className="object-contain object-center w-full my-4"
+          alt="Autobon Approved"
         />
 
         <div className="pt-4 border-t border-gray-100 mb-6">
