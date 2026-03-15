@@ -9,6 +9,7 @@ import Link from "next/link";
 import { validators, validateAll } from "@/lib/validators";
 import { FieldError, inputBorderClass } from "@/components/FieldError";
 import AddressAutocomplete from "@/components/AddressAutocomplete";
+import top from "@/assets/top2.png";
 
 // --- HELPERS ---
 const formatCurrency = (value) => {
@@ -259,6 +260,7 @@ const MultiStepCarForm = () => {
     setAnimClass("step-exit");
     // Phase 1: fade out (200ms matches the CSS stepFadeOut duration)
     setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: "instant" });
       setDisplayStep(newStep);
       setAnimClass("step-enter");
       // Phase 2: fade in completes (400ms), then unlock
@@ -450,9 +452,9 @@ const MultiStepCarForm = () => {
             </span>
           </p>
           <img
-            src="/autobon approved.png"
+            src={top.src}
             className="object-contain object-center w-full my-4"
-            alt="Autobon Approved"
+            alt="Application Submitted"
           />
           <div className="pt-4 border-t border-gray-100 mb-6">
             <p className="text-xs text-center  sm:text-sm font-semibold text-gray-400 uppercase tracking-widest mb-3">
@@ -867,16 +869,16 @@ function renderStepContent(step, formData, setFormData, nextStep, stepErrors = {
           <h2 className="text-lg md:text-2xl font-bold mb-2 text-[#4A4A4A] leading-tight">
             Where are you looking for a vehicle?
           </h2>
-          <p className="text-gray-400 mb-6 md:mb-8 text-sm">Type in your address</p>
+          <p className="text-gray-400 mb-2 text-sm">Type in your address</p>
           <AddressAutocomplete
             label="Home Address"
+            floatingLabel
             value={formData?.address || ""}
             onChange={(fullAddress) => {
               setFormData({ ...formData, address: fullAddress });
             }}
             error={stepErrors.address}
             required
-            inputClassName="w-full border border-[#9BA5AD] p-4 pt-6 pb-2 rounded-none outline-none focus:border-blue-400 transition-all text-gray-700 text-sm"
           />
           <FieldError error={stepErrors.address} />
         </div>

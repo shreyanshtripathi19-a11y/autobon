@@ -97,7 +97,7 @@ const TraditionalDealerships = () => {
   );
 
   return (
-    <section className="w-full bg-background py-[80px]">
+    <section className="w-full bg-background py-[80px] overflow-hidden">
       <style jsx>{`
         @keyframes leaf-rotate {
           0% {
@@ -119,16 +119,9 @@ const TraditionalDealerships = () => {
             0px 20px 50px -10px rgba(0, 0, 0, 0.12),
             0px 10px 20px -5px rgba(0, 0, 0, 0.08);
         }
-        .no-scrollbar::-webkit-scrollbar {
-          display: none;
-        }
-        .no-scrollbar {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
       `}</style>
 
-      <div className="max-w-custom mx-auto px-[0px] lg:px-0 flex flex-col items-center overflow-x-hidden">
+      <div className="max-w-custom mx-auto px-[0px] lg:px-0 flex flex-col items-center overflow-hidden">
         <div className="text-center mb-10 md:mb-20 px-4">
           <h2 className="text-[30px] lg:text-[50px] font-semibold text-black leading-tight">
             Why <span className="text-primary">Autobon</span> beats traditional
@@ -141,7 +134,7 @@ const TraditionalDealerships = () => {
           <div
             ref={scrollContainerRef}
             className="flex flex-nowrap overflow-x-auto snap-x snap-mandatory no-scrollbar pt-14 pb-10 px-2"
-            style={{ WebkitOverflowScrolling: "touch" }}
+            style={{ WebkitOverflowScrolling: "touch", scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
             {slides.map((slide, index) => (
               <div
@@ -188,12 +181,12 @@ const TraditionalDealerships = () => {
         </div>
 
         {/* DESKTOP GRID */}
-        <div className="hidden md:grid w-full grid-cols-3 gap-[30px] items-stretch">
+        <div className="hidden md:grid w-full grid-cols-3 gap-[30px] items-stretch px-4 lg:px-6 py-4">
           {slides.map((slide, idx) => (
             <div
               key={idx}
               className={`relative flex flex-col bg-white border border-[#DDDDDD] rounded-[10px] transition-all ${
-                slide.type === "autobon" ? "sp-shadow z-20 scale-105" : "z-10"
+                slide.type === "autobon" ? "sp-shadow z-20 shadow-xl" : "z-10"
               }`}
             >
               <div className="p-8 pb-4 border-b border-[#DDDDDD] flex justify-between items-center">

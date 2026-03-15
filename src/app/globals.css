@@ -116,3 +116,19 @@ button {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* Prevent iOS Safari auto-zoom on input focus (triggered when font-size < 16px) */
+@media screen and (max-width: 768px) {
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="number"],
+  input[type="password"],
+  input[type="url"],
+  input[type="search"],
+  input:not([type]),
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}

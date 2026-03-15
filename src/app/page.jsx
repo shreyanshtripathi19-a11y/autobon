@@ -41,9 +41,9 @@ const Page = () => {
         <WhyBuyFromAutobon />
       </SectionWrapper>
       <SectionSeparator />
-      <SectionWrapper>
+      <div className="w-full overflow-hidden">
         <TraditionalDealerships />
-      </SectionWrapper>
+      </div>
       <SectionSeparator />
       <SectionWrapper>
         <SellingOrTrading />

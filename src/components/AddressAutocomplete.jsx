@@ -34,6 +34,7 @@ function loadGooglePlaces() {
  *  - label?: string
  *  - required?: boolean
  *  - id?: string
+ *  - floatingLabel?: boolean  — if true, renders label inside input (floating style)
  */
 const AddressAutocomplete = ({
   value,
@@ -45,7 +46,8 @@ const AddressAutocomplete = ({
   required = false,
   id,
   inputClassName = "",
-}) => {
+  floatingLabel = false,
+})  => {
   const inputRef = useRef(null);
   const autocompleteRef = useRef(null);
   const [isFocused, setIsFocused] = useState(false);
@@ -128,31 +130,47 @@ const AddressAutocomplete = ({
 
   return (
     <div className={className}>
-      {label && (
+      {label && !floatingLabel && (
         <label className="text-[13px] text-gray-400 font-medium mb-1 block">
           {label} {required && <span className="text-red-400">*</span>}
         </label>
       )}
-      <input
-        ref={inputRef}
-        id={id}
-        type="text"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
-        placeholder={placeholder}
-        required={required}
-        autoComplete="off"
-        className={`w-full border rounded-md p-3.5 text-sm outline-none transition-all ${
-          error
-            ? "border-red-500 focus:border-red-500 focus:ring-4 focus:ring-red-100"
-            : isFocused
-              ? "border-blue-600 ring-4 ring-blue-100"
-              : "border-gray-300"
-        } ${inputClassName}`}
-      />
-      {error && (
+      <div className={floatingLabel ? "relative w-full group" : ""}>
+        <input
+          ref={inputRef}
+          id={id}
+          type="text"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+          placeholder={floatingLabel ? " " : placeholder}
+          required={required}
+          autoComplete="off"
+          className={
+            floatingLabel
+              ? `peer w-full border border-[#9BA5AD] p-4 pt-6 pb-2 rounded-none outline-none focus:border-blue-400 transition-all text-gray-700 ${inputClassName}`
+              : `w-full border rounded-md p-3.5 text-sm outline-none transition-all ${
+                  error
+                    ? "border-red-500 focus:border-red-500 focus:ring-4 focus:ring-red-100"
+                    : isFocused
+                      ? "border-blue-600 ring-4 ring-blue-100"
+                      : "border-gray-300"
+                } ${inputClassName}`
+          }
+        />
+        {floatingLabel && label && (
+          <label
+            className={`absolute text-gray-400 transition-all duration-200 pointer-events-none uppercase font-bold text-[10px] left-4
+              peer-placeholder-shown:text-sm peer-placeholder-shown:top-[1.15rem] peer-placeholder-shown:font-medium peer-placeholder-shown:text-gray-400
+              peer-focus:top-1 peer-focus:text-[10px] peer-focus:text-blue-500
+              ${value ? "top-1 text-[10px] text-blue-500" : ""}`}
+          >
+            {label}
+          </label>
+        )}
+      </div>
+      {error && !floatingLabel && (
         <p className="text-red-500 text-xs mt-1.5 flex items-center gap-1">
           <svg className="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />

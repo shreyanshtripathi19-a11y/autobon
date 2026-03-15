@@ -226,9 +226,9 @@ function PreQualifyForm() {
       </div>
 
       {/* --- Main Content --- */}
-      <main className="flex-1 w-full max-w-[1280px] mx-auto px-8 py-10 lg:py-20 flex flex-col lg:flex-row lg:justify-between lg:items-start lg:gap-[60px]">
+      <main className="flex-1 w-full max-w-[1440px] mx-auto px-6 sm:px-8 py-10 lg:py-20 flex flex-col lg:flex-row lg:justify-between lg:items-start lg:gap-[60px]">
         {/* Left Section */}
-        <div className="w-full lg:w-[45%] max-w-[480px] mb-8 lg:mb-0 text-center lg:text-left">
+        <div className="w-full lg:w-[40%] max-w-[480px] mb-8 lg:mb-0 text-center lg:text-left">
           <h1 className="text-[32px] lg:text-[42px] font-bold leading-[1.15] text-gray-700">
             Pre-qualify for a car loan in <br className="hidden lg:block" />
             <span className="text-blue-600">minutes</span>
@@ -250,14 +250,16 @@ function PreQualifyForm() {
         </div>
 
         {/* Form Card */}
-        <div className="w-full lg:w-[55%] max-w-[640px]">
+        <div className="w-full lg:w-[60%] max-w-[740px]">
           {/* Selected Car Banner */}
           {selectedCar && (
             <div className="mb-4 border border-blue-200 rounded-2xl p-4 bg-blue-50/50 flex items-center gap-3">
               <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                <svg className="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10m10 0H3m10 0h2m4 0a1 1 0 001-1v-4a1 1 0 00-.4-.8l-3-2.25A1 1 0 0016 7.5H13" />
+                <svg className="w-5 h-5 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M5 17h2m10 0h2M3 17h18v-4l-2-5H5L3 13v4z" />
+                  <circle cx="7.5" cy="17" r="1.5" />
+                  <circle cx="16.5" cy="17" r="1.5" />
+                  <path d="M5 12l1.5-4h11L19 12" />
                 </svg>
               </div>
               <div className="flex-1 min-w-0">

@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import s1 from "../../assets/s1.png";
 import s2 from "../../assets/s2.png";
-import s3 from "../../assets/s3.webp";
 import h2 from "../../assets/h2.png";
 import h1 from "../../assets/h1.png";
 import h3 from "../../assets/h3.png";
@@ -40,9 +39,9 @@ const Features = () => {
     {
       title: "Instant Approvals",
       desc: "Get financing with some of the best interest rates in the nation for the car you want.",
-      img: s3,
+      img: "/autobon approved.png",
       help: h2,
-      isAnimated: true,
+      isApproved: true,
       link: "/finance-form",
     },
     {
@@ -99,12 +98,12 @@ const Features = () => {
                 </div>
 
                 {/* ANIMATION AREA */}
-                <div className="relative z-10 w-full flex justify-center items-center overflow-hidden h-[190px] lg:h-[220px]">
-                  {card.isAnimated ? (
+                <div className={`relative z-10 w-full flex justify-center overflow-hidden h-[230px] lg:h-[270px] ${card.isApproved ? "items-end" : "items-center"}`}>
+                  {card.isApproved ? (
                     <img
-                      src={card.img.src}
+                      src={card.img}
                       alt={card.title}
-                      className={`w-max relative md:left-3 h-max  bottom-5 max-w-[180px] md:max-w-[200px]  object-cover object-bottom transition-transform duration-500 group-hover:scale-105`}
+                      className="w-[280px] lg:w-[320px] h-auto object-contain mb-0 transition-transform duration-500 group-hover:scale-105 -translate-y-3"
                     />
                   ) : (
                     <img
