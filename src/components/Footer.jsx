@@ -214,6 +214,12 @@ const Footer = () => {
     if (link === "View More" || link === "Shop cars") return "/shop";
     if (link === "Home") return "/";
     if (link === "About AUTOBON") return "/about-us";
+    if (link === "Sell or Trade") return "/sell-or-trade";
+    if (link === "Finance") return "/finance";
+    if (link === "Get Pre-Approved") return "/pre-qualify";
+    if (link === "Chat with us" || link === "Any Car, Any Where") return "/contact-us";
+    if (link.startsWith("Call us")) return "tel:9058003100";
+    if (link.startsWith("Email us")) return "mailto:info@autobon.ca";
 
     const query = encodeURIComponent(link);
 
@@ -265,7 +271,7 @@ const Footer = () => {
               alt="Google Logo"
             />
             <div className="flex flex-col items-center">
-              <div className="text-primary text-2xl lg:text-3xl tracking-widest">★★★★★</div>
+              <div className="flex gap-0.5">{[...Array(5)].map((_,i) => (<svg key={i} viewBox="0 0 24 24" className="w-5 h-5 lg:w-7 lg:h-7 text-primary fill-primary"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" /></svg>))}</div>
               <p className="text-[10px] font-extrabold text-gray-500 uppercase tracking-tighter mt-0.5">
                 Over 2500 5 Star Reviews
               </p>

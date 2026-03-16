@@ -2,7 +2,6 @@
 import React from "react";
 import home1 from "../../assets/home-1.png";
 import Image from "next/image";
-import { Star } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 const Hero = () => {
@@ -13,7 +12,7 @@ const Hero = () => {
       <div className="mx-auto max-w-[1200px] w-full px-5 z-20 pointer-events-none">
         <div className="w-full lg:w-[50%] flex flex-col gap-[20px] py-8 lg:py-[30px] text-left pointer-events-auto">
           <p className="w-max bg-white px-3 rounded-full py-1 font-[400] text-[10px] sm:text-[15px] text-black flex items-center gap-2 shadow-sm">
-            <Star fill="currentColor" size={20} className="text-primary" />
+            <svg viewBox="0 0 24 24" className="w-5 h-5 text-primary fill-primary"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" /></svg>
             5.0 Star Rating from Thousands of Customers
           </p>
 

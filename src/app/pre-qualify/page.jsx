@@ -358,14 +358,51 @@ const MultiStepCarForm = () => {
     }
   };
 
-  const nextStep = () => {
+  const nextStep = async () => {
     const error = validateStep(step);
     if (error) {
       setValidationError(error);
       return;
     }
     if (step === totalSteps) {
-      console.log("Final Data Submission:", formData);
+      try {
+        await fetch("/api/forms", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            type: "pre-qualify",
+            data: {
+              vehicleType: formData.vehicleType,
+              preferredVehicle: formData.preferredVehicle,
+              budget: formData.budget,
+              hasTradeIn: formData.hasTradeIn,
+              creditRating: formData.creditRating,
+              employmentStatus: formData.employmentStatus,
+              incomeType: formData.incomeType,
+              hourlyWage: formData.hourlyWage,
+              hoursPerWeek: formData.hoursPerWeek,
+              annualSalary: formData.annualSalary,
+              companyName: formData.companyName,
+              jobTitle: formData.jobTitle,
+              homeStatus: formData.homeStatus,
+              monthlyPayment: formData.monthlyPayment,
+              isCitizen: formData.isCitizen,
+              hasLicense: formData.hasLicense,
+              dob: `${formData.dobYear}-${formData.dobMonth}-${formData.dobDay}`,
+              firstName: formData.firstName,
+              lastName: formData.lastName,
+              email: formData.email,
+              address: formData.address,
+              phoneNumber: formData.phoneNumber,
+            },
+            name: `${formData.firstName} ${formData.lastName}`,
+            email: formData.email,
+            phone: formData.phoneNumber,
+          }),
+        });
+      } catch (err) {
+        console.error("Pre-qualify form error:", err);
+      }
       setIsSubmitted(true);
     } else {
       const newStep = Math.min(step + 1, totalSteps);

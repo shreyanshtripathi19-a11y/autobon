@@ -134,7 +134,7 @@ function PreQualifyForm() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     // Mark all fields touched
     const allTouched = {};
@@ -166,13 +166,25 @@ function PreQualifyForm() {
         selectedCarPrice: selectedCar.price,
       }),
     };
-    console.log("Finance form submission:", submissionData);
 
     setIsProcessing(true);
-    setTimeout(() => {
-      setIsProcessing(false);
-      router.push("/pre-qualify?submitted=true");
-    }, 1000);
+    try {
+      await fetch("/api/forms", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "finance",
+          data: submissionData,
+          name: `${formData.firstName} ${formData.lastName}`,
+          email: formData.email,
+          phone: formData.phone,
+        }),
+      });
+    } catch (err) {
+      console.error("Finance form error:", err);
+    }
+    setIsProcessing(false);
+    router.push("/pre-qualify?submitted=true");
   };
 
   const closeModal = () => {
@@ -226,7 +238,7 @@ function PreQualifyForm() {
       </div>
 
       {/* --- Main Content --- */}
-      <main className="flex-1 w-full max-w-[1440px] mx-auto px-6 sm:px-8 py-10 lg:py-20 flex flex-col lg:flex-row lg:justify-between lg:items-start lg:gap-[60px]">
+      <main className="flex-1 w-full max-w-[1440px] mx-auto px-6 sm:px-8 py-6 lg:py-10 flex flex-col lg:flex-row lg:justify-between lg:items-start lg:gap-[60px]">
         {/* Left Section */}
         <div className="w-full lg:w-[40%] max-w-[480px] mb-8 lg:mb-0 text-center lg:text-left">
           <h1 className="text-[32px] lg:text-[42px] font-bold leading-[1.15] text-gray-700">
@@ -255,23 +267,16 @@ function PreQualifyForm() {
           {selectedCar && (
             <div className="mb-4 border border-blue-200 rounded-2xl p-4 bg-blue-50/50 flex items-center gap-3">
               <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                <svg className="w-5 h-5 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M5 17h2m10 0h2M3 17h18v-4l-2-5H5L3 13v4z" />
-                  <circle cx="7.5" cy="17" r="1.5" />
-                  <circle cx="16.5" cy="17" r="1.5" />
-                  <path d="M5 12l1.5-4h11L19 12" />
+                <svg className="w-5 h-5 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M7 17a2 2 0 1 0 4 0 2 2 0 0 0-4 0Zm6 0a2 2 0 1 0 4 0 2 2 0 0 0-4 0Z" />
+                  <path d="M5 17H3v-4.27a1 1 0 0 1 .684-.948L7 10.5l3-4.5h5l2.5 4h2a2 2 0 0 1 2 2V17h-2" />
+                  <path d="M11 17H13" />
                 </svg>
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-[11px] font-semibold text-blue-600 uppercase tracking-wide">Selected Vehicle</p>
                 <p className="text-[14px] font-bold text-gray-800 truncate">{selectedCar.title}</p>
               </div>
-              {selectedCar.price && (
-                <div className="text-right flex-shrink-0">
-                  <p className="text-[11px] text-gray-400 font-medium">Price</p>
-                  <p className="text-[15px] font-bold text-gray-800">${Number(selectedCar.price).toLocaleString()}</p>
-                </div>
-              )}
             </div>
           )}
 
@@ -449,7 +454,7 @@ function PreQualifyForm() {
 
             <div className="grid grid-cols-2 gap-4 lg:gap-5">
               <div>
-                <label className="text-[13px] text-gray-400 font-medium mb-1 block">
+                <label className="text-[13px] text-gray-400 font-medium mb-1.5 block min-h-[32px] flex items-end leading-3">
                   Suite, unit (optional)
                 </label>
                 <input
@@ -461,7 +466,7 @@ function PreQualifyForm() {
                 />
               </div>
               <div>
-                <label className="text-[13px] text-gray-400 font-medium mb-1 block">
+                <label className="text-[13px] text-gray-400 font-medium mb-1.5 block min-h-[32px] flex items-end leading-3">
                   Postal Code <span className="text-red-400">*</span>
                 </label>
                 <input

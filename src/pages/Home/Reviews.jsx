@@ -1,13 +1,14 @@
 "use client";
 
-import React, { useRef } from "react";
-import { Quote, ChevronLeft, ChevronRight, Star } from "lucide-react";
+import React, { useRef, useState, useEffect } from "react";
+import { Quote, ChevronLeft, ChevronRight } from "lucide-react";
 import review1 from "../../assets/r1.png";
 import review2 from "../../assets/r2.png";
 import review3 from "../../assets/r3.png";
 import Link from "next/link";
 
-const reviewData = [
+
+const fallbackReviewData = [
   {
     name: "Eldho J.",
     role: "Satisfied Contractor",
@@ -51,9 +52,31 @@ const reviewData = [
     rating: 5,
   },
 ];
+const fallbackImages = [review1, review2, review3];
 
 const Reviews = () => {
   const scrollRef = useRef(null);
+  const [reviewData, setReviewData] = useState(fallbackReviewData);
+
+  useEffect(() => {
+    fetch("/api/reviews")
+      .then((res) => (res.ok ? res.json() : Promise.reject()))
+      .then((data) => {
+        if (data && data.length > 0) {
+          const mapped = data.map((r, i) => ({
+            name: r.name,
+            role: r.role,
+            text: r.text,
+            rating: r.rating,
+            image: r.imageUrl
+              ? { src: r.imageUrl }
+              : fallbackImages[i % fallbackImages.length],
+          }));
+          setReviewData(mapped);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const scroll = (direction) => {
     if (scrollRef.current) {
@@ -188,15 +211,17 @@ const Reviews = () => {
                     />
                     <div className="absolute bottom-3 left-3 flex gap-1 bg-black/20 backdrop-blur-sm p-1.5 rounded-lg">
                       {[...Array(5)].map((_, i) => (
-                        <Star
+                        <svg
                           key={i}
-                          size={14}
-                          className={
+                          viewBox="0 0 24 24"
+                          className={`w-3.5 h-3.5 ${
                             i < review.rating
                               ? "text-white fill-white"
                               : "text-gray-400 fill-gray-400"
-                          }
-                        />
+                          }`}
+                        >
+                          <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
+                        </svg>
                       ))}
                     </div>
                   </div>

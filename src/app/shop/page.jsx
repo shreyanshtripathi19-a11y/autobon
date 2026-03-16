@@ -1024,13 +1024,13 @@ export default function Home() {
                       {detailFormSubmitting ? "Sending..." : "Send Message"}
                     </button>
                     <p className="text-[11px] text-gray-400 leading-relaxed">
-                      By submitting this form, I acknowledge that I accept and agree to be bound by the Terms and Conditions of cars.ca and further acknowledge that any personal information I may provide to cars.ca will be handled in accordance with the Privacy Policy. I further agree to receive communications from cars.ca or sellers of motor vehicles advertised on cars.ca. I understand that I can unsubscribe from receiving such communication at any time.
+                      By submitting this form, you acknowledge and agree to be bound by the <Link href="/terms-of-use" className="text-[#1a6adb] underline">Terms and Conditions</Link> of Autobon. You also acknowledge that any personal information you provide will be handled in accordance with our <Link href="/privacy" className="text-[#1a6adb] underline">Privacy Policy</Link>. By submitting your information, you consent to receive communications from Autobon regarding vehicle listings, services, and related offers. You may unsubscribe from these communications at any time.
                       <br /><br />
-                      This site is protected by reCAPTCHA and the Google Privacy Policy and Terms of Service apply.
+                      This site is protected by reCAPTCHA and the Google <Link href="/privacy" className="text-[#1a6adb] underline">Privacy Policy</Link> and <Link href="/terms-of-use" className="text-[#1a6adb] underline">Terms of Service</Link> apply.
                       <br /><br />
-                      *Prices listed exclude taxes, licensing fees, and other applicable charges.
+                      *Prices listed exclude taxes, licensing fees, and any other applicable charges.
                       <br /><br />
-                      While we strive to provide accurate and up-to-date information, we recommend that you verify the details of any listing directly with the seller. Cars.ca is not responsible for any discrepancies or inaccuracies in the information provided.
+                      While we strive to provide accurate and up-to-date information, we recommend confirming all vehicle details directly with Autobon prior to purchase. Autobon is not responsible for any typographical errors, omissions, or inaccuracies in the information provided.
                     </p>
                   </form>
                 </div>
@@ -1174,13 +1174,13 @@ export default function Home() {
                   {detailFormSubmitting ? "Sending..." : "Send Message"}
                 </button>
                 <p className="text-[11px] text-gray-400 leading-relaxed">
-                  By submitting this form, I acknowledge that I accept and agree to be bound by the <span className="text-[#1a6adb] underline">Terms and Conditions</span> of cars.ca and further acknowledge that any personal information I may provide to cars.ca will be handled in accordance with the <span className="text-[#1a6adb] underline">Privacy Policy</span>. I further agree to receive communications from cars.ca or sellers of motor vehicles advertised on cars.ca. I understand that I can unsubscribe from receiving such communication at any time.
+                  By submitting this form, you acknowledge and agree to be bound by the <Link href="/terms-of-use" className="text-[#1a6adb] underline">Terms and Conditions</Link> of Autobon. You also acknowledge that any personal information you provide will be handled in accordance with our <Link href="/privacy" className="text-[#1a6adb] underline">Privacy Policy</Link>. By submitting your information, you consent to receive communications from Autobon regarding vehicle listings, services, and related offers. You may unsubscribe from these communications at any time.
                   <br /><br />
-                  This site is protected by reCAPTCHA and the Google <span className="text-[#1a6adb] underline">Privacy Policy</span> and <span className="text-[#1a6adb] underline">Terms of Service</span> apply.
+                  This site is protected by reCAPTCHA and the Google <Link href="/privacy" className="text-[#1a6adb] underline">Privacy Policy</Link> and <Link href="/terms-of-use" className="text-[#1a6adb] underline">Terms of Service</Link> apply.
                   <br /><br />
-                  *Prices listed exclude taxes, licensing fees, and other applicable charges.
+                  *Prices listed exclude taxes, licensing fees, and any other applicable charges.
                   <br /><br />
-                  While we strive to provide accurate and up-to-date information, we recommend that you verify the details of any listing directly with the
+                  While we strive to provide accurate and up-to-date information, we recommend confirming all vehicle details directly with Autobon prior to purchase. Autobon is not responsible for any typographical errors, omissions, or inaccuracies in the information provided.
                 </p>
               </form>
             </div>
@@ -1206,7 +1206,7 @@ export default function Home() {
                   alt="Google Logo"
                 />
                 <div className="flex flex-col items-center">
-                  <div className="text-[#1a6adb] text-2xl tracking-widest">★★★★★</div>
+                  <div className="flex gap-0.5">{[...Array(5)].map((_,i) => (<svg key={i} viewBox="0 0 24 24" className="w-5 h-5 lg:w-6 lg:h-6 text-[#1a6adb] fill-[#1a6adb]"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" /></svg>))}</div>
                   <p className="text-[10px] font-extrabold text-gray-500 uppercase tracking-tighter mt-0.5">
                     Over 2500 5 Star Reviews
                   </p>

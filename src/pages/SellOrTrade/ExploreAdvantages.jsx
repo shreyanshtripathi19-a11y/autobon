@@ -115,11 +115,11 @@ const ExploreAdvantages = () => {
   const tabs = Object.keys(tabContent);
 
   return (
-    <section className="w-full py-20 px-3 lg:px-[0px] bg-[#FAFAFA]">
+    <section className="w-full py-12 px-3 lg:px-[0px] bg-[#FAFAFA]">
       <div className=" mx-auto">
         {/* CENTRALIZED HEADER */}
         <div className="flex flex-col items-center text-center mb-4 lg:mb-16">
-          <h2 className="text-[28px] lg:text-[45px] capitalize font-bold text-[#272727] leading-tight  mb-4">
+          <h2 className="text-[32px] lg:text-[56px] capitalize font-bold text-[#272727] leading-tight mb-4">
             We buy hundreds of cars every week!
           </h2>
           <p className="text-[#6D6D6D] text-[10px] lg:text-[18px] max-w-[600px] mb-8 ">

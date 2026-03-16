@@ -57,7 +57,7 @@ const Hero = () => {
         {/* LEFT SIDE: Text + Image */}
         <div className="flex pt-5 md:pt-5 flex-col w-full lg:w-[55%] gap-6 items-center lg:items-start text-center lg:text-left">
           <div className="flex flex-col gap-3 relative w-full">
-            <div className="absolute xs:-top-20 smg:-top-28 -top-25 xs:right-[16vw]  right-[20vw] md:-top-34 smg:right-[110px] md:right-[160px] flex flex-col items-center sm:items-start lg:items-start pointer-events-none z-10 scale-[0.6] sm:scale-90 lg:scale-100 origin-right">
+            <div className="absolute xs:-top-24 smg:-top-32 -top-28 xs:right-[20vw] right-[24vw] md:-top-34 smg:right-[110px] md:right-[160px] flex flex-col items-center sm:items-start lg:items-start pointer-events-none z-10 scale-[0.75] sm:scale-90 lg:scale-100 origin-right">
               <img
                 src={textImage.src}
                 alt="Decorative Text"
@@ -100,22 +100,20 @@ const Hero = () => {
               <button
                 type="button"
                 onClick={() => setActiveTab("details")}
-                className={`flex-1 text-[12px] lg:text-[14px] px-4 py-2 rounded-full font-bold transition-all ${
-                  activeTab === "details"
+                className={`flex-1 text-[12px] lg:text-[14px] px-4 py-2 rounded-full font-bold transition-all ${activeTab === "details"
                     ? "bg-primary text-white shadow-sm"
                     : "text-gray-500 hover:text-black"
-                }`}
+                  }`}
               >
                 Details
               </button>
               <button
                 type="button"
                 onClick={() => setActiveTab("vin")}
-                className={`flex-1 text-[12px] lg:text-[14px] px-4 py-2 rounded-full font-bold transition-all ${
-                  activeTab === "vin"
+                className={`flex-1 text-[12px] lg:text-[14px] px-4 py-2 rounded-full font-bold transition-all ${activeTab === "vin"
                     ? "bg-primary text-white shadow-sm"
                     : "text-gray-500 hover:text-black"
-                }`}
+                  }`}
               >
                 VIN
               </button>

@@ -72,11 +72,18 @@ const ContactPage = () => {
     e.preventDefault();
     if (validate()) {
       setLoading(true);
-      // Simulate API call
-      setTimeout(() => {
-        setLoading(false);
-        router.push("/pre-qualify?submitted=true");
-      }, 1500);
+      try {
+        const res = await fetch("/api/contact", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        });
+        if (!res.ok) console.error("Contact form failed");
+      } catch (err) {
+        console.error("Contact form error:", err);
+      }
+      setLoading(false);
+      router.push("/pre-qualify?submitted=true");
     }
   };
 
