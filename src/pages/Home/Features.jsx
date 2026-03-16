@@ -103,7 +103,7 @@ const Features = () => {
                     <img
                       src={card.img}
                       alt={card.title}
-                      className="w-[280px] lg:w-[320px] h-auto object-contain mb-0 transition-transform duration-500 group-hover:scale-105 -translate-y-3"
+                      className="w-[320px] lg:w-[380px] h-auto object-contain mb-0 transition-transform duration-500 group-hover:scale-105 -translate-y-3"
                     />
                   ) : (
                     <img

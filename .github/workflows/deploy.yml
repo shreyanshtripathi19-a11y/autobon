@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Deploy to VPS
+      - name: Deploy Frontend & Backend to VPS
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -25,9 +25,9 @@ jobs:
             [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
             export PATH="$HOME/.nvm/versions/node/$(ls $HOME/.nvm/versions/node/ | tail -1)/bin:$PATH:/usr/local/bin:/usr/bin"
 
+            # ─── Frontend ───────────────────────────────────────
             APP_DIR="/var/www/autobon"
 
-            # Clone if not exists, otherwise pull
             if [ ! -d "$APP_DIR" ]; then
               echo ">>> Cloning repository..."
               git clone https://github.com/shreyanshtripathi19-a11y/autobon.git "$APP_DIR"
@@ -35,21 +35,39 @@ jobs:
 
             cd "$APP_DIR"
 
-            echo ">>> Pulling latest code..."
+            echo ">>> Pulling latest frontend code..."
             git fetch origin main
             git reset --hard origin/main
 
-            echo ">>> Installing dependencies..."
+            echo ">>> Installing frontend dependencies..."
             npm install --legacy-peer-deps
 
-            echo ">>> Building application..."
+            echo ">>> Building frontend..."
             npm run build
 
-            echo ">>> Restarting application with PM2..."
+            echo ">>> Restarting frontend with PM2..."
             if pm2 describe autobon > /dev/null 2>&1; then
               pm2 restart autobon
             else
               pm2 start npm --name "autobon" -- start
+            fi
+
+            # ─── Backend ────────────────────────────────────────
+            BACKEND_DIR="/var/www/autobon-backend"
+
+            echo ">>> Installing backend dependencies..."
+            cd "$BACKEND_DIR"
+            npm install
+
+            echo ">>> Running Prisma schema sync..."
+            npx prisma generate
+            npx prisma db push --accept-data-loss || true
+
+            echo ">>> Restarting backend with PM2..."
+            if pm2 describe autobon-backend > /dev/null 2>&1; then
+              pm2 restart autobon-backend
+            else
+              pm2 start src/index.js --name "autobon-backend"
             fi
 
             pm2 save
