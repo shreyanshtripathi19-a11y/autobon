@@ -39,10 +39,10 @@ const Financing = () => {
             </h3>
             <div className="flex flex-row justify-start items-baseline gap-2">
               <span className="text-[25px] lg:text-[40px] font-bold text-[#272727] leading-none">
-                $38,000
+                $42,500
               </span>
               <span className="text-[16px] text-[#272727] font-medium">
-                ($210 biweekly)
+                ($215 biweekly)
               </span>
             </div>
           </div>

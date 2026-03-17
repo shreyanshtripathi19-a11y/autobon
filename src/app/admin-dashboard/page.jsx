@@ -257,18 +257,39 @@ function CarFormModal({ isOpen, onClose, onSaved, editCar }) {
     setError("");
 
     try {
-      // Upload new images to Firebase Storage
+      // Upload new images to Firebase Storage (auto-convert to WebP)
       let imageUrls = existingImages.map((img) => img.url);
       if (imageFiles.length > 0) {
         const { storage } = await import("@/lib/firebase");
-        const { ref, uploadBytes, getDownloadURL } = await import("firebase/storage");
+        const { ref, uploadString, getDownloadURL } = await import("firebase/storage");
         if (!storage) throw new Error("Firebase Storage not initialized");
 
+        // Convert image file to WebP using Canvas API
+        const convertToWebP = (file) => new Promise((resolve, reject) => {
+          const img = new window.Image();
+          img.onload = () => {
+            const canvas = document.createElement("canvas");
+            // Resize: max 1600px wide, maintain aspect ratio
+            const MAX_W = 1600;
+            let w = img.width, h = img.height;
+            if (w > MAX_W) { h = Math.round(h * (MAX_W / w)); w = MAX_W; }
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, w, h);
+            // 0.85 quality WebP
+            const dataUrl = canvas.toDataURL("image/webp", 0.85);
+            resolve(dataUrl);
+          };
+          img.onerror = reject;
+          img.src = URL.createObjectURL(file);
+        });
+
         const uploadPromises = imageFiles.map(async (file) => {
-          const ext = file.name.split(".").pop();
-          const fileName = `cars/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+          const webpData = await convertToWebP(file);
+          const fileName = `cars/${Date.now()}-${Math.random().toString(36).slice(2)}.webp`;
           const storageRef = ref(storage, fileName);
-          await uploadBytes(storageRef, file);
+          await uploadString(storageRef, webpData, "data_url", { contentType: "image/webp" });
           return getDownloadURL(storageRef);
         });
         const newUrls = await Promise.all(uploadPromises);
