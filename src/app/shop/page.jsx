@@ -9,40 +9,16 @@ import { X } from "lucide-react";
 import { validators, formatPhone, validateAll } from "@/lib/validators";
 import { FieldError, inputBorderClass } from "@/components/FieldError";
 
-// Car images from uploaded photos
-const CAR_IMGS = [
-  "/images/c0e515790ae6cd243a0ae47e32ad732e993b78a2.png",
-  "/images/eb30a4d65252692d4873d6b8a9fd07a49d03cca2.png",
-  "/images/a3fcdda6786415d8d2e1e609eb1515fed34bf69d.png",
-];
+// Fallback placeholder images for cars without uploaded images
+const PLACEHOLDER_IMG = "/images/c0e515790ae6cd243a0ae47e32ad732e993b78a2.png";
 
-const CAR_TITLES = [
-  "2020 Audi A3",
-  "2022 Honda Civic",
-  "2021 Kia Stinger",
-  "2019 Tesla Model 3",
-  "2021 Toyota RAV4",
-  "2020 BMW 3 Series",
-  "2021 Mercedes-Benz C-Class",
-  "2020 Mazda CX-5",
-  "2018 Ford Mustang",
-  "2022 Hyundai Elantra",
-  "2021 Subaru Crosstrek",
-  "2019 Jeep Wrangler",
-  "2021 Nissan Rogue",
-  "2018 Chevrolet Silverado 1500",
-  "2020 Volkswagen Golf",
-  "2023 Tesla Model Y",
-  "2021 Porsche Macan",
-  "2022 Lexus IS 350",
-  "2020 GMC Sierra 1500",
-  "2021 Honda CR-V",
-  "2019 Dodge Challenger",
-  "2022 Volvo XC60",
-  "2021 Subaru WRX STi",
-  "2020 Land Rover Defender 110",
-  "2021 BMW M4",
-];
+// Helper: get images array for a car (from DB images or fallback)
+const getCarImages = (car) => {
+  if (car.images && car.images.length > 0) {
+    return car.images.map((img) => img.url);
+  }
+  return [PLACEHOLDER_IMG];
+};
 
 const BODY_TYPES = ["Coupe", "Hatchback", "SUV", "Sedan", "Truck"];
 const PRICE_RATINGS = [
@@ -73,73 +49,6 @@ const COLORS = [
   "Silver",
   "Soul Red",
 ];
-
-const mockCars = CAR_TITLES.map((title, i) => {
-  const parts = title.split(" ");
-  const year = parseInt(parts[0]);
-  let make = parts[1];
-  let modelWords = parts.slice(2);
-
-  if (make === "Land") {
-    make = "Land Rover";
-    modelWords = parts.slice(3);
-  }
-
-  const model = modelWords.join(" ");
-  const basePrice = 30000 + (i % 5) * 10000;
-
-  let bodyType = "Sedan";
-  if (
-    model.includes("CX") ||
-    model.includes("RAV4") ||
-    model.includes("Rogue") ||
-    model.includes("Macan") ||
-    model.includes("XC60") ||
-    model.includes("Defender") ||
-    model.includes("CR-V") ||
-    model.includes("Model Y") ||
-    model.includes("Wrangler")
-  ) {
-    bodyType = "SUV";
-  } else if (
-    model.includes("Silverado") ||
-    model.includes("Sierra") ||
-    model.includes("F-150")
-  ) {
-    bodyType = "Truck";
-  } else if (
-    model.includes("Mustang") ||
-    model.includes("Challenger") ||
-    model.includes("M4") ||
-    model.includes("STi")
-  ) {
-    bodyType = "Coupe";
-  } else if (model.includes("Golf") || model.includes("Crosstrek")) {
-    bodyType = "Hatchback";
-  }
-
-  return {
-    id: i + 1,
-    title: title,
-    year: year,
-    make: make,
-    model: model,
-    price: basePrice,
-    priceRating: PRICE_RATINGS[i % PRICE_RATINGS.length],
-    condition: CONDITIONS[i % CONDITIONS.length],
-    bodyType: bodyType,
-    color: COLORS[i % COLORS.length],
-    trim: ["All Trims"][0],
-    mileage: "14,200 km",
-    priceStatus: "Competitive price",
-    desc: "Excellent fuel efficiency & low maintenance Sporty design with advanced safety features.",
-    oldPrice: "$" + basePrice.toLocaleString(),
-    biWeekly: "$" + Math.round(basePrice / 120),
-    down: "$0 down",
-    noAccident: true,
-    img: CAR_IMGS[i % CAR_IMGS.length],
-  };
-});
 
 // Sidebar filter list options
 const FP_MAKES = [
@@ -368,7 +277,9 @@ function CheckAvailabilityModal({ isOpen, onClose, carTitle = "this vehicle" }) 
 }
 
 export default function Home() {
-  const [selectedCar, setSelectedCar] = useState(mockCars[0]);
+  const [cars, setCars] = useState([]);
+  const [loadingCars, setLoadingCars] = useState(true);
+  const [selectedCar, setSelectedCar] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [isMobileDetailView, setIsMobileDetailView] = useState(false);
   const [isFiltersPanelOpen, setIsFiltersPanelOpen] = useState(false);
@@ -502,10 +413,32 @@ export default function Home() {
 
   const router = useRouter();
 
+  // Fetch cars from backend API
+  useEffect(() => {
+    const fetchCars = async () => {
+      try {
+        setLoadingCars(true);
+        const res = await fetch("/api/cars");
+        if (res.ok) {
+          const data = await res.json();
+          setCars(data);
+          if (data.length > 0 && !selectedCar) {
+            setSelectedCar(data[0]);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch cars:", err);
+      } finally {
+        setLoadingCars(false);
+      }
+    };
+    fetchCars();
+  }, []);
+
   const toggleFilter = (name) =>
     setOpenFilter((prev) => (prev === name ? null : name));
 
-  const filteredCars = mockCars.filter((c) => {
+  const filteredCars = cars.filter((c) => {
     if (selectedMake && c.make !== selectedMake) return false;
     if (fpMake !== "All Makes" && c.make !== fpMake) return false;
     if (fpModel !== "All Models" && !c.model.includes(fpModel)) return false;
@@ -650,10 +583,10 @@ export default function Home() {
                               onClick={() => {
                                 if (selectedMake === m) {
                                   setSelectedMake(null);
-                                  setSelectedCar(mockCars[0]);
+                                  setSelectedCar(cars[0]);
                                 } else {
                                   setSelectedMake(m);
-                                  const first = mockCars.find((c) => c.make === m);
+                                  const first = cars.find((c) => c.make === m);
                                   if (first) setSelectedCar(first);
                                 }
                                 setOpenFilter(null);
@@ -674,10 +607,10 @@ export default function Home() {
                           onClick={() => {
                             if (selectedMake === m) {
                               setSelectedMake(null);
-                              setSelectedCar(mockCars[0]);
+                              setSelectedCar(cars[0]);
                             } else {
                               setSelectedMake(m);
-                              const first = mockCars.find((c) => c.make === m);
+                              const first = cars.find((c) => c.make === m);
                               if (first) setSelectedCar(first);
                             }
                             setOpenFilter(null);
@@ -829,7 +762,7 @@ export default function Home() {
                         </div>
                       )}
                       <img
-                        src={CAR_IMGS[(cardImageIndices[car.id] || 0) % CAR_IMGS.length]}
+                        src={getCarImages(car)[0]}
                         alt={car.title}
                         className="w-full h-full object-cover transition-opacity duration-300"
                       />
@@ -841,25 +774,25 @@ export default function Home() {
                       <div className="flex items-center gap-2 sm:gap-1.5 text-[11px] sm:text-[9px] font-semibold text-black mb-2 sm:mb-2 pb-2 sm:pb-2" style={{ borderBottom: "1px solid #E3E3E3", marginLeft: "-12px", marginRight: "-12px", paddingLeft: "12px", paddingRight: "12px" }}>
                         <span className="flex items-center gap-1 whitespace-nowrap">
                           <IconSpeed />
-                          {car.mileage}
+                          {car.mileage || "N/A"}
                         </span>
                         <span className="text-gray-200 font-light">|</span>
                         <span className="flex items-center gap-1 whitespace-nowrap">
                           <IconPrice />
-                          {car.priceStatus}
+                          {car.priceRating || "Market Price"}
                         </span>
                       </div>
-                      <p className="text-[11px] sm:text-[9px] text-[#595959] mb-2 sm:mb-2 line-clamp-2" style={{ lineHeight: 1.6 }}>{car.desc}</p>
+                      <p className="text-[11px] sm:text-[9px] text-[#595959] mb-2 sm:mb-2 line-clamp-2" style={{ lineHeight: 1.6 }}>{car.description || "Quality vehicle with great features and excellent condition."}</p>
                       <div className="mt-auto flex items-center justify-between gap-1">
                         <div className="flex flex-col gap-1 sm:gap-1 min-w-0">
                           <span className="text-[16px] sm:text-[14px] font-extrabold text-gray-900" style={{ filter: "blur(5.8px)", userSelect: "none", opacity: 0.85, lineHeight: 1 }}>
-                            {car.oldPrice}
+                            ${car.price?.toLocaleString()}
                           </span>
                           <span className="flex items-end gap-1 sm:gap-1" style={{ lineHeight: 1 }}>
                             <span className="text-[9px] sm:text-[7px] font-semibold text-[#595959]" style={{ filter: "blur(2px)", userSelect: "none", opacity: 0.85, whiteSpace: "nowrap" }}>
-                              {car.biWeekly} /biweekly
+                              {car.biWeekly || "$" + Math.round((car.price || 0) / 120)} /biweekly
                             </span>
-                            <span className="text-[10px] sm:text-[8px] font-semibold text-black" style={{ whiteSpace: "nowrap" }}>{car.down}</span>
+                            <span className="text-[10px] sm:text-[8px] font-semibold text-black" style={{ whiteSpace: "nowrap" }}>{car.downPayment || "$0 down"}</span>
                           </span>
                         </div>
                         <button
@@ -883,33 +816,33 @@ export default function Home() {
               </div>
             </div>
 
-            {/* RIGHT: DETAIL PANEL */}
+            {selectedCar && (
             <aside className="hidden lg:block w-[480px] flex-shrink-0" aria-label="Car detail panel">
               <div className="sticky top-[20px] bg-white rounded-2xl overflow-hidden shadow-sm overflow-y-auto max-h-[calc(100vh-40px)] border-2 border-[#1a6adb]">
                 {/* Hero Image Carousel */}
                 <div className="relative bg-white group/detail"
                   onTouchStart={handleTouchStart}
-                  onTouchEnd={createTouchEndHandler(setDetailImageIndex, CAR_IMGS.length)}
+                  onTouchEnd={createTouchEndHandler(setDetailImageIndex, getCarImages(selectedCar).length)}
                 >
                   <div className="absolute top-3 left-3 z-10 flex items-center gap-1 px-2.5 py-1 bg-white text-green-600 text-xs font-medium rounded-full shadow-sm">
                     <IconCheck className="w-4 h-4" />
                     No accident
                   </div>
                   <img
-                    src={CAR_IMGS[detailImageIndex % CAR_IMGS.length]}
+                    src={getCarImages(selectedCar)[detailImageIndex % getCarImages(selectedCar).length]}
                     alt={selectedCar.title}
                     className="w-full h-[280px] object-cover transition-opacity duration-300"
                   />
                   <button
                     className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 bg-[#1a6adb] hover:bg-[#1558b4] rounded-full flex items-center justify-center shadow-md transition-colors duration-200"
-                    onClick={() => setDetailImageIndex((prev) => (prev - 1 + CAR_IMGS.length) % CAR_IMGS.length)}
+                    onClick={() => setDetailImageIndex((prev) => (prev - 1 + getCarImages(selectedCar).length) % getCarImages(selectedCar).length)}
                     aria-label="Previous image"
                   >
                     <IconChevronLeft size={18} className="text-white" />
                   </button>
                   <button
                     className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 bg-[#1a6adb] hover:bg-[#1558b4] rounded-full flex items-center justify-center shadow-md transition-colors duration-200"
-                    onClick={() => setDetailImageIndex((prev) => (prev + 1) % CAR_IMGS.length)}
+                    onClick={() => setDetailImageIndex((prev) => (prev + 1) % getCarImages(selectedCar).length)}
                     aria-label="Next image"
                   >
                     <IconChevronRight size={18} className="text-white" />
@@ -918,8 +851,8 @@ export default function Home() {
                     {[0, 1, 2, 3, 4].map((dotIdx) => (
                       <button
                         key={dotIdx}
-                        className={"rounded-full transition-all duration-200 " + (detailImageIndex % 5 === dotIdx ? "bg-[#1a6adb] w-2.5 h-2.5" : "bg-white/70 w-2 h-2 hover:bg-white")}
-                        onClick={() => setDetailImageIndex(dotIdx % CAR_IMGS.length)}
+                        className={"rounded-full transition-all duration-200 " + (detailImageIndex % getCarImages(selectedCar).length === dotIdx ? "bg-[#1a6adb] w-2.5 h-2.5" : "bg-white/70 w-2 h-2 hover:bg-white")}
+                        onClick={() => setDetailImageIndex(dotIdx)}
                         aria-label={"View image " + (dotIdx + 1)}
                       />
                     ))}
@@ -928,11 +861,11 @@ export default function Home() {
 
                 {/* Thumbnail Gallery */}
                 <div className="flex gap-2 px-6 py-3">
-                  {CAR_IMGS.concat(CAR_IMGS.slice(0, 2)).slice(0, 5).map((img, idx) => (
+                  {getCarImages(selectedCar).slice(0, 5).map((img, idx) => (
                     <div
                       key={idx}
-                      className={"w-1/5 aspect-square rounded-lg overflow-hidden border-2 cursor-pointer transition-colors " + (detailImageIndex === idx % CAR_IMGS.length ? "border-[#1a6adb]" : "border-transparent hover:border-[#1a6adb]")}
-                      onClick={() => setDetailImageIndex(idx % CAR_IMGS.length)}
+                      className={"w-1/5 aspect-square rounded-lg overflow-hidden border-2 cursor-pointer transition-colors " + (detailImageIndex === idx ? "border-[#1a6adb]" : "border-transparent hover:border-[#1a6adb]")}
+                      onClick={() => setDetailImageIndex(idx)}
                     >
                       <img src={img} alt={"Thumb " + (idx + 1)} className="w-full h-full object-cover" />
                     </div>
@@ -953,24 +886,24 @@ export default function Home() {
                   {/* Car Info */}
                   <h2 className="text-2xl font-bold text-gray-900 mb-3">{selectedCar.title}</h2>
                   <div className="flex items-center gap-3 text-sm mb-5">
-                    <span className="flex items-center gap-1 text-gray-600"><IconSpeed />{selectedCar.mileage}</span>
+                    <span className="flex items-center gap-1 text-gray-600"><IconSpeed />{selectedCar.mileage || "N/A"}</span>
                     <span className="text-gray-300">|</span>
-                    <span className="flex items-center gap-1 text-[#1a6adb] font-medium"><IconPrice />{selectedCar.priceStatus}</span>
+                    <span className="flex items-center gap-1 text-[#1a6adb] font-medium"><IconPrice />{selectedCar.priceRating || "Market Price"}</span>
                   </div>
-                  <p className="text-sm text-gray-600 mb-6 leading-relaxed">{selectedCar.desc}</p>
+                  <p className="text-sm text-gray-600 mb-6 leading-relaxed">{selectedCar.description || "Quality vehicle with great features and excellent condition."}</p>
 
                   {/* Overview */}
                   <h3 className="text-lg font-bold text-gray-900 mb-4">Overview</h3>
                   <div className="grid grid-cols-2 gap-0 mb-6">
                     {[
-                      { label: "Mileage", val: "14,563 km" },
-                      { label: "Condition", val: "Used" },
-                      { label: "Drive Train", val: "-" },
-                      { label: "Transmission", val: "Automatic" },
-                      { label: "Passengers", val: "5" },
-                      { label: "Engine", val: "1.5L 4-Cyl" },
-                      { label: "Fuel Type", val: "Gasoline" },
-                      { label: "Stock Number", val: "T-OPDIKE" },
+                      { label: "Mileage", val: selectedCar.mileage || "N/A" },
+                      { label: "Condition", val: selectedCar.condition || "Used" },
+                      { label: "Body Type", val: selectedCar.bodyType || "-" },
+                      { label: "Transmission", val: selectedCar.transmission || "Automatic" },
+                      { label: "Color", val: selectedCar.color || "-" },
+                      { label: "Year", val: selectedCar.year || "-" },
+                      { label: "Fuel Type", val: selectedCar.fuelType || "Gasoline" },
+                      { label: "Location", val: selectedCar.location || "-" },
                     ].map((item, idx) => (
                       <div key={item.label} className={"py-3 " + (idx < 6 ? "border-b border-gray-100" : "")}>
                         <div className="text-sm font-bold text-gray-900">{item.val}</div>
@@ -981,7 +914,7 @@ export default function Home() {
 
                   <h3 className="text-lg font-bold text-gray-900 mb-3">Description</h3>
                   <p className="text-sm text-gray-600 mb-6 leading-relaxed">
-                    The 2025 GMC Terrain Elevation AWD delivers a fresh take on the compact SUV, combining bold design, intelligent technology, and versatile capability in a package that feels modern, confident, and distinctly upscale. With its sleek profile and athletic stance, this Terrain makes a statement from the moment you see it.
+                    {selectedCar.description || "This quality vehicle comes with great features and is in excellent condition. Contact us for more details."}
                   </p>
 
                   <h3 className="text-lg font-bold text-gray-900 mb-3">Options</h3>
@@ -1036,6 +969,7 @@ export default function Home() {
                 </div>
               </div>
             </aside>
+            )}
           </div>
         </main>
 
@@ -1054,7 +988,7 @@ export default function Home() {
 
               <div className="relative mb-4 bg-white rounded-xl overflow-hidden group/mobile"
                 onTouchStart={handleTouchStart}
-                onTouchEnd={createTouchEndHandler(setMobileDetailImageIndex, CAR_IMGS.length)}
+                onTouchEnd={createTouchEndHandler(setMobileDetailImageIndex, getCarImages(selectedCar).length)}
               >
                 <div className="flex items-center justify-between absolute top-3 left-3 right-3 z-10">
                   {selectedCar.noAccident && (
@@ -1065,26 +999,26 @@ export default function Home() {
                   <button className="ml-auto p-2.5 bg-white rounded-full shadow-md"><IconHeart className="text-gray-400" /></button>
                 </div>
                 <img
-                  src={CAR_IMGS[mobileDetailImageIndex % CAR_IMGS.length]}
+                  src={getCarImages(selectedCar)[mobileDetailImageIndex % getCarImages(selectedCar).length]}
                   alt={selectedCar.title}
                   className="w-full h-[280px] object-cover transition-opacity duration-300"
                 />
                 <button
                   className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 bg-[#1a6adb] hover:bg-[#1558b4] rounded-full flex items-center justify-center shadow-md transition-colors"
-                  onClick={() => setMobileDetailImageIndex((prev) => (prev - 1 + CAR_IMGS.length) % CAR_IMGS.length)}
+                  onClick={() => setMobileDetailImageIndex((prev) => (prev - 1 + getCarImages(selectedCar).length) % getCarImages(selectedCar).length)}
                   aria-label="Previous image"
                 >
                   <IconChevronLeft size={18} className="text-white" />
                 </button>
                 <button
                   className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 bg-[#1a6adb] hover:bg-[#1558b4] rounded-full flex items-center justify-center shadow-md transition-colors"
-                  onClick={() => setMobileDetailImageIndex((prev) => (prev + 1) % CAR_IMGS.length)}
+                  onClick={() => setMobileDetailImageIndex((prev) => (prev + 1) % getCarImages(selectedCar).length)}
                   aria-label="Next image"
                 >
                   <IconChevronRight size={18} className="text-white" />
                 </button>
                 <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2">
-                  {CAR_IMGS.map((_, dotIdx) => (
+                  {getCarImages(selectedCar).map((_, dotIdx) => (
                     <button
                       key={dotIdx}
                       className={"rounded-full transition-all duration-200 " + (mobileDetailImageIndex === dotIdx ? "bg-[#3B82F6] w-2.5 h-2.5" : "bg-white/70 hover:bg-white w-2 h-2")}
@@ -1108,7 +1042,7 @@ export default function Home() {
               <div className="flex items-center gap-3 text-sm mb-4 pb-4 border-b border-gray-100">
                 <span className="flex items-center gap-1.5 text-gray-700 font-medium"><IconSpeed /> {selectedCar.mileage}</span>
                 <span className="text-gray-300">|</span>
-                <span className="flex items-center gap-1.5 text-[#1a6adb] font-semibold"><IconPrice /> {selectedCar.priceStatus}</span>
+                <span className="flex items-center gap-1.5 text-[#1a6adb] font-semibold"><IconPrice /> {selectedCar.priceRating || "Market Price"}</span>
               </div>
 
               {/* Description */}
