@@ -37,7 +37,7 @@ const Step1 = ({ formData, setFormData, onNext }) => {
         What type of vehicle are you looking for?
       </p>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 w-max gap-5 md:gap-2  justify-center   items-center   overflow-hidden">
+      <div className="grid grid-cols-1 md:grid-cols-4 w-max gap-5 md:gap-2 justify-center items-center overflow-hidden">
         {vehicleTypes.map((type) => (
           <div
             key={type.id}
@@ -48,11 +48,11 @@ const Step1 = ({ formData, setFormData, onNext }) => {
                 : "hover:bg-gray-50 border-[#9B9B9B]"
             }`}
           >
-            <div className="h-25   flex items-center">
+            <div className="h-25 w-full flex items-center justify-center">
               <img
                 src={type.img}
                 alt={type.label}
-                className="max-w-[140px] h-auto object-contain"
+                className="max-w-[100px] md:max-w-[120px] h-auto object-contain block mx-auto"
               />
             </div>
             <div className="w-full justify-start">

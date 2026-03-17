@@ -8,6 +8,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { X } from "lucide-react";
+import { VEHICLE_MAKES, VEHICLE_MODELS } from "@/lib/vehicleData";
 import { validators, formatPhone, validateAll } from "@/lib/validators";
 import { FieldError, inputBorderClass } from "@/components/FieldError";
 
@@ -52,13 +53,9 @@ const COLORS = [
   "Soul Red",
 ];
 
-// Sidebar filter list options
-const FP_MAKES = [
-  "All Makes", "Audi", "BMW", "Chevrolet", "Dodge", "Ford", "GMC", "Honda",
-  "Hyundai", "Jeep", "Kia", "Land Rover", "Lexus", "Mazda", "Mercedes-Benz",
-  "Nissan", "Porsche", "Subaru", "Tesla", "Toyota", "Volkswagen", "Volvo",
-];
-const FP_MODELS = ["All Models", "CR-V", "Civic"];
+// Sidebar filter list options — uses comprehensive vehicle data
+const FP_MAKES = ["All Makes", ...VEHICLE_MAKES];
+const FP_MODELS = ["All Models"];
 const FP_TRIMS = [
   "All Trims", "330i", "B5 Inscription", "C 300", "Competition", "Denali",
   "F SPORT", "GT Premium", "GT-Line", "Grand Touring", "Highline", "Komfort",
@@ -288,6 +285,27 @@ export default function Home() {
   const [sortOption, setSortOption] = useState("Relevance");
   const [showSortDropdown, setShowSortDropdown] = useState(false);
 
+  // Favorites / saved cars state (persisted in localStorage)
+  const [savedCars, setSavedCars] = useState([]);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("savedCars");
+      if (stored) setSavedCars(JSON.parse(stored));
+    } catch {}
+  }, []);
+
+  const toggleSavedCar = useCallback((carId, e) => {
+    if (e) e.stopPropagation();
+    setSavedCars((prev) => {
+      const next = prev.includes(carId)
+        ? prev.filter((id) => id !== carId)
+        : [...prev, carId];
+      localStorage.setItem("savedCars", JSON.stringify(next));
+      return next;
+    });
+  }, []);
+
   // "Get Details" form state for desktop & mobile detail panels
   const [detailForm, setDetailForm] = useState({
     firstName: "", lastName: "", email: "", phone: "", comment: "", hasTradeIn: false,
@@ -415,6 +433,13 @@ export default function Home() {
 
   const router = useRouter();
 
+  // Placeholder cars shown when backend is offline
+  const PLACEHOLDER_CARS = [
+    { id: "placeholder-1", title: "2024 Toyota Camry XLE", year: 2024, make: "Toyota", model: "Camry", trim: "XLE", price: 38990, mileage: "12,500 km", fuelType: "Gasoline", transmission: "Automatic", bodyType: "Sedan", color: "White", condition: "Used", location: "Toronto, ON", description: "Elegant sedan with premium interior, heated leather seats, sunroof, and advanced safety features. Low mileage, one owner.", badge: "Featured", priceRating: "Great Price", biWeekly: "$249", downPayment: "$0 down", isVisible: true, noAccident: true, images: [{ url: "/images/c0e515790ae6cd243a0ae47e32ad732e993b78a2.png" }] },
+    { id: "placeholder-2", title: "2023 Honda CR-V Sport", year: 2023, make: "Honda", model: "CR-V", trim: "Sport", price: 42500, mileage: "18,200 km", fuelType: "Gasoline", transmission: "Automatic", bodyType: "SUV", color: "Black", condition: "Used", location: "Mississauga, ON", description: "Versatile SUV with turbocharged engine, Honda Sensing suite, wireless Apple CarPlay, and spacious cargo area.", badge: "Hot Deal", priceRating: "Good Price", biWeekly: "$279", downPayment: "$0 down", isVisible: true, noAccident: true, images: [{ url: "/images/c0e515790ae6cd243a0ae47e32ad732e993b78a2.png" }] },
+    { id: "placeholder-3", title: "2024 Tesla Model 3 Long Range", year: 2024, make: "Tesla", model: "Model 3", trim: "Long Range", price: 55990, mileage: "5,100 km", fuelType: "Electric", transmission: "Automatic", bodyType: "Sedan", color: "Red", condition: "Used", location: "Toronto, ON", description: "All-electric performance sedan with 358-mile range, Autopilot, glass roof, and premium audio system. Nearly new.", badge: "Premium", priceRating: "Fair Price", biWeekly: "$359", downPayment: "$0 down", isVisible: true, noAccident: true, images: [{ url: "/images/c0e515790ae6cd243a0ae47e32ad732e993b78a2.png" }] },
+  ];
+
   // Fetch cars from backend API
   useEffect(() => {
     const fetchCars = async () => {
@@ -423,13 +448,24 @@ export default function Home() {
         const res = await fetch("/api/cars");
         if (res.ok) {
           const data = await res.json();
-          setCars(data);
-          if (data.length > 0 && !selectedCar) {
-            setSelectedCar(data[0]);
+          if (data.length > 0) {
+            setCars(data);
+            if (!selectedCar) setSelectedCar(data[0]);
+          } else {
+            // API returned empty array — use placeholders
+            setCars(PLACEHOLDER_CARS);
+            setSelectedCar(PLACEHOLDER_CARS[0]);
           }
+        } else {
+          // API error — use placeholders
+          setCars(PLACEHOLDER_CARS);
+          setSelectedCar(PLACEHOLDER_CARS[0]);
         }
       } catch (err) {
         console.error("Failed to fetch cars:", err);
+        // Backend offline — use placeholders
+        setCars(PLACEHOLDER_CARS);
+        setSelectedCar(PLACEHOLDER_CARS[0]);
       } finally {
         setLoadingCars(false);
       }
@@ -763,6 +799,15 @@ export default function Home() {
                           No accident
                         </div>
                       )}
+                      {/* Favorite / Save button */}
+                      <button
+                        className="absolute top-2 right-2 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-white/80 backdrop-blur-sm shadow-sm hover:bg-white transition-all group/fav"
+                        onClick={(e) => toggleSavedCar(car.id, e)}
+                        aria-label={savedCars.includes(car.id) ? "Remove from My Cars" : "Save to My Cars"}
+                        title={savedCars.includes(car.id) ? "Remove from My Cars" : "Save to My Cars"}
+                      >
+                        <IconHeart className={savedCars.includes(car.id) ? "w-4 h-4 fill-red-500 text-red-500" : "w-4 h-4 text-gray-500 group-hover/fav:text-red-400 transition-colors"} />
+                      </button>
                       <img
                         src={getCarImages(car)[0]}
                         alt={car.title}

@@ -5,13 +5,15 @@ import home1 from "../../assets/out.png";
 import arrowImage from "../../assets/arrow-f.png";
 import textImage from "../../assets/text-f.png";
 import Image from "next/image";
-import { useRouter } from "next/navigation"; // Added for navigation
+import { useRouter } from "next/navigation";
+import AutocompleteInput from "../../components/AutocompleteInput";
+import AddressAutocomplete from "../../components/AddressAutocomplete";
+import { VEHICLE_MAKES, VEHICLE_MODELS } from "../../lib/vehicleData";
 
 const Hero = () => {
-  const router = useRouter(); // Initialize router
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("details");
 
-  // State to hold form values
   const [formData, setFormData] = useState({
     year: "",
     make: "",
@@ -21,16 +23,22 @@ const Hero = () => {
     province: "",
   });
 
-  // Handle input changes
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Handle Form Submission
+  const handleMakeChange = (val) => {
+    setFormData((prev) => ({ ...prev, make: val, model: "" }));
+  };
+
+  const handleModelChange = (val) => {
+    setFormData((prev) => ({ ...prev, model: val }));
+  };
+
+  const modelSuggestions = VEHICLE_MODELS[formData.make] || [];
+
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // Create query parameters based on active tab
     const params = new URLSearchParams();
     params.set("type", activeTab);
     params.set("city", formData.city);
@@ -44,9 +52,11 @@ const Hero = () => {
       params.set("vin", formData.vin);
     }
 
-    // Redirect to /sell-car with query strings
     router.push(`/sell-car?${params.toString()}`);
   };
+
+  const inputClass =
+    "w-full text-[14px] h-[50px] px-6 rounded-full bg-gray-50 border border-gray-200 focus:border-primary outline-none transition-all";
 
   return (
     <section
@@ -129,23 +139,24 @@ const Hero = () => {
                   value={formData.year}
                   onChange={handleChange}
                   placeholder="Year"
-                  className="w-full text-[14px] h-[50px] px-6 rounded-full bg-gray-50 border border-gray-200 focus:border-primary outline-none transition-all"
+                  className={inputClass}
                 />
-                <input
-                  type="text"
+                <AutocompleteInput
                   name="make"
                   value={formData.make}
-                  onChange={handleChange}
+                  onChange={handleMakeChange}
+                  suggestions={VEHICLE_MAKES}
                   placeholder="Make"
-                  className="w-full text-[14px] h-[50px] px-6 rounded-full bg-gray-50 border border-gray-200 focus:border-primary outline-none transition-all"
+                  className={inputClass}
                 />
-                <input
-                  type="text"
+                <AutocompleteInput
                   name="model"
                   value={formData.model}
-                  onChange={handleChange}
+                  onChange={handleModelChange}
+                  suggestions={modelSuggestions}
                   placeholder="Model"
-                  className="w-full text-[14px] h-[50px] px-6 rounded-full bg-gray-50 border border-gray-200 focus:border-primary outline-none transition-all"
+                  className={inputClass}
+                  disabled={!formData.make}
                 />
               </>
             ) : (
@@ -155,28 +166,26 @@ const Hero = () => {
                 value={formData.vin}
                 onChange={handleChange}
                 placeholder="Enter 17-digit VIN"
-                className="w-full text-[14px] h-[50px] px-6 rounded-full bg-gray-50 border border-gray-200 focus:border-primary outline-none transition-all"
+                className={inputClass}
               />
             )}
 
-            <div className="grid grid-cols-2 gap-4">
-              <input
-                type="text"
-                name="city"
-                value={formData.city}
-                onChange={handleChange}
-                placeholder="City"
-                className="w-full text-[14px] h-[50px] px-6 rounded-full bg-gray-50 border border-gray-200 focus:border-primary outline-none transition-all"
-              />
-              <input
-                type="text"
-                name="province"
-                value={formData.province}
-                onChange={handleChange}
-                placeholder="Province"
-                className="w-full text-[14px] h-[50px] px-6 rounded-full bg-gray-50 border border-gray-200 focus:border-primary outline-none transition-all"
-              />
-            </div>
+            <AddressAutocomplete
+              value={formData.city ? `${formData.city}${formData.province ? `, ${formData.province}` : ""}` : ""}
+              onChange={(val, components) => {
+                if (components) {
+                  setFormData((prev) => ({
+                    ...prev,
+                    city: components.city || "",
+                    province: components.provinceShort || components.province || "",
+                  }));
+                } else {
+                  setFormData((prev) => ({ ...prev, city: val, province: "" }));
+                }
+              }}
+              placeholder="City, Province"
+              inputClassName="!rounded-full !h-[50px] !px-6 !bg-gray-50 !border-gray-200 !text-[14px]"
+            />
 
             <button
               type="submit"

@@ -277,6 +277,16 @@ function PreQualifyForm() {
                 <p className="text-[11px] font-semibold text-blue-600 uppercase tracking-wide">Selected Vehicle</p>
                 <p className="text-[14px] font-bold text-gray-800 truncate">{selectedCar.title}</p>
               </div>
+              {selectedCar.price && (
+                <div className="flex flex-col items-end flex-shrink-0">
+                  <span className="text-[14px] font-bold text-gray-900" style={{ filter: "blur(4px)", userSelect: "none", opacity: 0.85 }}>
+                    ${Number(selectedCar.price).toLocaleString()}
+                  </span>
+                  <span className="text-[10px] text-gray-500" style={{ filter: "blur(3px)", userSelect: "none", opacity: 0.8 }}>
+                    ${Math.round(Number(selectedCar.price) / 120)}/biweekly
+                  </span>
+                </div>
+              )}
             </div>
           )}
 
@@ -331,7 +341,7 @@ function PreQualifyForm() {
                   value={formData.dobMonth}
                   onChange={handleInputChange}
                   onBlur={() => handleBlur("dobMonth")}
-                  className={`w-full border rounded-md p-3.5 text-sm outline-none appearance-none bg-no-repeat bg-[right_12px_center] bg-[length:14px] select-chevron bg-white ${inputBorderClass(errors.dobMonth)}`}
+                  className={`w-full border rounded-md p-2.5 sm:p-3.5 text-xs sm:text-sm outline-none appearance-none bg-no-repeat bg-[right_8px_center] sm:bg-[right_12px_center] bg-[length:12px] sm:bg-[length:14px] select-chevron bg-white ${inputBorderClass(errors.dobMonth)}`}
                 >
                   <option value="" disabled>Month</option>
                   {months.map((m, i) => (
@@ -343,7 +353,7 @@ function PreQualifyForm() {
                   value={formData.dobDay}
                   onChange={handleInputChange}
                   onBlur={() => handleBlur("dobDay")}
-                  className={`w-full border rounded-md p-3.5 text-sm outline-none appearance-none bg-no-repeat bg-[right_12px_center] bg-[length:14px] select-chevron bg-white ${inputBorderClass(errors.dobDay)}`}
+                  className={`w-full border rounded-md p-2.5 sm:p-3.5 text-xs sm:text-sm outline-none appearance-none bg-no-repeat bg-[right_8px_center] sm:bg-[right_12px_center] bg-[length:12px] sm:bg-[length:14px] select-chevron bg-white ${inputBorderClass(errors.dobDay)}`}
                 >
                   <option value="" disabled>Day</option>
                   {days.map((d) => (
@@ -355,7 +365,7 @@ function PreQualifyForm() {
                   value={formData.dobYear}
                   onChange={handleInputChange}
                   onBlur={() => handleBlur("dobYear")}
-                  className={`w-full border rounded-md p-3.5 text-sm outline-none appearance-none bg-no-repeat bg-[right_12px_center] bg-[length:14px] select-chevron bg-white ${inputBorderClass(errors.dobYear)}`}
+                  className={`w-full border rounded-md p-2.5 sm:p-3.5 text-xs sm:text-sm outline-none appearance-none bg-no-repeat bg-[right_8px_center] sm:bg-[right_12px_center] bg-[length:12px] sm:bg-[length:14px] select-chevron bg-white ${inputBorderClass(errors.dobYear)}`}
                 >
                   <option value="" disabled>Year</option>
                   {years.map((y) => (

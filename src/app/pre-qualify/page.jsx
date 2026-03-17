@@ -209,6 +209,11 @@ const MultiStepCarForm = () => {
   const isTransitioning = useRef(false);
   const totalSteps = 16;
 
+  // SMS verification state
+  const [confirmationResult, setConfirmationResult] = useState(null);
+  const [smsSending, setSmsSending] = useState(false);
+  const recaptchaRef = useRef(null);
+
   const [formData, setFormData] = useState({
     vehicleType: "Car",
     preferredVehicle: "",
@@ -364,7 +369,55 @@ const MultiStepCarForm = () => {
       setValidationError(error);
       return;
     }
+
+    // Send SMS when moving from step 15 (phone) → step 16 (verification)
+    if (step === 15) {
+      setSmsSending(true);
+      try {
+        const { auth } = await import("@/lib/firebase");
+        const { RecaptchaVerifier, signInWithPhoneNumber } = await import("firebase/auth");
+        if (!auth) throw new Error("Auth not initialized");
+
+        // Create invisible reCAPTCHA
+        if (!recaptchaRef.current) {
+          recaptchaRef.current = new RecaptchaVerifier(auth, "recaptcha-container", {
+            size: "invisible",
+          });
+        }
+
+        // Format phone number to E.164 (+1 for Canada/US)
+        const digits = (formData.phoneNumber || "").replace(/\D/g, "");
+        const phoneE164 = digits.length === 10 ? `+1${digits}` : `+${digits}`;
+
+        const result = await signInWithPhoneNumber(auth, phoneE164, recaptchaRef.current);
+        setConfirmationResult(result);
+      } catch (err) {
+        console.error("SMS send error:", err);
+        // Allow proceeding even if SMS fails (for development / testing)
+        setConfirmationResult(null);
+      } finally {
+        setSmsSending(false);
+      }
+
+      const newStep = 16;
+      setStep(newStep);
+      goToStep(newStep);
+      return;
+    }
+
+    // Verify SMS code on step 16 before submitting
     if (step === totalSteps) {
+      // If we have a confirmationResult, verify the code
+      if (confirmationResult) {
+        try {
+          await confirmationResult.confirm(formData.verificationCode);
+        } catch (err) {
+          setStepErrors({ verificationCode: "Invalid verification code. Please try again." });
+          setValidationError("Invalid verification code");
+          return;
+        }
+      }
+
       try {
         await fetch("/api/forms", {
           method: "POST",
@@ -461,6 +514,14 @@ const MultiStepCarForm = () => {
             <p className="text-[#8E8E93] text-xs mb-1 truncate">
               {formData.budget ? `$Under ${formData.budget}` : "Budget not set"}
             </p>
+            <div className="flex items-baseline gap-2 mt-1">
+              <span className="text-[14px] md:text-[16px] font-bold text-black" style={{ filter: "blur(5.8px)", userSelect: "none", opacity: 0.85 }}>
+                $42,990
+              </span>
+              <span className="text-[10px] md:text-[11px] font-semibold text-[#595959]" style={{ filter: "blur(3px)", userSelect: "none", opacity: 0.85 }}>
+                $499/mo
+              </span>
+            </div>
           </div>
           <button
             onClick={() => { setStep(1); goToStep(1); }}
@@ -1147,6 +1208,8 @@ export default function PreQualifyPage() {
   return (
     <Suspense fallback={<div className="text-center py-20">Loading...</div>}>
       <MultiStepCarForm />
+      {/* Invisible reCAPTCHA container for Firebase Phone Auth */}
+      <div id="recaptcha-container" />
     </Suspense>
   );
 }

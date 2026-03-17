@@ -3,6 +3,8 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import AutocompleteInput from "@/components/AutocompleteInput";
+import { VEHICLE_MAKES, VEHICLE_MODELS } from "@/lib/vehicleData";
 import {
   Car,
   Search,
@@ -239,21 +241,38 @@ function CarFormModal({ isOpen, onClose, onSaved, editCar }) {
     setForm((p) => ({ ...p, [name]: type === "checkbox" ? checked : value }));
   };
 
+  const handleMakeChange = (val) => {
+    setForm((p) => ({ ...p, make: val, model: "" }));
+  };
+
+  const handleModelChange = (val) => {
+    setForm((p) => ({ ...p, model: val }));
+  };
+
+  const adminModelSuggestions = VEHICLE_MODELS[form.make] || [];
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
     try {
-      // Upload new images first
+      // Upload new images to Firebase Storage
       let imageUrls = existingImages.map((img) => img.url);
       if (imageFiles.length > 0) {
-        const formData = new FormData();
-        imageFiles.forEach((file) => formData.append("images", file));
-        const uploadRes = await fetch("/api/upload", { method: "POST", body: formData });
-        if (!uploadRes.ok) throw new Error("Image upload failed");
-        const uploadData = await uploadRes.json();
-        imageUrls = [...imageUrls, ...uploadData.urls];
+        const { storage } = await import("@/lib/firebase");
+        const { ref, uploadBytes, getDownloadURL } = await import("firebase/storage");
+        if (!storage) throw new Error("Firebase Storage not initialized");
+
+        const uploadPromises = imageFiles.map(async (file) => {
+          const ext = file.name.split(".").pop();
+          const fileName = `cars/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+          const storageRef = ref(storage, fileName);
+          await uploadBytes(storageRef, file);
+          return getDownloadURL(storageRef);
+        });
+        const newUrls = await Promise.all(uploadPromises);
+        imageUrls = [...imageUrls, ...newUrls];
       }
 
       // Auto-generate title if empty
@@ -309,11 +328,26 @@ function CarFormModal({ isOpen, onClose, onSaved, editCar }) {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Make *</label>
-              <input name="make" value={form.make} onChange={handleChange} required placeholder="e.g. Toyota" className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <AutocompleteInput
+                name="make"
+                value={form.make}
+                onChange={handleMakeChange}
+                suggestions={VEHICLE_MAKES}
+                placeholder="e.g. Toyota"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Model *</label>
-              <input name="model" value={form.model} onChange={handleChange} required placeholder="e.g. Camry" className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <AutocompleteInput
+                name="model"
+                value={form.model}
+                onChange={handleModelChange}
+                suggestions={adminModelSuggestions}
+                placeholder="e.g. Camry"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                disabled={!form.make}
+              />
             </div>
           </div>
 
