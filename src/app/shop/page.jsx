@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = 'force-dynamic';
+
 import { useState, useEffect, useCallback, useRef } from "react";
 import Head from "next/head";
 import Image from "next/image";
@@ -1324,7 +1326,7 @@ export default function Home() {
         <CheckAvailabilityModal
           isOpen={isAvailabilityModalOpen}
           onClose={() => setIsAvailabilityModalOpen(false)}
-          carTitle={selectedCar.title}
+          carTitle={selectedCar?.title || "this vehicle"}
         />
       </div>
     </>
