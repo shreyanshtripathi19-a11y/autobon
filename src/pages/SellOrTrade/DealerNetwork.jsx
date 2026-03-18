@@ -15,19 +15,28 @@ const DealerNetwork = () => {
           </h2>
         </div>
 
-        {/* MAP CONTAINER — mobile-safe rendering */}
+        {/* MAP CONTAINER */}
         <div className="w-full relative">
           <div className="w-full flex justify-center items-center">
+            {/* Fixed heights for consistent sizing, GPU-accelerated for mobile */}
             <div
-              className="relative w-full rounded-[18px] lg:rounded-[32px] overflow-hidden"
-              style={{ willChange: 'transform' }}
+              className="relative w-full md:w-auto h-[250px] sm:h-[350px] md:h-[450px] lg:h-[550px] rounded-[18px] lg:rounded-[32px] overflow-hidden"
+              style={{
+                willChange: 'transform',
+                transform: 'translateZ(0)',
+                WebkitTransform: 'translateZ(0)',
+              }}
             >
               <img
                 src={map.src || map}
                 alt="Canada Dealer Network Map"
-                className="w-full h-auto block"
-                loading="lazy"
+                className="w-full h-full object-contain object-center"
+                loading="eager"
                 decoding="async"
+                style={{
+                  WebkitBackfaceVisibility: 'hidden',
+                  backfaceVisibility: 'hidden',
+                }}
               />
             </div>
           </div>

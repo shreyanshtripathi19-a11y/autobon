@@ -6,7 +6,7 @@ const Step2_Confirm = ({ onNext, onBack, formData }) => {
 
   // Get generic silhouette based on body type from car data
   const getVehicleImage = () => {
-    return "/images/c0e515790ae6cd243a0ae47e32ad732e993b78a2.png";
+    return "/car-icon.png";
   };
 
   const displayYear = formData.year || "—";
