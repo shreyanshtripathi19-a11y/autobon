@@ -287,6 +287,7 @@ export default function Home() {
 
   // Favorites / saved cars state (persisted in localStorage)
   const [savedCars, setSavedCars] = useState([]);
+  const [favToast, setFavToast] = useState("");
 
   useEffect(() => {
     try {
@@ -298,10 +299,16 @@ export default function Home() {
   const toggleSavedCar = useCallback((carId, e) => {
     if (e) e.stopPropagation();
     setSavedCars((prev) => {
-      const next = prev.includes(carId)
+      const isRemoving = prev.includes(carId);
+      const next = isRemoving
         ? prev.filter((id) => id !== carId)
         : [...prev, carId];
       localStorage.setItem("savedCars", JSON.stringify(next));
+      // Dispatch storage event so Header can pick up the change
+      window.dispatchEvent(new Event("storage"));
+      // Show toast
+      setFavToast(isRemoving ? "Removed from favorites" : "Added to favorites ❤️");
+      setTimeout(() => setFavToast(""), 2000);
       return next;
     });
   }, []);
@@ -895,7 +902,7 @@ export default function Home() {
                     <IconChevronRight size={18} className="text-white" />
                   </button>
                   <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2">
-                    {[0, 1, 2, 3, 4].map((dotIdx) => (
+                    {getCarImages(selectedCar).map((_, dotIdx) => (
                       <button
                         key={dotIdx}
                         className={"rounded-full transition-all duration-200 " + (detailImageIndex % getCarImages(selectedCar).length === dotIdx ? "bg-[#1a6adb] w-2.5 h-2.5" : "bg-white/70 w-2 h-2 hover:bg-white")}
@@ -1374,6 +1381,12 @@ export default function Home() {
           carTitle={selectedCar?.title || "this vehicle"}
         />
       </div>
+      {/* Favorites toast */}
+      {favToast && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999] bg-gray-900 text-white px-6 py-3 rounded-full shadow-lg text-sm font-medium animate-bounce-in">
+          {favToast}
+        </div>
+      )}
     </>
   );
 }

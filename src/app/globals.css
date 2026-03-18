@@ -133,36 +133,3 @@ button {
   }
 }
 
-/* ─── Responsive: iPhone Pro Max (428px) ─── */
-@media screen and (min-width: 414px) and (max-width: 440px) {
-  .max-w-custom,
-  .max-w-\[1200px\] {
-    padding-left: 20px;
-    padding-right: 20px;
-  }
-}
-
-/* ─── Responsive: Large monitors (1536px+) ─── */
-@media screen and (min-width: 1536px) {
-  .max-w-custom,
-  .max-w-\[1200px\] {
-    max-width: 1400px !important;
-  }
-  .max-w-\[1280px\] {
-    max-width: 1440px !important;
-  }
-}
-
-/* ─── Responsive: Ultra-wide / 4K monitors (2560px+) ─── */
-@media screen and (min-width: 2560px) {
-  .max-w-custom,
-  .max-w-\[1200px\] {
-    max-width: 1600px !important;
-  }
-  .max-w-\[1280px\] {
-    max-width: 1680px !important;
-  }
-  body {
-    font-size: 18px;
-  }
-}

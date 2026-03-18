@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Menu, X, Timer } from "lucide-react";
+import { Menu, X, Timer, Heart } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 
@@ -9,6 +9,7 @@ const Header = () => {
   const [showBanner, setShowBanner] = useState(true);
   const [timeLeft, setTimeLeft] = useState(31 * 60); // 31 minutes in seconds
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [favCount, setFavCount] = useState(0);
   const pathname = usePathname();
   const router = useRouter();
   const { user, logout } = useAuth();
@@ -19,6 +20,25 @@ const Header = () => {
 
   // Check if on a car detail page (/shop/[carId])
   const isCarDetailPage = pathname.startsWith("/shop/") && pathname !== "/shop";
+
+  // Track favorites count from localStorage
+  useEffect(() => {
+    const updateCount = () => {
+      try {
+        const stored = localStorage.getItem("savedCars");
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          setFavCount(Array.isArray(parsed) ? parsed.length : 0);
+        } else {
+          setFavCount(0);
+        }
+      } catch { setFavCount(0); }
+    };
+    updateCount();
+    // Listen for storage changes from other components
+    window.addEventListener("storage", updateCount);
+    return () => window.removeEventListener("storage", updateCount);
+  }, []);
 
   // Countdown timer effect
   useEffect(() => {
@@ -61,8 +81,6 @@ const Header = () => {
       desc: "Simple and fast loan approvals",
     },
   ];
-
-  // Don't hide on dashboard routes — use the same header everywhere
 
   return (
     <>
@@ -118,7 +136,7 @@ const Header = () => {
             </ul>
           </nav>
 
-          {/* Desktop Sign In Button with Timer (only on checkout page) */}
+          {/* Desktop Right: Favorites + Auth */}
           <div className="hidden sm:flex items-center gap-4">
             {isCheckoutPage && (
               <div className="flex items-center gap-2 text-primary px-4 py-2 ">
@@ -128,6 +146,19 @@ const Header = () => {
                 </span>
               </div>
             )}
+            {/* Favorites heart icon with badge */}
+            <a
+              href="/dashboard/my-cars"
+              className="relative flex items-center justify-center w-9 h-9 rounded-full hover:bg-gray-100 transition-colors"
+              title="My Favorites"
+            >
+              <Heart size={20} className={favCount > 0 ? "text-red-500 fill-red-500" : "text-gray-400"} />
+              {favCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1">
+                  {favCount}
+                </span>
+              )}
+            </a>
             {user ? (
               <div className="relative">
                 <button
@@ -200,10 +231,24 @@ const Header = () => {
             )}
           </div>
 
-          {/* Burger Toggle */}
-          <button className="sm:hidden p-2" onClick={() => setIsOpen(true)}>
-            <Menu size={20} />
-          </button>
+          {/* Mobile: Favorites + Burger */}
+          <div className="flex sm:hidden items-center gap-2">
+            <a
+              href="/dashboard/my-cars"
+              className="relative flex items-center justify-center w-8 h-8"
+              title="My Favorites"
+            >
+              <Heart size={18} className={favCount > 0 ? "text-red-500 fill-red-500" : "text-gray-400"} />
+              {favCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-[16px] bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center px-0.5">
+                  {favCount}
+                </span>
+              )}
+            </a>
+            <button className="p-2" onClick={() => setIsOpen(true)}>
+              <Menu size={20} />
+            </button>
+          </div>
         </div>
 
         {/* Backdrop Overlay */}

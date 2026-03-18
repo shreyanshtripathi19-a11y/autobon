@@ -217,7 +217,8 @@ const Footer = () => {
     if (link === "Sell or Trade") return "/sell-or-trade";
     if (link === "Finance") return "/finance";
     if (link === "Get Pre-Approved") return "/pre-qualify";
-    if (link === "Chat with us" || link === "Any Car, Any Where") return "/contact-us";
+    if (link === "Chat with us") return "#chatra";
+    if (link === "Any Car, Any Where") return "/contact-us";
     if (link.startsWith("Call us")) return "tel:9058003100";
     if (link.startsWith("Email us")) return "mailto:info@autobon.ca";
 
@@ -310,7 +311,7 @@ const Footer = () => {
                   <Link
                     key={link}
                     href={getHref(link, section.type)}
-                    onClick={link === "FAQ" ? handleFaqClick : undefined}
+                    onClick={link === "FAQ" ? handleFaqClick : link === "Chat with us" ? (e) => { e.preventDefault(); if (typeof window !== 'undefined' && window.Chatra) window.Chatra('openChat', true); } : undefined}
                     className={`text-[#595959] ${section.title === "Contact Us" ? "text-nowrap" : ""} text-[14px] hover:text-black transition-colors`}
                   >
                     {link}

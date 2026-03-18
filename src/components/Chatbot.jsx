@@ -11,6 +11,16 @@ const Chatbot = () => {
         (window.Chatra.q = window.Chatra.q || []).push(arguments);
       };
 
+      // Configure Chatra with logo
+      window.ChatraSetup = {
+        colors: {
+          buttonText: "#ffffff",
+          buttonBg: "#1a6adb",
+        },
+        chatTitle: "Autobon Support",
+        chatSubtitle: "We typically reply within minutes",
+      };
+
       const script = document.createElement("script");
       script.async = true;
       script.src = "https://call.chatra.io/chatra.js";
