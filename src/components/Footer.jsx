@@ -229,10 +229,17 @@ const Footer = () => {
         return `/shop?model=${query}`;
       case "body":
         return `/shop?body_style=${query}`;
-      case "location":
-        return `/shop?location=${query}`;
-      case "sell":
-        return `/shop?location=${query}`;
+      case "location": {
+        // Extract city name from 'Used Cars in Toronto, ON' → 'Toronto'
+        const cityMatch = link.match(/in\s+(.+?)(?:,|$)/);
+        const city = cityMatch ? cityMatch[1].trim() : query;
+        return `/shop?location=${encodeURIComponent(city)}`;
+      }
+      case "sell": {
+        // Extract city from 'Sell My Car in Toronto' → link to sell page
+        const sellCity = link.replace(/Sell My Car in\s*/i, "").trim();
+        return `/sell-or-trade?city=${encodeURIComponent(sellCity)}`;
+      }
       case "page":
         return `/${link.toLowerCase().replace(/\s+/g, "-")}`;
       default:

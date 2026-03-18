@@ -279,6 +279,8 @@ export default function Home() {
   // Read URL params without useSearchParams (avoids Suspense requirement)
   const [locationParam, setLocationParam] = useState("");
   const [viewParam, setViewParam] = useState("");
+  const [showLocationModal, setShowLocationModal] = useState(false);
+  const [locationInput, setLocationInput] = useState("");
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -287,6 +289,50 @@ export default function Home() {
       setViewParam(params.get("view") || "");
     }
   }, []);
+
+  // Google Places Autocomplete for location modal
+  const locationInputRef = useRef(null);
+  useEffect(() => {
+    if (!showLocationModal || !locationInputRef.current) return;
+    if (typeof window === "undefined" || !window.google?.maps?.places) return;
+    const autocomplete = new window.google.maps.places.Autocomplete(
+      locationInputRef.current,
+      { types: ["(cities)"], componentRestrictions: { country: "ca" } }
+    );
+    autocomplete.addListener("place_changed", () => {
+      const place = autocomplete.getPlace();
+      if (place?.address_components) {
+        const city = place.address_components.find((c) => c.types.includes("locality"))?.long_name || "";
+        const province = place.address_components.find((c) => c.types.includes("administrative_area_level_1"))?.short_name || "";
+        if (city) {
+          setLocationParam(city);
+          setShowLocationModal(false);
+          // Update URL without reload
+          const url = new URL(window.location.href);
+          url.searchParams.set("location", city);
+          window.history.pushState({}, "", url.toString());
+        }
+      }
+    });
+  }, [showLocationModal]);
+
+  const handleLocationSubmit = () => {
+    if (locationInput.trim()) {
+      setLocationParam(locationInput.trim());
+      setShowLocationModal(false);
+      const url = new URL(window.location.href);
+      url.searchParams.set("location", locationInput.trim());
+      window.history.pushState({}, "", url.toString());
+    }
+  };
+
+  const clearLocation = () => {
+    setLocationParam("");
+    setShowLocationModal(false);
+    const url = new URL(window.location.href);
+    url.searchParams.delete("location");
+    window.history.pushState({}, "", url.toString());
+  };
 
   const [cars, setCars] = useState([]);
   const [loadingCars, setLoadingCars] = useState(true);
@@ -764,12 +810,19 @@ export default function Home() {
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6 gap-2 sm:gap-3">
                 <div>
                   <h1 className="text-lg sm:text-2xl font-bold text-gray-900 flex items-center gap-2">
-                    {locationParam && <svg className="w-5 h-5 sm:w-6 sm:h-6 text-[#1a6adb] flex-shrink-0" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>}
+                    <svg className="w-5 h-5 sm:w-6 sm:h-6 text-gray-800 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
                     {viewParam === "favourites"
-                      ? `Your Favourites (${sortedCars.length})`
-                      : locationParam
-                        ? <span>Used Cars for Sale in <span className="text-[#1a6adb] underline">{locationParam}</span> : {sortedCars.length.toLocaleString()} results</span>
-                        : `${sortedCars.length.toLocaleString()} Cars for Sale in Canada`
+                      ? <span>Your Favourites ({sortedCars.length})</span>
+                      : <span>
+                          Used Cars for Sale in{" "}
+                          <button
+                            onClick={() => setShowLocationModal(true)}
+                            className="text-gray-900 underline underline-offset-2 decoration-1 hover:text-[#1a6adb] transition-colors cursor-pointer"
+                          >
+                            {locationParam || "Canada"}
+                          </button>
+                          {" "}: {sortedCars.length.toLocaleString()} results
+                        </span>
                     }
                   </h1>
                   <p className="text-xs sm:text-sm text-gray-500">
@@ -779,9 +832,10 @@ export default function Home() {
                 <div className="relative flex-shrink-0">
                   <button
                     onClick={() => setShowSortDropdown(!showSortDropdown)}
-                    className="flex items-center gap-1 px-3 sm:px-4 py-1.5 sm:py-2 text-[11px] sm:text-sm border border-gray-300 rounded-full hover:border-blue-600 transition-colors bg-white whitespace-nowrap max-w-[140px] sm:max-w-none"
+                    className="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm border border-gray-300 rounded-full hover:border-blue-600 transition-colors bg-white whitespace-nowrap"
                   >
-                    <span className="truncate">Sort {sortOption}</span>
+                    <span className="hidden sm:inline">Sort {sortOption}</span>
+                    <span className="sm:hidden">Sort</span>
                     <IconChevron size={10} className="flex-shrink-0" />
                   </button>
                   {showSortDropdown && (
@@ -1411,6 +1465,84 @@ export default function Home() {
           {favToast}
         </div>
       )}
+
+      {/* Location Picker Modal */}
+      {showLocationModal && (
+        <>
+          <div className="fixed inset-0 z-[10000] bg-black/50" onClick={() => setShowLocationModal(false)} />
+          <div className="fixed inset-0 z-[10001] flex items-center justify-center p-4">
+            <div className="bg-white rounded-2xl shadow-2xl max-w-[480px] w-full p-6 relative">
+              <div className="flex items-center justify-between mb-5">
+                <h2 className="text-lg font-bold text-gray-900">Update current location</h2>
+                <button onClick={() => setShowLocationModal(false)} className="p-1 hover:bg-gray-100 rounded-lg transition-colors">
+                  <X size={20} className="text-gray-400" />
+                </button>
+              </div>
+
+              {/* Current Location */}
+              <div className="mb-5">
+                <p className="text-sm text-gray-500 mb-1">Current location</p>
+                <div className="flex items-center gap-2">
+                  <svg className="w-5 h-5 text-red-500 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                  <span className="font-semibold text-gray-900">{locationParam || "Canada"}</span>
+                </div>
+              </div>
+
+              {/* Postal Code / City Input */}
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Enter postal code or city</label>
+                <input
+                  ref={locationInputRef}
+                  type="text"
+                  value={locationInput}
+                  onChange={(e) => setLocationInput(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter") handleLocationSubmit(); }}
+                  placeholder="e.g. Toronto, Brampton, M5V 3L9..."
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  autoFocus
+                />
+              </div>
+
+              {/* Map Preview */}
+              <div className="mb-5 rounded-lg overflow-hidden border border-gray-200">
+                <iframe
+                  width="100%"
+                  height="180"
+                  style={{ border: 0 }}
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyD1dPVD4NdbnkM8OtRIaxPjtcPMN2aClxw&q=${encodeURIComponent(locationParam || "Canada")}&zoom=10`}
+                />
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-3">
+                {locationParam && (
+                  <button
+                    onClick={clearLocation}
+                    className="flex-1 py-3 text-sm font-semibold text-gray-700 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
+                  >
+                    Clear location
+                  </button>
+                )}
+                <button
+                  onClick={handleLocationSubmit}
+                  className="flex-1 py-3 text-sm font-semibold text-white bg-gray-900 rounded-full hover:bg-gray-800 transition-colors"
+                >
+                  Update location
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Google Maps Places API */}
+      <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD1dPVD4NdbnkM8OtRIaxPjtcPMN2aClxw&libraries=places"
+        async
+        defer
+      />
     </>
   );
 }
