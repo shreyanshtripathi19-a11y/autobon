@@ -5,23 +5,28 @@ import map from "../../assets/map.webp";
 
 const DealerNetwork = () => {
   return (
-    <section className="w-full py-[60px] lg:py-[100px] overflow-hidden">
+    <section className="w-full py-[60px] lg:py-[100px] overflow-hidden ">
       <div className="max-w-[1400px] mx-auto px-[20px] lg:px-[60px] flex flex-col items-center">
         {/* HEADER */}
         <div className="flex flex-col items-center gap-4 mb-[40px] md:mb-[60px] text-center">
           <h2 className="text-[30px] md:text-[42px] lg:text-[54px] font-semibold text-black tracking-tight leading-tight">
-            Canada&apos;s <span className="text-[#3B82F6]">Largest</span> Dealer
+            Canada's <span className="text-[#3B82F6]">Largest</span> Dealer
             Network
           </h2>
         </div>
 
-        {/* MAP — simple static image, no animations */}
-        <div className="w-full max-w-[900px] mx-auto">
-          <img
-            src={map.src || map}
-            alt="Canada Dealer Network Map"
-            className="w-full h-auto rounded-[18px] lg:rounded-[32px]"
-          />
+        {/* MAP CONTAINER */}
+        <div className="w-full relative">
+          <div className="w-full flex justify-center items-center">
+            {/* Responsive container: fixed heights at breakpoints to maintain aspect ratio */}
+            <div className="relative w-full md:w-auto h-[250px] sm:h-[350px] md:h-[450px] lg:h-[550px] rounded-[18px] lg:rounded-[32px] overflow-hidden">
+              <img
+                src={map.src || map}
+                alt="Canada Dealer Network Map"
+                className="w-full h-full object-contain object-center"
+              />
+            </div>
+          </div>
         </div>
 
         {/* BOTTOM BADGE */}

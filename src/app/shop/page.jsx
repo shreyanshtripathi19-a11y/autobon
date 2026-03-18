@@ -285,7 +285,7 @@ export default function Home() {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
-      setLocationParam(params.get("location") || "");
+      setLocationParam(params.get("location") || "Toronto");
       setViewParam(params.get("view") || "");
       
       // Footer model link: "Honda Civic" → make=Honda, model=Civic
@@ -823,7 +823,7 @@ export default function Home() {
         <main className="mx-auto px-3 sm:px-8 lg:px-[120px] py-4 sm:py-6" style={{ maxWidth: "1600px" }}>
           <div className="text-xs sm:text-sm text-gray-500 mb-3 sm:mb-4">
             <span>Home &gt; </span>
-            <Link href="#" className="text-[#1a6adb] hover:underline font-medium">Cars for Sale in Canada</Link>
+            <Link href="#" className="text-[#1a6adb] hover:underline font-medium">Cars for Sale in {locationParam || "Canada"}</Link>
           </div>
 
           <div className="flex flex-col lg:flex-row gap-6">

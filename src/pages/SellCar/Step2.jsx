@@ -6,7 +6,7 @@ const Step2_Confirm = ({ onNext, onBack, formData }) => {
 
   // Get generic silhouette based on body type from car data
   const getVehicleImage = () => {
-    return "/car-icon.png";
+    return "/car-icon.jpeg";
   };
 
   const displayYear = formData.year || "—";
@@ -20,7 +20,7 @@ const Step2_Confirm = ({ onNext, onBack, formData }) => {
       <p className="text-[#8E8E93] mb-10">Is this information correct?</p>
 
       <div className="border-2 border-primary rounded-none p-6 flex items-center gap-6 relative mb-12 bg-[#F0F7FF]">
-        <img src={getVehicleImage()} alt="Car" className="w-44 h-auto object-contain" />
+        <img src={getVehicleImage()} alt="Car" className="w-52 h-auto object-contain" />
         <div className="text-left">
           <h3 className="text-xl font-semibold">{title}</h3>
           <p className="text-[#8E8E93]">{displayYear}</p>
