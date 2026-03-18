@@ -11,7 +11,7 @@ const Chatbot = () => {
         (window.Chatra.q = window.Chatra.q || []).push(arguments);
       };
 
-      // Configure Chatra with logo
+      // Configure Chatra — small icon button, no "Message" text
       window.ChatraSetup = {
         colors: {
           buttonText: "#ffffff",
@@ -19,7 +19,27 @@ const Chatbot = () => {
         },
         chatTitle: "Autobon Support",
         chatSubtitle: "We typically reply within minutes",
+        buttonSize: 50,
+        buttonStyle: "round",
       };
+
+      // After script loads, hide the default launcher text via CSS
+      const style = document.createElement("style");
+      style.textContent = `
+        #chatra:not(.chatra--expanded) .chatra--pos-right {
+          width: 50px !important;
+          height: 50px !important;
+        }
+        #chatra:not(.chatra--expanded) .chatra--btn-text {
+          display: none !important;
+        }
+        #chatra:not(.chatra--expanded) .chatra--btn {
+          width: 50px !important;
+          height: 50px !important;
+          border-radius: 50% !important;
+        }
+      `;
+      document.head.appendChild(style);
 
       const script = document.createElement("script");
       script.async = true;

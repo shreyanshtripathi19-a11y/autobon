@@ -277,7 +277,7 @@ function CheckAvailabilityModal({ isOpen, onClose, carTitle = "this vehicle" }) 
 
 export default function Home() {
   // Read URL params without useSearchParams (avoids Suspense requirement)
-  const [locationParam, setLocationParam] = useState("");
+  const [locationParam, setLocationParam] = useState("Toronto, Ontario");
   const [viewParam, setViewParam] = useState("");
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [locationInput, setLocationInput] = useState("");
@@ -778,7 +778,7 @@ export default function Home() {
               <div className="hidden lg:flex items-center flex-1" style={{ marginLeft: "16px" }}>
                 <div className="relative w-full">
                   <IconSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-[#4079ED]" />
-                  <input type="text" className="w-full py-3 pl-[42px] pr-4 text-sm bg-[#F3F4F6] rounded-lg border-none focus:outline-none focus:bg-white" placeholder="Search here..." aria-label="Search cars" />
+                  <input type="text" className="w-full py-3 pl-[42px] pr-4 text-sm bg-[#F3F4F6] rounded-lg border-2 border-transparent focus:outline-none focus:border-[#1a6adb] focus:bg-white transition-colors" placeholder="Search cars or keywords" aria-label="Search cars" />
                 </div>
               </div>
             </div>
@@ -786,7 +786,7 @@ export default function Home() {
             <div className="lg:hidden mt-2 sm:mt-3">
               <div className="relative w-full">
                 <IconSearch className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-[#4079ED]" />
-                <input type="text" className="w-full py-2.5 sm:py-3 pl-[36px] sm:pl-[42px] pr-4 text-sm bg-[#F3F4F6] rounded-lg border-none focus:outline-none focus:bg-white" placeholder="Search here..." aria-label="Search cars" />
+                <input type="text" className="w-full py-2.5 sm:py-3 pl-[36px] sm:pl-[42px] pr-4 text-sm bg-[#F3F4F6] rounded-lg border-2 border-transparent focus:outline-none focus:border-[#1a6adb] focus:bg-white transition-colors" placeholder="Search cars or keywords" aria-label="Search cars" />
               </div>
             </div>
           </div>
@@ -807,33 +807,29 @@ export default function Home() {
           <div className="flex flex-col lg:flex-row gap-6">
             {/* LEFT: LISTINGS */}
             <div className="flex-1 min-w-0">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6 gap-2 sm:gap-3">
-                <div>
-                  <h1 className="text-lg sm:text-2xl font-bold text-gray-900 flex items-center gap-2">
-                    <svg className="w-5 h-5 sm:w-6 sm:h-6 text-gray-800 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+              <div className="flex items-center justify-between mb-4 sm:mb-6 gap-2">
+                <h1 className="text-[15px] sm:text-xl font-bold text-gray-900 flex items-center gap-1.5 flex-1 min-w-0">
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5 text-gray-800 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
                     {viewParam === "favourites"
                       ? <span>Your Favourites ({sortedCars.length})</span>
-                      : <span>
+                      : <span className="truncate">
                           Used Cars for Sale in{" "}
                           <button
                             onClick={() => setShowLocationModal(true)}
                             className="text-gray-900 underline underline-offset-2 decoration-1 hover:text-[#1a6adb] transition-colors cursor-pointer"
                           >
-                            {locationParam || "Canada"}
+                            {locationParam}
                           </button>
                           {" "}: {sortedCars.length.toLocaleString()} results
                         </span>
                     }
-                  </h1>
-                  <p className="text-xs sm:text-sm text-gray-500">
-                    {viewParam === "favourites" ? "Your saved vehicles" : locationParam ? `Location > Canada > ${locationParam}` : "Location > Canada"}
-                  </p>
-                </div>
+                </h1>
                 <div className="relative flex-shrink-0">
                   <button
                     onClick={() => setShowSortDropdown(!showSortDropdown)}
-                    className="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm border border-gray-300 rounded-full hover:border-blue-600 transition-colors bg-white whitespace-nowrap"
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm border border-gray-300 rounded-full hover:border-blue-600 transition-colors bg-white whitespace-nowrap"
                   >
+                    <svg className="w-3.5 h-3.5 sm:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 6h18M6 12h12M9 18h6"/></svg>
                     <span className="hidden sm:inline">Sort {sortOption}</span>
                     <span className="sm:hidden">Sort</span>
                     <IconChevron size={10} className="flex-shrink-0" />
