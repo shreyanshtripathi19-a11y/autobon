@@ -34,32 +34,40 @@ const features = [
 
 const WhyAutobon = () => {
   return (
-    <section className="bg-white py-16 lg:py-24 px-6">
+    <section className="bg-background py-16 lg:py-24 px-6">
       <div className="max-w-[1200px] mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-20">
+        <div className="text-center mb-14">
+          <h2 className="text-[28px] lg:text-[40px] font-bold text-[#0F0202] tracking-tight">
+            What Makes Us Different
+          </h2>
+          <p className="text-[#505050] text-[15px] mt-3 max-w-[500px] mx-auto">
+            Four pillars that define the Autobon experience
+          </p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-16">
           {features.map((feature, index) => (
-            <div key={index} className="text-center">
+            <div key={index} className="group">
               {/* Image */}
-              <div className="rounded-2xl overflow-hidden mb-6 shadow-lg">
+              <div className="rounded-2xl overflow-hidden mb-5 shadow-md">
                 <img
                   src={feature.image}
                   alt={feature.title}
-                  className="w-full h-[260px] lg:h-[320px] object-cover hover:scale-105 transition-transform duration-700"
+                  className="w-full h-[240px] lg:h-[300px] object-cover group-hover:scale-105 transition-transform duration-700"
                 />
               </div>
 
-              {/* Category */}
-              <p className="text-[#9CA3AF] text-[12px] lg:text-[13px] font-semibold tracking-[0.15em] uppercase mb-3">
+              {/* Category badge */}
+              <span className="inline-block text-primary text-[11px] lg:text-[12px] font-bold tracking-[0.15em] uppercase mb-2">
                 {feature.category}
-              </p>
+              </span>
 
               {/* Title */}
-              <h3 className="text-[22px] lg:text-[26px] font-bold text-[#0F0202] mb-4 leading-tight">
+              <h3 className="text-[20px] lg:text-[24px] font-bold text-[#0F0202] mb-3 leading-tight">
                 {feature.title}
               </h3>
 
               {/* Description */}
-              <p className="text-[#505050] text-[14px] lg:text-[15px] leading-relaxed max-w-[480px] mx-auto">
+              <p className="text-[#505050] text-[14px] lg:text-[15px] leading-relaxed">
                 {feature.description}
               </p>
             </div>

@@ -1,16 +1,15 @@
 "use client";
 import React from "react";
-import Image from "next/image";
 
 const AboutHero = () => {
   return (
     <section className="relative overflow-hidden">
-      {/* Red diagonal background */}
+      {/* Blue diagonal background */}
       <div className="absolute inset-0 z-0">
         <div
           className="absolute inset-0"
           style={{
-            background: "linear-gradient(135deg, #E31837 0%, #E31837 55%, #e8e8e8 55%, #e8e8e8 100%)",
+            background: "linear-gradient(135deg, #1a6adb 0%, #1a6adb 55%, #f5f7fa 55%, #f5f7fa 100%)",
           }}
         />
       </div>
@@ -19,21 +18,21 @@ const AboutHero = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
           {/* Left Text */}
           <div className="text-white">
-            <p className="text-white/90 font-semibold text-[16px] mb-3 tracking-wide">
+            <p className="text-white/90 font-semibold text-[14px] mb-3 tracking-wider uppercase">
               Why Autobon
             </p>
-            <h1 className="text-[36px] lg:text-[48px] font-black leading-[1.1] mb-6">
+            <h1 className="text-[34px] lg:text-[46px] font-black leading-[1.1] mb-6">
               We make car shopping<br />
               easy, simple and stress-free.
             </h1>
-            <p className="text-white/85 text-[16px] lg:text-[18px] leading-relaxed max-w-[480px] mb-8">
+            <p className="text-white/85 text-[15px] lg:text-[17px] leading-relaxed max-w-[480px] mb-8">
               We created Autobon to make car shopping straight forward. Quality vehicles,
               inspected inside and out. Receive 5 star customer service you deserve.
             </p>
             <div className="flex flex-wrap gap-4">
               <a
                 href="/shop"
-                className="inline-flex items-center justify-center px-8 py-3.5 bg-[#1a1a1a] text-white text-[14px] font-semibold rounded-full hover:bg-black transition-colors"
+                className="inline-flex items-center justify-center px-8 py-3.5 bg-[#0F0F0F] text-white text-[14px] font-semibold rounded-full hover:bg-black transition-colors"
               >
                 Buy a car
               </a>
@@ -48,7 +47,7 @@ const AboutHero = () => {
 
           {/* Right Image */}
           <div className="relative">
-            <div className="rounded-2xl overflow-hidden shadow-2xl border-4 border-[#c41230]">
+            <div className="rounded-2xl overflow-hidden shadow-2xl">
               <img
                 src="/who-we.jpg"
                 alt="Premium car interior"

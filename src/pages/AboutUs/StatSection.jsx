@@ -8,7 +8,7 @@ const StatsSection = () => {
   ];
 
   return (
-    <section className="bg-[#E31837] py-6 lg:py-8">
+    <section className="bg-primary py-6 lg:py-8">
       <div className="max-w-[1200px] mx-auto px-6 lg:px-12">
         <div className="grid grid-cols-3 gap-4">
           {stats.map((stat, index) => (
