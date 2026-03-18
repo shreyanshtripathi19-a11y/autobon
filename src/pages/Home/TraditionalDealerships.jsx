@@ -121,7 +121,7 @@ const TraditionalDealerships = () => {
         }
       `}</style>
 
-      <div className="max-w-custom mx-auto px-[0px] lg:px-0 flex flex-col items-center overflow-hidden">
+      <div className="max-w-custom mx-auto px-[0px] lg:px-0 flex flex-col items-center overflow-visible">
         <div className="text-center mb-10 md:mb-20 px-4">
           <h2 className="text-[30px] lg:text-[50px] font-semibold text-black leading-tight">
             Why <span className="text-primary">Autobon</span> beats traditional
@@ -181,7 +181,7 @@ const TraditionalDealerships = () => {
         </div>
 
         {/* DESKTOP GRID */}
-        <div className="hidden md:grid w-full grid-cols-3 gap-[30px] items-stretch px-4 lg:px-6 py-4">
+        <div className="hidden md:grid w-full grid-cols-3 gap-[30px] items-stretch px-4 lg:px-6 pt-4 pb-16">
           {slides.map((slide, idx) => (
             <div
               key={idx}

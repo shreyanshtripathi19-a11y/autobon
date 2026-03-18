@@ -118,7 +118,7 @@ const SellYourCar = () => {
         }
       `}</style>
 
-      <div className="max-w-custom mx-auto px-0 lg:px-0 flex flex-col items-center overflow-x-hidden">
+      <div className="max-w-custom mx-auto px-0 lg:px-0 flex flex-col items-center overflow-visible">
         <div className="flex flex-col items-center gap-4 mb-[40px] md:mb-[80px] text-center px-4">
           <h2 className="text-[30px] lg:text-[54px] font-semibold text-black tracking-tight leading-tight max-w-[80vw]">
             Why sell your car online to{" "}
@@ -182,7 +182,7 @@ const SellYourCar = () => {
         </div>
 
         {/* DESKTOP GRID */}
-        <div className="hidden md:grid w-full grid-cols-3 gap-[30px] items-stretch mt-10 px-4 py-10 overflow-visible">
+        <div className="hidden md:grid w-full grid-cols-3 gap-[30px] items-stretch mt-10 px-4 pt-10 pb-16 overflow-visible">
           {slides.map((slide, idx) => (
             <div key={idx} className="relative overflow-visible">
               {slide.id === "autobon" && (
