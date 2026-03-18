@@ -7,53 +7,85 @@ import review2 from "../../assets/r2.png";
 import review3 from "../../assets/r3.png";
 import Link from "next/link";
 
-
-const fallbackReviewData = [
-  {
-    name: "Eldho J.",
-    role: "Satisfied Contractor",
-    text: "Great experience with Autobon! The process was smooth, transparent, and hassle-free. The team was professional and helpful throughout. Highly recommend for a stress-free car buying experience.",
-    image: review1,
-    rating: 5,
-  },
-  {
-    name: "Teena",
-    role: "Satisfied Contractor",
-    text: "Autobon offers a smooth and trustworthy car buying experience. Everything was transparent, the process was quick, and the team was genuinely helpful from start to finish. No pressure, no hidden surprises. Would definitely recommend Autobon to anyone looking for an easy and reliable way to buy a car.",
-    image: review2,
-    rating: 5,
-  },
-  {
-    name: "Noah",
-    role: "Satisfied Contractor",
-    text: "Autobon made buying a car simple and stress-free. Transparent process and very professional team.",
-    image: review3,
-    rating: 5,
-  },
-];
+// Fallback images to assign to reviews that don't have their own image
+const fallbackImages = [review1, review2, review3];
 
 const Reviews = () => {
   const scrollRef = useRef(null);
-  const [reviewData, setReviewData] = useState(fallbackReviewData);
+  const [reviewData, setReviewData] = useState([]);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     fetch("/api/reviews")
       .then((res) => (res.ok ? res.json() : Promise.reject()))
       .then((data) => {
         if (data && data.length > 0) {
-          const mapped = data.map((r) => ({
+          const mapped = data.map((r, i) => ({
             name: r.name,
             role: r.role,
             text: r.text,
             rating: r.rating,
+            // Use the review's own image if available, otherwise cycle through fallback images
             image: r.imageUrl
               ? { src: r.imageUrl }
-              : null,
+              : fallbackImages[i % fallbackImages.length],
           }));
           setReviewData(mapped);
+        } else {
+          // No reviews from API — use hardcoded fallbacks
+          setReviewData([
+            {
+              name: "Eldho J.",
+              role: "Satisfied Contractor",
+              text: "Great experience with Autobon! The process was smooth, transparent, and hassle-free. The team was professional and helpful throughout. Highly recommend for a stress-free car buying experience.",
+              image: review1,
+              rating: 5,
+            },
+            {
+              name: "Teena",
+              role: "Satisfied Contractor",
+              text: "Autobon offers a smooth and trustworthy car buying experience. Everything was transparent, the process was quick, and the team was genuinely helpful from start to finish. No pressure, no hidden surprises. Would definitely recommend Autobon to anyone looking for an easy and reliable way to buy a car.",
+              image: review2,
+              rating: 5,
+            },
+            {
+              name: "Noah",
+              role: "Satisfied Contractor",
+              text: "Autobon made buying a car simple and stress-free. Transparent process and very professional team.",
+              image: review3,
+              rating: 5,
+            },
+          ]);
         }
+        setLoaded(true);
       })
-      .catch(() => {});
+      .catch(() => {
+        // API failed — use hardcoded fallbacks
+        setReviewData([
+          {
+            name: "Eldho J.",
+            role: "Satisfied Contractor",
+            text: "Great experience with Autobon! The process was smooth, transparent, and hassle-free. The team was professional and helpful throughout. Highly recommend for a stress-free car buying experience.",
+            image: review1,
+            rating: 5,
+          },
+          {
+            name: "Teena",
+            role: "Satisfied Contractor",
+            text: "Autobon offers a smooth and trustworthy car buying experience. Everything was transparent, the process was quick, and the team was genuinely helpful from start to finish. No pressure, no hidden surprises. Would definitely recommend Autobon to anyone looking for an easy and reliable way to buy a car.",
+            image: review2,
+            rating: 5,
+          },
+          {
+            name: "Noah",
+            role: "Satisfied Contractor",
+            text: "Autobon made buying a car simple and stress-free. Transparent process and very professional team.",
+            image: review3,
+            rating: 5,
+          },
+        ]);
+        setLoaded(true);
+      });
   }, []);
 
   const scroll = (direction) => {
@@ -67,6 +99,9 @@ const Reviews = () => {
       scrollRef.current.scrollTo({ left: scrollTo, behavior: "smooth" });
     }
   };
+
+  // Don't render until data is loaded to prevent flash
+  if (!loaded && reviewData.length === 0) return null;
 
   return (
     <section
@@ -135,7 +170,6 @@ const Reviews = () => {
                 </div>
 
                 <div className="p-3">
-                  {/* TRUNCATION LOGIC: line-clamp-3 ensures exactly 3 lines max */}
                   <p className="text-[#000000B2] text-[13px] lg:text-[14px] leading-relaxed mb-5 mt-7 line-clamp-3 h-[60px] lg:h-[66px]">
                     {review.text}
                   </p>
@@ -160,74 +194,38 @@ const Reviews = () => {
                     <div className="shrink-0">
                       <div className="w-6 h-6 lg:w-[30px] lg:h-[30px]">
                         <svg viewBox="0 0 24 24" className="w-full h-full">
-                          <path
-                            d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                            fill="#4285F4"
-                          />
-                          <path
-                            d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                            fill="#34A853"
-                          />
-                          <path
-                            d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                            fill="#FBBC05"
-                          />
-                          <path
-                            d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 12-4.53z"
-                            fill="#EA4335"
-                          />
+                          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+                          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+                          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
+                          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 12-4.53z" fill="#EA4335" />
                         </svg>
                       </div>
                     </div>
                   </div>
 
-                  {review.image ? (
-                    <div className="relative w-full h-[180px] lg:h-[220px] rounded-[16px] overflow-hidden">
-                      <img
-                        src={review.image.src}
-                        alt="Customer"
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute bottom-3 left-3 flex gap-1 bg-black/20 backdrop-blur-sm p-1.5 rounded-lg">
-                        {[...Array(5)].map((_, i) => (
-                          <svg
-                            key={i}
-                            viewBox="0 0 24 24"
-                            className={`w-3.5 h-3.5 ${
-                              i < review.rating
-                                ? "text-white fill-white"
-                                : "text-gray-400 fill-gray-400"
-                            }`}
-                          >
-                            <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
-                          </svg>
-                        ))}
-                      </div>
+                  {/* Review image — use uploaded image or fallback */}
+                  <div className="relative w-full h-[180px] lg:h-[220px] rounded-[16px] overflow-hidden">
+                    <img
+                      src={review.image?.src || (typeof review.image === 'string' ? review.image : '')}
+                      alt="Customer"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute bottom-3 left-3 flex gap-1 bg-black/20 backdrop-blur-sm p-1.5 rounded-lg">
+                      {[...Array(5)].map((_, i) => (
+                        <svg
+                          key={i}
+                          viewBox="0 0 24 24"
+                          className={`w-3.5 h-3.5 ${
+                            i < review.rating
+                              ? "text-white fill-white"
+                              : "text-gray-400 fill-gray-400"
+                          }`}
+                        >
+                          <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
+                        </svg>
+                      ))}
                     </div>
-                  ) : (
-                    <div className="relative w-full h-[180px] lg:h-[220px] rounded-[16px] overflow-hidden bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center">
-                      <div className="text-center">
-                        <div className="w-16 h-16 mx-auto mb-3 bg-primary/15 rounded-full flex items-center justify-center">
-                          <span className="text-2xl font-bold text-primary">{review.name.charAt(0)}</span>
-                        </div>
-                        <div className="flex gap-1 justify-center">
-                          {[...Array(5)].map((_, i) => (
-                            <svg
-                              key={i}
-                              viewBox="0 0 24 24"
-                              className={`w-3.5 h-3.5 ${
-                                i < review.rating
-                                  ? "text-primary fill-primary"
-                                  : "text-gray-300 fill-gray-300"
-                              }`}
-                            >
-                              <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
-                            </svg>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  )}
+                  </div>
                 </div>
               </div>
             ))}
