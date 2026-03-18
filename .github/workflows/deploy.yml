@@ -25,7 +25,7 @@ jobs:
             [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
             export PATH="$HOME/.nvm/versions/node/$(ls $HOME/.nvm/versions/node/ | tail -1)/bin:$PATH:/usr/local/bin:/usr/bin"
 
-            # ─── Frontend ───────────────────────────────────────
+            # ─── Pull Latest Code ────────────────────────────────
             APP_DIR="/var/www/autobon"
 
             if [ ! -d "$APP_DIR" ]; then
@@ -35,10 +35,11 @@ jobs:
 
             cd "$APP_DIR"
 
-            echo ">>> Pulling latest frontend code..."
+            echo ">>> Pulling latest code..."
             git fetch origin main
             git reset --hard origin/main
 
+            # ─── Frontend ────────────────────────────────────────
             echo ">>> Installing frontend dependencies..."
             npm install --legacy-peer-deps
 
@@ -52,11 +53,18 @@ jobs:
               pm2 start npm --name "autobon" -- start
             fi
 
-            # ─── Backend ────────────────────────────────────────
+            # ─── Backend (from same repo) ────────────────────────
             BACKEND_DIR="/var/www/autobon-backend"
 
-            echo ">>> Installing backend dependencies..."
+            echo ">>> Syncing backend from repo..."
+            rsync -av --delete \
+              --exclude 'node_modules' \
+              --exclude '.env' \
+              "$APP_DIR/backend/" "$BACKEND_DIR/"
+
             cd "$BACKEND_DIR"
+
+            echo ">>> Installing backend dependencies..."
             npm install
 
             echo ">>> Running Prisma schema sync..."

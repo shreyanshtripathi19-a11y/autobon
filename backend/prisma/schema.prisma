@@ -1,0 +1,134 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String   @id @default(uuid())
+  name            String
+  email           String   @unique
+  password        String
+  role            String   @default("USER")
+  phone           String?
+  firstName       String?
+  middleName      String?
+  lastName        String?
+  dob             String?
+  address         String?
+  resetCode       String?
+  resetCodeExpiry DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Car {
+  id           String     @id @default(uuid())
+  title        String
+  year         Int
+  make         String
+  model        String
+  trim         String?
+  price        Float
+  mileage      String?
+  fuelType     String?
+  transmission String?
+  bodyType     String?
+  color        String?
+  condition    String?    @default("Used")
+  location     String?
+  description  String?
+  badge        String?
+  priceRating  String?
+  isVisible    Boolean    @default(true)
+  noAccident   Boolean    @default(true)
+  biWeekly     String?
+  downPayment  String?
+  features     String[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  images       CarImage[]
+}
+
+model CarImage {
+  id       String @id @default(uuid())
+  url      String
+  carId    String
+  car      Car    @relation(fields: [carId], references: [id], onDelete: Cascade)
+  position Int    @default(0)
+}
+
+model ContactSubmission {
+  id        String   @id @default(uuid())
+  firstName String
+  lastName  String
+  email     String
+  phone     String?
+  comment   String?
+  carTitle  String?
+  hasTradeIn Boolean @default(false)
+  createdAt DateTime @default(now())
+}
+
+// Unified form submissions — stores all form types (pre-qualify, finance, get-details)
+model FormSubmission {
+  id             String   @id @default(uuid())
+  formType       String   // "pre-qualify" | "finance" | "get-details" | "checkout"
+
+  // Personal info
+  firstName      String
+  lastName       String
+  email          String
+  phone          String?
+  dob            String?
+  address        String?
+  postalCode     String?
+
+  // Vehicle preferences
+  vehicleType    String?
+  preferredVehicle String?
+  budget         String?
+  hasTradeIn     String?
+
+  // Financial
+  creditRating   String?
+  employmentStatus String?
+  incomeType     String?
+  annualIncome   String?
+  monthlyPayment String?
+  companyName    String?
+  jobTitle       String?
+  homeStatus     String?
+
+  // Car selected (for get-details forms)
+  carId          String?
+  carTitle       String?
+  carPrice       Float?
+
+  // Extra data as JSON string
+  extraData      String?
+
+  // Status
+  status         String   @default("new") // "new" | "reviewed" | "contacted" | "closed"
+  adminNotes     String?
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+// Reviews shown on website — managed by admin
+model Review {
+  id        String   @id @default(uuid())
+  name      String
+  role      String   @default("Satisfied Customer")
+  text      String
+  rating    Int      @default(5)
+  imageUrl  String?
+  isVisible Boolean  @default(true)
+  position  Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
