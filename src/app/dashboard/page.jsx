@@ -70,15 +70,7 @@ export default function UserDashboard() {
       <div className="px-6 py-10 max-w-[1073px] mx-auto">
         <h2 className="mb-6 font-semibold text-2xl">Account Dashboard</h2>
 
-        {/* Welcome Banner */}
-        <div className="bg-gray-50 border border-gray-200 rounded-xl px-8 py-8 mb-6">
-          <h3 className="text-2xl font-bold text-gray-900">
-            Welcome back! 👋
-          </h3>
-          <p className="text-gray-500 mt-1">
-            Manage your account settings and preferences here.
-          </p>
-        </div>
+        {/* Welcome Banner Removed */}
 
         {/* Navigation Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

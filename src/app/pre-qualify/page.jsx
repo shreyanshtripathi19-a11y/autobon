@@ -503,7 +503,7 @@ const MultiStepCarForm = () => {
           <img
             src={getVehicleImage()}
             alt="Selected Car"
-            className="w-[90px] md:w-[250px] h-auto object-cover"
+            className="w-[115px] md:w-[280px] h-auto object-cover"
           />
           <div className="w-full flex justify-center mx-2 items-start flex-col">
             <h4 className="font-medium text-[#3F3F3F] text-md mb-1 md:text-base truncate">

@@ -808,7 +808,7 @@ export default function Home() {
             {/* LEFT: LISTINGS */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between mb-4 sm:mb-6 gap-2">
-                <h1 className="text-[15px] sm:text-xl font-bold text-gray-900 flex items-center gap-1.5 flex-1 min-w-0">
+                <h1 className="text-[12px] sm:text-lg font-bold text-gray-900 flex items-center gap-1 sm:gap-1.5 flex-1 min-w-0">
                     <svg className="w-4 h-4 sm:w-5 sm:h-5 text-gray-800 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
                     {viewParam === "favourites"
                       ? <span>Your Favourites ({sortedCars.length})</span>
