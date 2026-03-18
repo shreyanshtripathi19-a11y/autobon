@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import map from "../../assets/map.webp";
 
 const DealerNetwork = () => {
   return (
@@ -15,15 +14,20 @@ const DealerNetwork = () => {
           </h2>
         </div>
 
-        {/* ANIMATED MAP — uses natural aspect ratio for smooth frame rendering */}
-        <div className="w-full max-w-[800px] mx-auto">
-          <img
-            src={map.src || map}
-            alt="Canada Dealer Network Map"
-            className="w-full h-auto"
-            loading="eager"
-            decoding="async"
-          />
+        {/* MAP VIDEO */}
+        <div className="w-full relative">
+          <div className="w-full flex justify-center items-center">
+            <div className="relative w-full md:w-auto h-[250px] sm:h-[350px] md:h-[450px] lg:h-[550px] rounded-[18px] lg:rounded-[32px] overflow-hidden">
+              <video
+                src="/map.webm"
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-full object-contain object-center"
+              />
+            </div>
+          </div>
         </div>
 
         {/* BOTTOM BADGE */}
