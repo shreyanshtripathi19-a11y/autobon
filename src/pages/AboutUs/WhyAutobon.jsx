@@ -1,68 +1,69 @@
+"use client";
 import React from "react";
-import whatWeDoImg from "../../assets/about-6.png";
-import whoWeAreImg from "../../assets/about-5.png";
+
+const features = [
+  {
+    category: "CLIENT EXPERIENCE",
+    title: "Obsessed with providing best service",
+    description:
+      "At Autobon, we care deeply about the relationships with our clients. We understand that each individual has unique needs. The team strives to achieve excellence in providing you an unparalleled vehicle buying experience.",
+    image: "/who-we.jpg",
+  },
+  {
+    category: "TRANSPARENCY",
+    title: "Easy, simple & straight forward",
+    description:
+      "Throughout your entire purchasing process, we are committed to answering all your questions with full transparency. From your first inquiry, to final delivery, we are committed to clear and concise communication of the buying process. You can feel confident knowing you have honest industry experts on your side.",
+    image: "/what-we.jpg",
+  },
+  {
+    category: "INTEGRITY",
+    title: "Quality vehicles for everyone",
+    description:
+      "A current CARFAX report will always be available for every vehicle we sell. We adhere to all the requirements of the Ontario Consumer Protection Act and code of ethics. We are a proud member of UCDA.",
+    image: "/quality.jpg",
+  },
+  {
+    category: "SATISFACTION GUARANTEE",
+    title: "Hundreds of satisfied Canadians",
+    description:
+      "At Autobon, we are certain you will drive out of our lot with 100% confidence you made the right decision to purchase from us. We will always be available for questions and concerns after your purchase.",
+    image: "/why-pic.png",
+  },
+];
 
 const WhyAutobon = () => {
   return (
-    <section className="bg-white py-16 lg:py-24 px-6 font-sans">
-      <div className="max-w-[1200px] mx-auto space-y-24 lg:space-y-32">
-        {/* Box 1: What we do (Text Left, Image Right) */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
-          <div className="order-2 lg:order-1">
-            <h3 className="text-[#4079ED] uppercase font-bold text-xl mb-2">
-              What we do
-            </h3>
-            <h2 className="text-[24px] font-bold text-[#0F0202] mb-6">
-              A better way to buy a car
-            </h2>
-            <div className="space-y-5  text-[16px]  text-[#2C2C2C]">
-              <p>
-                We're tired of traditional dealerships that take advantage of
-                customers. Clutch aims to offer our customers high quality
-                vehicles and a stress-free online car buying experience.
-              </p>
-            </div>
-          </div>
-          <div className="order-1 lg:order-2">
-            <div className="rounded-none overflow-hidden  ">
-              <img
-                src={whatWeDoImg.src}
-                alt="Process of reconditioning cars"
-                className="w-[400px]  rounded-none *:h-[dd00px] object-cover"
-              />
-            </div>
-          </div>
-        </div>
+    <section className="bg-white py-16 lg:py-24 px-6">
+      <div className="max-w-[1200px] mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-20">
+          {features.map((feature, index) => (
+            <div key={index} className="text-center">
+              {/* Image */}
+              <div className="rounded-2xl overflow-hidden mb-6 shadow-lg">
+                <img
+                  src={feature.image}
+                  alt={feature.title}
+                  className="w-full h-[260px] lg:h-[320px] object-cover hover:scale-105 transition-transform duration-700"
+                />
+              </div>
 
-        {/* Box 2: Who we are (Image Left, Text Right) */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
-          <div className="order-1">
-            <div className="rounded-3xl overflow-hidden">
-              <img
-                src={whoWeAreImg.src}
-                alt="Our team and mission"
-                className="w-[400px] h-[400px]  rounded-none  object-contain"
-              />
-            </div>
-          </div>
-          <div className="order-2">
-            <h3 className="text-[#4079ED] uppercase font-bold text-xl mb-2">
-              Who we are
-            </h3>
-            <h2 className="text-[24px] font-bold text-[#0F0202] mb-6">
-              Driven by transparency
-            </h2>
-            <div className="space-y-5  text-[16px]  text-[#2C2C2C]">
-              <p>
-                Founded on the belief that car buying should be fun and honest,
-                our team is dedicated to removing the stress from the process.
-                We are a group of automotive experts and technology enthusiasts
-                working together to build Canada’s most trusted used car
-                platform, ensuring every customer drives away with total peace
-                of mind.
+              {/* Category */}
+              <p className="text-[#9CA3AF] text-[12px] lg:text-[13px] font-semibold tracking-[0.15em] uppercase mb-3">
+                {feature.category}
+              </p>
+
+              {/* Title */}
+              <h3 className="text-[22px] lg:text-[26px] font-bold text-[#0F0202] mb-4 leading-tight">
+                {feature.title}
+              </h3>
+
+              {/* Description */}
+              <p className="text-[#505050] text-[14px] lg:text-[15px] leading-relaxed max-w-[480px] mx-auto">
+                {feature.description}
               </p>
             </div>
-          </div>
+          ))}
         </div>
       </div>
     </section>

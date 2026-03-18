@@ -1,7 +1,7 @@
 "use client";
 import React, { useRef, useEffect, useState } from "react";
 
-const GOOGLE_API_KEY = "AIzaSyD8qcZZZD_iXZNnFcaQ5auErE9G-pU-Tio";
+const GOOGLE_API_KEY = "AIzaSyBFxzOeG7y_v-bGwYOJS5TGWu-q1ViwF2E";
 
 // Lightweight loader — injects the script tag once, resolves when google.maps is ready
 let loadPromise = null;

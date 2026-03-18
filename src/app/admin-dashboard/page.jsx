@@ -1402,9 +1402,62 @@ export default function DashboardPage() {
                         </div>
                       </div>
                       <div>
-                        <label className="text-sm font-medium text-gray-700 mb-1 block">Image URL (optional)</label>
-                        <input className="w-full border rounded-lg p-2.5 text-sm" placeholder="https://..." value={reviewForm.imageUrl} onChange={(e) => setReviewForm({...reviewForm, imageUrl: e.target.value})} />
-                        <p className="text-xs text-gray-400 mt-1">Paste a URL to a customer photo. Leave empty for default avatar.</p>
+                        <label className="text-sm font-medium text-gray-700 mb-2 block">Review Image</label>
+                        {/* Image preview */}
+                        {reviewForm.imageUrl && (
+                          <div className="relative mb-3 inline-block group">
+                            <img src={reviewForm.imageUrl} alt="Review" className="h-24 w-24 rounded-xl object-cover border" />
+                            <button
+                              type="button"
+                              onClick={() => setReviewForm({...reviewForm, imageUrl: ""})}
+                              className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              <X className="h-3 w-3" />
+                            </button>
+                          </div>
+                        )}
+                        {/* Upload button */}
+                        <label className="flex items-center gap-2 px-4 py-3 rounded-lg border-2 border-dashed border-gray-300 cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-colors">
+                          <Upload className="h-5 w-5 text-gray-400" />
+                          <span className="text-sm text-gray-500">Click to upload image (JPEG, PNG, WebP)</span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={async (e) => {
+                              const file = e.target.files?.[0];
+                              if (!file) return;
+                              try {
+                                const { storage } = await import("@/lib/firebase");
+                                const { ref, uploadString, getDownloadURL } = await import("firebase/storage");
+                                if (!storage) return;
+                                // Convert to WebP
+                                const img = new window.Image();
+                                img.onload = async () => {
+                                  const canvas = document.createElement("canvas");
+                                  const MAX_W = 800;
+                                  let w = img.width, h = img.height;
+                                  if (w > MAX_W) { h = Math.round(h * (MAX_W / w)); w = MAX_W; }
+                                  canvas.width = w;
+                                  canvas.height = h;
+                                  const ctx = canvas.getContext("2d");
+                                  ctx.drawImage(img, 0, 0, w, h);
+                                  const dataUrl = canvas.toDataURL("image/webp", 0.85);
+                                  const fileName = `reviews/${Date.now()}-${Math.random().toString(36).slice(2)}.webp`;
+                                  const storageRef = ref(storage, fileName);
+                                  await uploadString(storageRef, dataUrl, "data_url", { contentType: "image/webp" });
+                                  const url = await getDownloadURL(storageRef);
+                                  setReviewForm((prev) => ({...prev, imageUrl: url}));
+                                };
+                                img.src = URL.createObjectURL(file);
+                              } catch (err) {
+                                console.error("Image upload failed:", err);
+                              }
+                            }}
+                          />
+                        </label>
+                        <p className="text-xs text-gray-400 mt-1.5">Or paste an image URL below:</p>
+                        <input className="w-full border rounded-lg p-2.5 text-sm mt-1" placeholder="https://..." value={reviewForm.imageUrl} onChange={(e) => setReviewForm({...reviewForm, imageUrl: e.target.value})} />
                       </div>
                     </div>
                     <div className="flex justify-end gap-3 mt-6">

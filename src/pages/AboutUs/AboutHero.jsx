@@ -1,47 +1,60 @@
+"use client";
 import React from "react";
-import about1 from "../../assets/about-1.png";
-import about2 from "../../assets/about-3.png";
-import about3 from "../../assets/about-2.png";
+import Image from "next/image";
 
 const AboutHero = () => {
   return (
-    <section className="bg-[#E2E2E2 ] py-20 px-6">
-      <div className="max-w-[1000px] mx-auto grid md:grid-cols-2 gap-12 items-center">
-        <div>
-          <span className="text-[#4079ED] font-bold     text-[30px] uppercase ">
-            About Us
-          </span>
-          <h1 className="text-4xl md:text-[55px] font-black text-black mt-0 ">
-            Reinventing the way people buy cars
-          </h1>
-          <p className="text-[#2C2C2C] mt-2 text-[18px]">
-            Our mission is to deliver a delightful car-buying experience to
-            Canadians.
-          </p>
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-4">
-            <div className="h-40 bg-gray-300 rounded-2xl overflow-hidden shadow-lg">
-              <img
-                src={about1.src}
-                alt="Handing over keys"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="h-40 bg-gray-300 rounded-2xl overflow-hidden shadow-lg">
-              <img
-                src={about2.src}
-                alt="Car on road"
-                className="w-full h-full object-cover"
-              />
+    <section className="relative overflow-hidden">
+      {/* Red diagonal background */}
+      <div className="absolute inset-0 z-0">
+        <div
+          className="absolute inset-0"
+          style={{
+            background: "linear-gradient(135deg, #E31837 0%, #E31837 55%, #e8e8e8 55%, #e8e8e8 100%)",
+          }}
+        />
+      </div>
+
+      <div className="relative z-10 max-w-[1200px] mx-auto px-6 lg:px-12 py-16 lg:py-24">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+          {/* Left Text */}
+          <div className="text-white">
+            <p className="text-white/90 font-semibold text-[16px] mb-3 tracking-wide">
+              Why Autobon
+            </p>
+            <h1 className="text-[36px] lg:text-[48px] font-black leading-[1.1] mb-6">
+              We make car shopping<br />
+              easy, simple and stress-free.
+            </h1>
+            <p className="text-white/85 text-[16px] lg:text-[18px] leading-relaxed max-w-[480px] mb-8">
+              We created Autobon to make car shopping straight forward. Quality vehicles,
+              inspected inside and out. Receive 5 star customer service you deserve.
+            </p>
+            <div className="flex flex-wrap gap-4">
+              <a
+                href="/shop"
+                className="inline-flex items-center justify-center px-8 py-3.5 bg-[#1a1a1a] text-white text-[14px] font-semibold rounded-full hover:bg-black transition-colors"
+              >
+                Buy a car
+              </a>
+              <a
+                href="/sell-or-trade"
+                className="inline-flex items-center justify-center px-8 py-3.5 bg-transparent text-white text-[14px] font-semibold rounded-full border-2 border-white hover:bg-white/10 transition-colors"
+              >
+                Sell your car
+              </a>
             </div>
           </div>
-          <div className="h-full bg-gray-300 rounded-2xl overflow-hidden shadow-lg">
-            <img
-              src={about3.src}
-              alt="Cars at night"
-              className="w-full h-full object-cover"
-            />
+
+          {/* Right Image */}
+          <div className="relative">
+            <div className="rounded-2xl overflow-hidden shadow-2xl border-4 border-[#c41230]">
+              <img
+                src="/who-we.jpg"
+                alt="Premium car interior"
+                className="w-full h-[300px] lg:h-[380px] object-cover"
+              />
+            </div>
           </div>
         </div>
       </div>

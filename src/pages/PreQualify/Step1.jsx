@@ -52,9 +52,7 @@ const Step1 = ({ formData, setFormData, onNext }) => {
               <img
                 src={type.img}
                 alt={type.label}
-                className={`h-auto object-contain block mx-auto ${
-                  type.id === "SUV" ? "max-w-[90px] md:max-w-[110px] -ml-1 md:-ml-2" : "max-w-[100px] md:max-w-[120px]"
-                }`}
+                className="h-auto object-contain block mx-auto max-w-[100px] md:max-w-[120px]"
               />
             </div>
             <div className="w-full justify-start">

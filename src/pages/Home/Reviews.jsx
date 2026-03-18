@@ -30,29 +30,7 @@ const fallbackReviewData = [
     image: review3,
     rating: 5,
   },
-  {
-    name: "Liam ",
-    role: "Satisfied Contractor",
-    text: "Autobon made the car-buying process incredibly smooth. From exploring options to completing the paperwork, everything was transparent and well-managed. The team was responsive and helpful at every step, which made the entire experience stress-free.",
-    image: review1,
-    rating: 5,
-  },
-  {
-    name: "William",
-    role: "Satisfied Contractor",
-    text: "I had a great experience with Autobon. The process was simple, pricing was clear, and there were no hidden surprises. Customer support was professional and quick to respond, making the journey easy from start to finish.",
-    image: review2,
-    rating: 5,
-  },
-  {
-    name: "Samuel",
-    role: "Satisfied Contractor",
-    text: "Autobon delivers a very organized and trustworthy service. The team guided me properly, handled documentation smoothly, and ensured everything stayed on schedule. Overall, a very satisfying and hassle-free experience.",
-    image: review3,
-    rating: 5,
-  },
 ];
-const fallbackImages = [review1, review2, review3];
 
 const Reviews = () => {
   const scrollRef = useRef(null);
@@ -63,14 +41,14 @@ const Reviews = () => {
       .then((res) => (res.ok ? res.json() : Promise.reject()))
       .then((data) => {
         if (data && data.length > 0) {
-          const mapped = data.map((r, i) => ({
+          const mapped = data.map((r) => ({
             name: r.name,
             role: r.role,
             text: r.text,
             rating: r.rating,
             image: r.imageUrl
               ? { src: r.imageUrl }
-              : fallbackImages[i % fallbackImages.length],
+              : null,
           }));
           setReviewData(mapped);
         }
@@ -106,7 +84,7 @@ const Reviews = () => {
           <div className="w-full md:w-max gap-5 lg:gap-8 flex justify-between items-start flex-col">
             <p className="text-[#505050] max-w-[500px] text-[15px] lg:text-[18px]">
               With an endless selection of vehicles, we can help you find
-              exactly what you’re looking for.
+              exactly what you&apos;re looking for.
             </p>
             <Link
               href="/pre-qualify"
@@ -178,7 +156,7 @@ const Reviews = () => {
                         </p>
                       </div>
                     </div>
-                    {/* Google Icon SVG remains unchanged */}
+                    {/* Google Icon SVG */}
                     <div className="shrink-0">
                       <div className="w-6 h-6 lg:w-[30px] lg:h-[30px]">
                         <svg viewBox="0 0 24 24" className="w-full h-full">
@@ -203,28 +181,53 @@ const Reviews = () => {
                     </div>
                   </div>
 
-                  <div className="relative w-full h-[180px] lg:h-[220px] rounded-[16px] overflow-hidden">
-                    <img
-                      src={review.image.src}
-                      alt="Customer"
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute bottom-3 left-3 flex gap-1 bg-black/20 backdrop-blur-sm p-1.5 rounded-lg">
-                      {[...Array(5)].map((_, i) => (
-                        <svg
-                          key={i}
-                          viewBox="0 0 24 24"
-                          className={`w-3.5 h-3.5 ${
-                            i < review.rating
-                              ? "text-white fill-white"
-                              : "text-gray-400 fill-gray-400"
-                          }`}
-                        >
-                          <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
-                        </svg>
-                      ))}
+                  {review.image ? (
+                    <div className="relative w-full h-[180px] lg:h-[220px] rounded-[16px] overflow-hidden">
+                      <img
+                        src={review.image.src}
+                        alt="Customer"
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute bottom-3 left-3 flex gap-1 bg-black/20 backdrop-blur-sm p-1.5 rounded-lg">
+                        {[...Array(5)].map((_, i) => (
+                          <svg
+                            key={i}
+                            viewBox="0 0 24 24"
+                            className={`w-3.5 h-3.5 ${
+                              i < review.rating
+                                ? "text-white fill-white"
+                                : "text-gray-400 fill-gray-400"
+                            }`}
+                          >
+                            <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
+                          </svg>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="relative w-full h-[180px] lg:h-[220px] rounded-[16px] overflow-hidden bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center">
+                      <div className="text-center">
+                        <div className="w-16 h-16 mx-auto mb-3 bg-primary/15 rounded-full flex items-center justify-center">
+                          <span className="text-2xl font-bold text-primary">{review.name.charAt(0)}</span>
+                        </div>
+                        <div className="flex gap-1 justify-center">
+                          {[...Array(5)].map((_, i) => (
+                            <svg
+                              key={i}
+                              viewBox="0 0 24 24"
+                              className={`w-3.5 h-3.5 ${
+                                i < review.rating
+                                  ? "text-primary fill-primary"
+                                  : "text-gray-300 fill-gray-300"
+                              }`}
+                            >
+                              <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
+                            </svg>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

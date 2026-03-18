@@ -1507,7 +1507,7 @@ export default function Home() {
                   style={{ border: 0 }}
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
-                  src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyD1dPVD4NdbnkM8OtRIaxPjtcPMN2aClxw&q=${encodeURIComponent(locationParam || "Canada")}&zoom=10`}
+                  src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBFxzOeG7y_v-bGwYOJS5TGWu-q1ViwF2E&q=${encodeURIComponent(locationParam || "Canada")}&zoom=10`}
                 />
               </div>
 
@@ -1535,7 +1535,7 @@ export default function Home() {
 
       {/* Google Maps Places API */}
       <script
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD1dPVD4NdbnkM8OtRIaxPjtcPMN2aClxw&libraries=places"
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBFxzOeG7y_v-bGwYOJS5TGWu-q1ViwF2E&libraries=places"
         async
         defer
       />
