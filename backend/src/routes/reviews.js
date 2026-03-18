@@ -106,5 +106,27 @@ router.delete("/:id", requireAdmin, async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
+// POST /api/reviews/reorder — Admin: reorder reviews
+router.post("/reorder", requireAdmin, async (req, res) => {
+  try {
+    const prisma = req.app.locals.prisma;
+    const { order } = req.body; // array of { id, position }
+    if (!order || !Array.isArray(order)) {
+      return res.status(400).json({ message: "Order array is required" });
+    }
+    await prisma.$transaction(
+      order.map((item) =>
+        prisma.review.update({
+          where: { id: item.id },
+          data: { position: item.position },
+        })
+      )
+    );
+    res.json({ message: "Reviews reordered" });
+  } catch (error) {
+    console.error("Review reorder error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
 
 module.exports = router;

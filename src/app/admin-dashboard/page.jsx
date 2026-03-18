@@ -726,6 +726,21 @@ export default function DashboardPage() {
     } catch (err) { console.error("Delete review failed:", err); }
   };
 
+  const moveReview = async (index, direction) => {
+    const swapIndex = direction === "up" ? index - 1 : index + 1;
+    if (swapIndex < 0 || swapIndex >= adminReviews.length) return;
+    const newOrder = [...adminReviews];
+    [newOrder[index], newOrder[swapIndex]] = [newOrder[swapIndex], newOrder[index]];
+    try {
+      await fetch("/api/reviews/reorder", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ order: newOrder.map((r, i) => ({ id: r.id, position: i })) }),
+      });
+      fetchReviews();
+    } catch (err) { console.error("Reorder failed:", err); }
+  };
+
   React.useEffect(() => {
     if (user?.role === "ADMIN") {
       fetchCars();
@@ -1315,11 +1330,31 @@ export default function DashboardPage() {
                 </div>
               ) : (
                 <div className="grid gap-4">
-                  {adminReviews.map((r) => (
+                  {adminReviews.map((r, idx) => (
                     <Card key={r.id} className={`transition-all ${!r.isVisible ? "opacity-60" : ""}`}>
                       <div className="p-5">
                         <div className="flex items-start justify-between">
                           <div className="flex items-start gap-4">
+                            {/* Position number */}
+                            <div className="flex flex-col items-center gap-1 pt-1 flex-shrink-0">
+                              <button
+                                onClick={() => moveReview(idx, "up")}
+                                disabled={idx === 0}
+                                className={`p-1 rounded hover:bg-gray-100 transition-colors ${idx === 0 ? "opacity-30 cursor-not-allowed" : "cursor-pointer"}`}
+                                title="Move up"
+                              >
+                                <ChevronDown className="h-4 w-4 rotate-180 text-gray-500" />
+                              </button>
+                              <span className="text-xs font-bold text-gray-400 w-5 text-center">{idx + 1}</span>
+                              <button
+                                onClick={() => moveReview(idx, "down")}
+                                disabled={idx === adminReviews.length - 1}
+                                className={`p-1 rounded hover:bg-gray-100 transition-colors ${idx === adminReviews.length - 1 ? "opacity-30 cursor-not-allowed" : "cursor-pointer"}`}
+                                title="Move down"
+                              >
+                                <ChevronDown className="h-4 w-4 text-gray-500" />
+                              </button>
+                            </div>
                             {r.imageUrl ? (
                               <img src={r.imageUrl} alt={r.name} className="h-14 w-14 rounded-full object-cover flex-shrink-0" />
                             ) : (
