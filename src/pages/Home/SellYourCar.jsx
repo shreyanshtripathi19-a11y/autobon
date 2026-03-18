@@ -93,7 +93,7 @@ const SellYourCar = () => {
   );
 
   return (
-    <section className="w-full bg-background py-[80px]">
+    <section className="w-full bg-background pt-[80px] pb-[120px]">
       <style jsx>{`
         @keyframes leaf-rotate {
           0% {

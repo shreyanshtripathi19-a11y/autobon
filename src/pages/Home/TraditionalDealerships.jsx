@@ -97,7 +97,7 @@ const TraditionalDealerships = () => {
   );
 
   return (
-    <section className="w-full bg-background py-[80px] overflow-hidden">
+    <section className="w-full bg-background pt-[80px] pb-[120px] overflow-x-hidden">
       <style jsx>{`
         @keyframes leaf-rotate {
           0% {

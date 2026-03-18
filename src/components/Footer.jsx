@@ -315,14 +315,14 @@ const Footer = () => {
               <h4 className="font-semibold text-black mb-1">{section.title}</h4>
               <div className="flex flex-col gap-2">
                 {section.getLinks().map((link) => (
-                  <Link
+                  <a
                     key={link}
                     href={getHref(link, section.type)}
                     onClick={link === "FAQ" ? handleFaqClick : link === "Chat with us" ? (e) => { e.preventDefault(); if (typeof window !== 'undefined' && window.Chatra) window.Chatra('openChat', true); } : undefined}
                     className={`text-[#595959] ${section.title === "Contact Us" ? "text-nowrap" : ""} text-[14px] hover:text-black transition-colors`}
                   >
                     {link}
-                  </Link>
+                  </a>
                 ))}
 
                 {["model", "body", "location", "sell"].includes(

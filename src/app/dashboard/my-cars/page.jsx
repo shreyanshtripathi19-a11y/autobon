@@ -98,10 +98,10 @@ export default function MyCarsPage() {
             </div>
           ) : savedCarsData.length === 0 ? (
             <NullDataInfo
-              title="You haven't saved any cars yet"
-              description="Browse our inventory and tap the heart icon to save cars you love"
-              buttonLabel="Browse Cars"
-              href="/shop"
+              title="You don't have any active offers"
+              description="Share some info about your car and get a firm offer in minutes"
+              buttonLabel="Sell or trade my car"
+              href="/sell-or-trade"
             />
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
