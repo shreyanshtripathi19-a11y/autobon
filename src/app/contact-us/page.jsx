@@ -266,7 +266,10 @@ const ContactPage = () => {
                     support@autobon.ca
                   </a>
                 </p>
-                <button className="bg-[#4079ED] w-max text-white font-semibold py-2 px-8 rounded-full hover:bg-blue-700 transition-all">
+                <button
+                  onClick={() => { if (typeof window !== 'undefined' && window.Chatra) window.Chatra('openChat', true); }}
+                  className="bg-[#4079ED] w-max text-white font-semibold py-2 px-8 rounded-full hover:bg-blue-700 transition-all"
+                >
                   Start live chat
                 </button>
               </div>

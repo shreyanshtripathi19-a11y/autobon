@@ -38,7 +38,7 @@ const Step3_Mileage = ({ onNext, onBack, formData, updateFormData }) => {
       <p className="text-gray-500 mb-8">Tell us about your {displayYear} {title}</p>
 
       <div className="border-2 border-primary rounded-none p-6 flex items-center gap-6 relative mb-12 bg-[#F0F7FF]">
-        <img src="/images/c0e515790ae6cd243a0ae47e32ad732e993b78a2.png" alt="Car" className="w-32 object-contain" />
+        <img src="/car-icon.png" alt="Car" className="w-44 h-auto object-contain" />
         <div className="text-left">
           <h3 className="text-xl font-semibold">{title}</h3>
           <p className="text-[#8E8E93]">{displayYear}</p>

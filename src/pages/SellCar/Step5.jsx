@@ -27,7 +27,7 @@ const Step5_Offer = ({ onBack, onNext, formData }) => {
       </div>
 
       <div className="border border-primary p-4 py-6 flex items-center gap-6 mb-12 bg-[#F0F7FF] max-w-[500px] mx-auto">
-        <img src="/images/c0e515790ae6cd243a0ae47e32ad732e993b78a2.png" alt="Car" className="w-28 h-auto object-contain" />
+        <img src="/car-icon.png" alt="Car" className="w-44 h-auto object-contain" />
         <div className="text-left">
           <h3 className="font-semibold">{title}</h3>
           <p className="text-xs text-gray-500">{mileage} • {condition} condition</p>

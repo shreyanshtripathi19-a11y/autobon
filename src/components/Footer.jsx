@@ -193,7 +193,7 @@ const Footer = () => {
         "Chat with us",
         "Call us at (905) 800-3100",
         "Email us at info@autobon.ca",
-        "Any Car, Any Where",
+        "Get In Touch",
       ],
     },
   ];
@@ -218,7 +218,7 @@ const Footer = () => {
     if (link === "Finance") return "/finance";
     if (link === "Get Pre-Approved") return "/pre-qualify";
     if (link === "Chat with us") return "#chatra";
-    if (link === "Any Car, Any Where") return "/contact-us";
+    if (link === "Get In Touch") return "/contact-us";
     if (link.startsWith("Call us")) return "tel:9058003100";
     if (link.startsWith("Email us")) return "mailto:info@autobon.ca";
 

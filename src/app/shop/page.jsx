@@ -287,6 +287,28 @@ export default function Home() {
       const params = new URLSearchParams(window.location.search);
       setLocationParam(params.get("location") || "");
       setViewParam(params.get("view") || "");
+      
+      // Footer model link: "Honda Civic" → make=Honda, model=Civic
+      const modelParam = params.get("model");
+      if (modelParam) {
+        const parts = modelParam.split(" ");
+        if (parts.length >= 2) {
+          const make = parts[0];
+          const model = parts.slice(1).join(" ");
+          setSelectedMake(make);
+          setFpMake(make);
+          setFpModel(model);
+        } else {
+          setSelectedMake(modelParam);
+          setFpMake(modelParam);
+        }
+      }
+      
+      // Footer body style link: "SUV", "Sedan", etc.
+      const bodyParam = params.get("body_style");
+      if (bodyParam) {
+        setFpBodyType(bodyParam);
+      }
     }
   }, []);
 
