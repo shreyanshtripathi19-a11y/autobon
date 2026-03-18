@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import Step2_Confirm from "../../pages/SellCar/Step2";
 import Step3_Mileage from "../../pages/SellCar/Step3";
 import Step4_Contact from "../../pages/SellCar/Step4";
@@ -45,13 +46,23 @@ const SuccessScreen = ({ formData }) => (
 );
 
 const SellCarPage = () => {
-  const [currentScreen, setCurrentScreen] = useState(1);
+  const searchParams = useSearchParams();
+  
+  // Read URL params from sell-or-trade form
+  const urlYear = searchParams.get("year") || "";
+  const urlMake = searchParams.get("make") || "";
+  const urlModel = searchParams.get("model") || "";
+  const urlCity = searchParams.get("city") || "";
+  const hasPrefilledData = urlYear && urlMake && urlModel;
+  
+  // If all vehicle details were passed from the sell-or-trade form, skip Step 1
+  const [currentScreen, setCurrentScreen] = useState(hasPrefilledData ? 3 : 1);
   const [formData, setFormData] = useState({
     vin: "",
-    year: "",
-    make: "",
-    model: "",
-    city: "",
+    year: urlYear,
+    make: urlMake,
+    model: urlModel,
+    city: urlCity,
     mileage: "",
     condition: "Excellent",
     contact: { firstName: "", lastName: "", email: "", phone: "" },

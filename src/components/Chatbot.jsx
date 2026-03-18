@@ -4,18 +4,22 @@ import { useEffect } from "react";
 
 const Chatbot = () => {
   useEffect(() => {
-    // ─── Chatra Setup: brand colors, custom button, working hours ───
+    // Prevent duplicate initialization
+    if (document.getElementById('autobon-chat-trigger')) return;
+
+    // ─── Chatra Setup ───
     window.ChatraSetup = {
-      // Use our custom button instead of default Chatra button
-      startHidden: true,
-      
+      // Use our custom button — this hides Chatra's default button
+      // but keeps the chat panel fully functional
+      customWidgetButton: '#autobon-chat-trigger',
+
       // Brand colors
       colors: {
         buttonText: '#ffffff',
         buttonBg: '#1a6adb',
       },
 
-      // Working hours + branding in chat title
+      // Working hours + branding
       locale: {
         chat: {
           headerTitle: 'Autobon Support',
@@ -23,9 +27,6 @@ const Chatbot = () => {
           input: {
             placeholder: 'Type your message...',
           },
-        },
-        welcomeMessage: {
-          auto: "👋 Welcome to Autobon! How can we help you today? We're available Mon-Sun, 9 AM – 9 PM.",
         },
       },
     };
@@ -41,11 +42,11 @@ const Chatbot = () => {
     script.src = 'https://call.chatra.io/chatra.js';
     document.head.appendChild(script);
 
-    // ─── Custom CSS: brand logo, hide Chatra branding, Autobon icon ───
+    // ─── Custom CSS ───
     const style = document.createElement('style');
     style.id = 'autobon-chatra-css';
     style.textContent = `
-      /* ── Custom floating button (replaces Chatra default) ── */
+      /* ── Custom floating button ── */
       #autobon-chat-trigger {
         position: fixed;
         bottom: 20px;
@@ -68,23 +69,10 @@ const Chatbot = () => {
         transform: scale(1.08);
         box-shadow: 0 6px 28px rgba(26, 106, 219, 0.55);
       }
-      #autobon-chat-trigger img {
-        width: 34px;
-        height: 34px;
-        border-radius: 50%;
-        object-fit: contain;
-        background: white;
-        padding: 3px;
-      }
-
-      /* ── Ensure Chatra's own button is always hidden ── */
-      #chatra:not(.chatra--expanded) .chatra--btn,
-      .chatra--btn-frame {
-        display: none !important;
-        opacity: 0 !important;
-        pointer-events: none !important;
-        width: 0 !important;
-        height: 0 !important;
+      /* Chat icon SVG styling */
+      #autobon-chat-trigger svg {
+        width: 28px;
+        height: 28px;
       }
 
       /* ── Hide "Powered by Chatra" / "We run on Chatra" branding ── */
@@ -95,7 +83,6 @@ const Chatbot = () => {
       #chatra .chatra--footer-brand,
       #chatra a[href*="chatra.io"],
       #chatra a[href*="chatra.com"],
-      div[class*="brand"],
       .chatra--footer a[href*="chatra"] {
         display: none !important;
         visibility: hidden !important;
@@ -108,13 +95,13 @@ const Chatbot = () => {
         padding: 0 !important;
       }
 
-      /* ── Custom header colors ── */
+      /* ── Brand blue header ── */
       #chatra .chatra--header,
       .chatra--header-wrapper {
         background: linear-gradient(135deg, #1a6adb 0%, #1558b4 100%) !important;
       }
 
-      /* ── Add Autobon logo to header ── */
+      /* ── Autobon logo in chat header ── */
       #chatra .chatra--header-agents::before {
         content: '';
         display: block;
@@ -132,30 +119,20 @@ const Chatbot = () => {
     `;
     document.head.appendChild(style);
 
-    // ─── Create custom chat trigger button ───
+    // ─── Create custom chat trigger button with chat icon (not logo) ───
     const btn = document.createElement('button');
     btn.id = 'autobon-chat-trigger';
     btn.setAttribute('aria-label', 'Chat with Autobon');
-    btn.innerHTML = '<img src="/logo.png" alt="Autobon" />';
-    btn.addEventListener('click', () => {
-      if (window.Chatra) {
-        window.Chatra('openChat', true);
-      }
-    });
+    // Clean chat bubble SVG icon
+    btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z" fill="white"/>
+      <circle cx="8" cy="10" r="1.2" fill="#1a6adb"/>
+      <circle cx="12" cy="10" r="1.2" fill="#1a6adb"/>
+      <circle cx="16" cy="10" r="1.2" fill="#1a6adb"/>
+    </svg>`;
     document.body.appendChild(btn);
 
-    // Once Chatra loads, make sure its default button stays hidden
-    script.onload = () => {
-      // Small delay to let Chatra initialize
-      setTimeout(() => {
-        if (window.Chatra) {
-          window.Chatra('hide');
-        }
-      }, 500);
-    };
-
     return () => {
-      // Cleanup
       const existingBtn = document.getElementById('autobon-chat-trigger');
       if (existingBtn) existingBtn.remove();
       const existingStyle = document.getElementById('autobon-chatra-css');
@@ -164,7 +141,7 @@ const Chatbot = () => {
     };
   }, []);
 
-  return null; // Chatra + custom button render via DOM
+  return null;
 };
 
 export default Chatbot;
