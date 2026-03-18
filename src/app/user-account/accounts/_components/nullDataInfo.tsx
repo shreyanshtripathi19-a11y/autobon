@@ -15,7 +15,7 @@ const NullDataInfo = ({
   return (
     <div className="w-full bg-gray-100 flex flex-row justify-between gap-x-4 md:gap-x-16 items-center rounded-2xl p-4 md:p-8">
       <Image
-        src={"/carInfo.png"}
+        src={"/CarNotFound.svg"}
         width={10}
         height={10}
         alt="car icon"

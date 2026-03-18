@@ -276,6 +276,18 @@ function CheckAvailabilityModal({ isOpen, onClose, carTitle = "this vehicle" }) 
 }
 
 export default function Home() {
+  // Read URL params without useSearchParams (avoids Suspense requirement)
+  const [locationParam, setLocationParam] = useState("");
+  const [viewParam, setViewParam] = useState("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      setLocationParam(params.get("location") || "");
+      setViewParam(params.get("view") || "");
+    }
+  }, []);
+
   const [cars, setCars] = useState([]);
   const [loadingCars, setLoadingCars] = useState(true);
   const [selectedCar, setSelectedCar] = useState(null);
@@ -484,6 +496,10 @@ export default function Home() {
     setOpenFilter((prev) => (prev === name ? null : name));
 
   const filteredCars = cars.filter((c) => {
+    // Favourites view: show only saved cars
+    if (viewParam === "favourites" && !savedCars.includes(c.id)) return false;
+    // Location filter from URL param
+    if (locationParam && c.location && !c.location.toLowerCase().includes(locationParam.toLowerCase())) return false;
     if (selectedMake && c.make !== selectedMake) return false;
     if (fpMake !== "All Makes" && c.make !== fpMake) return false;
     if (fpModel !== "All Models" && !c.model.includes(fpModel)) return false;
@@ -747,18 +763,26 @@ export default function Home() {
             <div className="flex-1 min-w-0">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6 gap-2 sm:gap-3">
                 <div>
-                  <h1 className="text-lg sm:text-2xl font-bold text-gray-900">
-                    {sortedCars.length.toLocaleString()} Cars for Sale in Canada
+                  <h1 className="text-lg sm:text-2xl font-bold text-gray-900 flex items-center gap-2">
+                    {locationParam && <svg className="w-5 h-5 sm:w-6 sm:h-6 text-[#1a6adb] flex-shrink-0" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>}
+                    {viewParam === "favourites"
+                      ? `Your Favourites (${sortedCars.length})`
+                      : locationParam
+                        ? <span>Used Cars for Sale in <span className="text-[#1a6adb] underline">{locationParam}</span> : {sortedCars.length.toLocaleString()} results</span>
+                        : `${sortedCars.length.toLocaleString()} Cars for Sale in Canada`
+                    }
                   </h1>
-                  <p className="text-xs sm:text-sm text-gray-500">Location &gt; Canada</p>
+                  <p className="text-xs sm:text-sm text-gray-500">
+                    {viewParam === "favourites" ? "Your saved vehicles" : locationParam ? `Location > Canada > ${locationParam}` : "Location > Canada"}
+                  </p>
                 </div>
-                <div className="relative">
+                <div className="relative flex-shrink-0">
                   <button
                     onClick={() => setShowSortDropdown(!showSortDropdown)}
-                    className="flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm border border-gray-300 rounded-full hover:border-blue-600 transition-colors bg-white"
+                    className="flex items-center gap-1 px-3 sm:px-4 py-1.5 sm:py-2 text-[11px] sm:text-sm border border-gray-300 rounded-full hover:border-blue-600 transition-colors bg-white whitespace-nowrap max-w-[140px] sm:max-w-none"
                   >
-                    Sort {sortOption}
-                    <IconChevron size={10} />
+                    <span className="truncate">Sort {sortOption}</span>
+                    <IconChevron size={10} className="flex-shrink-0" />
                   </button>
                   {showSortDropdown && (
                     <>
