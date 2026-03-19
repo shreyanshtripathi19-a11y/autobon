@@ -151,8 +151,22 @@ const Header = () => {
 
             {/* Mobile: Burger */}
             <div className="flex sm:hidden items-center gap-2">
+              {isShopPage && (
+                <a
+                  href="/shop?view=favourites"
+                  className="relative p-2 text-gray-600"
+                  aria-label="View Favourites"
+                >
+                  <Heart size={22} className="text-gray-600" />
+                  {favCount > 0 && (
+                    <span className="absolute top-0 right-0 w-4 h-4 rounded-full bg-primary text-white text-[10px] font-bold flex items-center justify-center border-2 border-white box-content">
+                      {favCount}
+                    </span>
+                  )}
+                </a>
+              )}
               <button className="p-2" onClick={() => setIsOpen(true)}>
-                <Menu size={20} />
+                <Menu size={24} className="text-gray-800" />
               </button>
             </div>
           </div>

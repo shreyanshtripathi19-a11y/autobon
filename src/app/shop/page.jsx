@@ -285,7 +285,7 @@ export default function Home() {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
-      setLocationParam(params.get("location") || "Toronto");
+      setLocationParam(params.get("location") || "Toronto, Ontario");
       setViewParam(params.get("view") || "");
       
       // Footer model link: "Honda Civic" → make=Honda, model=Civic
@@ -323,23 +323,41 @@ export default function Home() {
     );
     autocomplete.addListener("place_changed", () => {
       const place = autocomplete.getPlace();
-      if (place?.address_components) {
-        const city = place.address_components.find((c) => c.types.includes("locality"))?.long_name || "";
-        const province = place.address_components.find((c) => c.types.includes("administrative_area_level_1"))?.short_name || "";
-        if (city) {
-          setLocationParam(city);
-          setShowLocationModal(false);
-          // Update URL without reload
-          const url = new URL(window.location.href);
-          url.searchParams.set("location", city);
-          window.history.pushState({}, "", url.toString());
-        }
+      if (place?.formatted_address || place?.name) {
+        const fullLocation = place.formatted_address || place.name;
+        setLocationParam(fullLocation);
+        setShowLocationModal(false);
+        const url = new URL(window.location.href);
+        url.searchParams.set("location", fullLocation);
+        window.history.pushState({}, "", url.toString());
       }
     });
   }, [showLocationModal]);
 
   const handleLocationSubmit = () => {
-    if (locationInput.trim()) {
+    if (!locationInput.trim()) return;
+    
+    // Validate with Google Places API to prevent garbage input
+    if (typeof window !== "undefined" && window.google?.maps?.places) {
+      const service = new window.google.maps.places.AutocompleteService();
+      service.getPlacePredictions(
+        { input: locationInput.trim(), types: ["(cities)"], componentRestrictions: { country: "ca" } },
+        (predictions, status) => {
+          if (status === window.google.maps.places.PlacesServiceStatus.OK && predictions && predictions.length > 0) {
+            const bestResult = predictions[0].description;
+            setLocationParam(bestResult);
+            setShowLocationModal(false);
+            const url = new URL(window.location.href);
+            url.searchParams.set("location", bestResult);
+            window.history.pushState({}, "", url.toString());
+          } else {
+            // Unrecognized location, maybe show error or just ignore
+            setLocationInput("");
+          }
+        }
+      );
+    } else {
+      // Fallback if API is not loaded
       setLocationParam(locationInput.trim());
       setShowLocationModal(false);
       const url = new URL(window.location.href);
@@ -386,9 +404,6 @@ export default function Home() {
       localStorage.setItem("savedCars", JSON.stringify(next));
       // Dispatch storage event so Header can pick up the change
       window.dispatchEvent(new Event("storage"));
-      // Show toast
-      setFavToast(isRemoving ? "Removed from favorites" : "Added to favorites ❤️");
-      setTimeout(() => setFavToast(""), 2000);
       return next;
     });
   }, []);
@@ -567,7 +582,11 @@ export default function Home() {
     // Favourites view: show only saved cars
     if (viewParam === "favourites" && !savedCars.includes(c.id)) return false;
     // Location filter from URL param
-    if (locationParam && c.location && !c.location.toLowerCase().includes(locationParam.toLowerCase())) return false;
+    if (locationParam && c.location) {
+      const paramCity = locationParam.split(',')[0].trim().toLowerCase();
+      const carCity = c.location.split(',')[0].trim().toLowerCase();
+      if (paramCity !== carCity) return false;
+    }
     if (selectedMake && c.make !== selectedMake) return false;
     if (fpMake !== "All Makes" && c.make !== fpMake) return false;
     if (fpModel !== "All Models" && !c.model.includes(fpModel)) return false;
@@ -1477,12 +1496,6 @@ export default function Home() {
           carTitle={selectedCar?.title || "this vehicle"}
         />
       </div>
-      {/* Favorites toast */}
-      {favToast && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999] bg-gray-900 text-white px-6 py-3 rounded-full shadow-lg text-sm font-medium animate-bounce-in">
-          {favToast}
-        </div>
-      )}
 
       {/* Location Picker Modal */}
       {showLocationModal && (
