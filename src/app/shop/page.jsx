@@ -324,7 +324,8 @@ export default function Home() {
     autocomplete.addListener("place_changed", () => {
       const place = autocomplete.getPlace();
       if (place?.formatted_address || place?.name) {
-        const fullLocation = place.formatted_address || place.name;
+        let fullLocation = place.formatted_address || place.name;
+        fullLocation = fullLocation.replace(', Canada', '');
         setLocationParam(fullLocation);
         setShowLocationModal(false);
         const url = new URL(window.location.href);
@@ -344,7 +345,8 @@ export default function Home() {
         { input: locationInput.trim(), types: ["(cities)"], componentRestrictions: { country: "ca" } },
         (predictions, status) => {
           if (status === window.google.maps.places.PlacesServiceStatus.OK && predictions && predictions.length > 0) {
-            const bestResult = predictions[0].description;
+            let bestResult = predictions[0].description;
+            bestResult = bestResult.replace(', Canada', '');
             setLocationParam(bestResult);
             setShowLocationModal(false);
             const url = new URL(window.location.href);
@@ -852,12 +854,14 @@ export default function Home() {
                 <div className="flex-1 min-w-0">
                   {viewParam === "favourites" ? (
                     <h1 className="text-[14px] sm:text-[18px] font-bold text-gray-900 flex text-left items-center gap-1.5 min-w-0">
+                      <svg className="w-4 h-4 sm:w-5 sm:h-5 text-gray-800 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
                       Your Favourites ({sortedCars.length})
                     </h1>
                   ) : (
-                    <div>
-                      <h1 className="text-[15px] sm:text-[18px] text-gray-800 flex text-left items-center gap-1 flex-wrap min-w-0">
-                        Used Cars for Sale in{" "}
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:gap-1.5">
+                      <h1 className="text-[15px] sm:text-[18px] text-gray-800 flex text-left items-center gap-1.5 flex-wrap min-w-0 font-medium">
+                        <svg className="w-4 h-4 sm:w-5 sm:h-5 text-gray-800 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                        <span>Used Cars for Sale in</span>
                         <button
                           onClick={() => setShowLocationModal(true)}
                           className="text-gray-900 underline underline-offset-2 decoration-1 hover:text-[#1a6adb] transition-colors cursor-pointer truncate"
@@ -865,8 +869,8 @@ export default function Home() {
                           {locationParam}
                         </button>
                       </h1>
-                      <div className="text-[14px] sm:text-[16px] font-bold text-gray-900 mt-1">
-                        {sortedCars.length.toLocaleString()} results
+                      <div className="text-[14px] sm:text-[18px] font-bold text-gray-900 mt-0.5 sm:mt-0">
+                        <span className="hidden sm:inline">: </span>{sortedCars.length.toLocaleString()} results
                       </div>
                     </div>
                   )}
