@@ -51,7 +51,7 @@ const Chatbot = () => {
         position: fixed;
         bottom: 20px;
         right: 20px;
-        z-index: 99998;
+        z-index: 90;
         width: 58px;
         height: 58px;
         border-radius: 50%;

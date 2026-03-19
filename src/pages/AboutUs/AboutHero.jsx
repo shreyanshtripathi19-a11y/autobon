@@ -7,9 +7,15 @@ const AboutHero = () => {
       {/* Blue diagonal background */}
       <div className="absolute inset-0 z-0">
         <div
-          className="absolute inset-0"
+          className="hidden lg:block absolute inset-0"
           style={{
             background: "linear-gradient(135deg, #1a6adb 0%, #1a6adb 55%, #f5f7fa 55%, #f5f7fa 100%)",
+          }}
+        />
+        <div
+          className="block lg:hidden absolute inset-0"
+          style={{
+            background: "linear-gradient(135deg, #1a6adb 0%, #1a6adb 75%, #f5f7fa 75%, #f5f7fa 100%)",
           }}
         />
       </div>
@@ -49,7 +55,7 @@ const AboutHero = () => {
           <div className="relative">
             <div className="rounded-2xl overflow-hidden shadow-2xl">
               <img
-                src="/who-we.jpg"
+                src="/our-story.jpg"
                 alt="Premium car interior"
                 className="w-full h-[300px] lg:h-[380px] object-cover"
               />
