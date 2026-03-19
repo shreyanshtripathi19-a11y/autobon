@@ -374,27 +374,27 @@ const MultiStepCarForm = () => {
     if (step === 15) {
       setSmsSending(true);
       try {
-        const { auth } = await import("@/lib/firebase");
-        const { RecaptchaVerifier, signInWithPhoneNumber } = await import("firebase/auth");
-        if (!auth) throw new Error("Auth not initialized");
-
-        // Create invisible reCAPTCHA
-        if (!recaptchaRef.current) {
-          recaptchaRef.current = new RecaptchaVerifier(auth, "recaptcha-container", {
-            size: "invisible",
-          });
-        }
-
         // Format phone number to E.164 (+1 for Canada/US)
         const digits = (formData.phoneNumber || "").replace(/\D/g, "");
         const phoneE164 = digits.length === 10 ? `+1${digits}` : `+${digits}`;
 
-        const result = await signInWithPhoneNumber(auth, phoneE164, recaptchaRef.current);
-        setConfirmationResult(result);
+        const res = await fetch("/api/verify/send-otp", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ phoneNumber: phoneE164 }),
+        });
+
+        if (!res.ok) {
+          const errorData = await res.json();
+          throw new Error(errorData.message || "Failed to send OTP");
+        }
+        
+        // Record that we successfully sent the sms so we know to verify it on step 16
+        setConfirmationResult(true); 
       } catch (err) {
         console.error("SMS send error:", err);
-        // Allow proceeding even if SMS fails (for development / testing)
-        setConfirmationResult(null);
+        // Allow proceeding even if SMS fails (for development / testing fallback)
+        setConfirmationResult(true); 
       } finally {
         setSmsSending(false);
       }
@@ -407,10 +407,21 @@ const MultiStepCarForm = () => {
 
     // Verify SMS code on step 16 before submitting
     if (step === totalSteps) {
-      // If we have a confirmationResult, verify the code
+      // Verify the code via Twilio backend
       if (confirmationResult) {
         try {
-          await confirmationResult.confirm(formData.verificationCode);
+          const digits = (formData.phoneNumber || "").replace(/\D/g, "");
+          const phoneE164 = digits.length === 10 ? `+1${digits}` : `+${digits}`;
+
+          const res = await fetch("/api/verify/check-otp", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ phoneNumber: phoneE164, code: formData.verificationCode }),
+          });
+
+          if (!res.ok) {
+            throw new Error("Invalid verification code");
+          }
         } catch (err) {
           setStepErrors({ verificationCode: "Invalid verification code. Please try again." });
           setValidationError("Invalid verification code");
