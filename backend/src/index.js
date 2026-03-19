@@ -16,6 +16,7 @@ const accountRoutes = require("./routes/accounts");
 const contactRoutes = require("./routes/contact");
 const formRoutes = require("./routes/forms");
 const reviewRoutes = require("./routes/reviews");
+const csvImportRoutes = require("./routes/csvImport");
 
 const app = express();
 const prisma = new PrismaClient();
@@ -103,6 +104,7 @@ app.use("/api/accounts", accountRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/forms", formRoutes);
 app.use("/api/reviews", reviewRoutes);
+app.use("/api/admin/csv-import", csvImportRoutes);
 
 // Health check
 app.get("/api/health", (req, res) => {

@@ -266,13 +266,8 @@ function PreQualifyForm() {
           {/* Selected Car Banner */}
           {selectedCar && (
             <div className="mb-4 border border-blue-200 rounded-2xl p-4 bg-blue-50/50 flex items-center gap-3">
-              <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                <svg className="w-5 h-5 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2" />
-                  <circle cx="7" cy="17" r="2" />
-                  <path d="M9 17h6" />
-                  <circle cx="17" cy="17" r="2" />
-                </svg>
+              <div className="w-14 h-10 bg-white rounded-md flex items-center justify-center flex-shrink-0 border border-blue-100 overflow-hidden">
+                <img src="/car-icon.jpeg" alt="Selected Vehicle" className="w-full h-full object-contain mix-blend-multiply" />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-[11px] font-semibold text-blue-600 uppercase tracking-wide">Selected Vehicle</p>

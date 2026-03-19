@@ -46,6 +46,10 @@ import {
   Plus,
   Star as StarIcon,
   ArrowUpDown,
+  Download,
+  FileUp,
+  AlertCircle,
+  CheckCircle2,
 } from "lucide-react";
 
 // ─── Reusable UI Components ────────────────────────────────────────────────────
@@ -505,6 +509,297 @@ function CarFormModal({ isOpen, onClose, onSaved, editCar }) {
   );
 }
 
+// ─── CSV Upload Modal ───────────────────────────────────────────────────────────
+
+const CSV_COLUMNS = [
+  "title", "year", "make", "model", "trim", "price", "mileage",
+  "fuelType", "transmission", "bodyType", "color", "condition",
+  "location", "description", "badge", "priceRating", "biWeekly",
+  "downPayment", "noAccident", "isVisible", "features",
+];
+
+function CsvUploadModal({ isOpen, onClose, onImported }) {
+  const [file, setFile] = React.useState(null);
+  const [preview, setPreview] = React.useState([]);
+  const [uploading, setUploading] = React.useState(false);
+  const [result, setResult] = React.useState(null);
+  const [error, setError] = React.useState("");
+  const [dragOver, setDragOver] = React.useState(false);
+  const fileInputRef = React.useRef(null);
+
+  React.useEffect(() => {
+    if (isOpen) {
+      setFile(null);
+      setPreview([]);
+      setResult(null);
+      setError("");
+      setDragOver(false);
+    }
+  }, [isOpen]);
+
+  const parseCSVPreview = (text) => {
+    const lines = text.split(/\r?\n/).filter(Boolean);
+    if (lines.length < 2) return [];
+    const headers = lines[0].split(",").map((h) => h.trim().replace(/^"|"$/g, ""));
+    return lines.slice(1, 6).map((line) => {
+      const values = line.match(/("[^"]*"|[^,]*)/g) || [];
+      const row = {};
+      headers.forEach((h, i) => {
+        row[h] = (values[i] || "").trim().replace(/^"|"$/g, "");
+      });
+      return row;
+    });
+  };
+
+  const handleFileSelect = (f) => {
+    if (!f) return;
+    if (!f.name.endsWith(".csv")) {
+      setError("Please select a CSV file");
+      return;
+    }
+    setError("");
+    setResult(null);
+    setFile(f);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const rows = parseCSVPreview(e.target.result);
+        setPreview(rows);
+      } catch {
+        setPreview([]);
+      }
+    };
+    reader.readAsText(f);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setDragOver(false);
+    const f = e.dataTransfer.files?.[0];
+    handleFileSelect(f);
+  };
+
+  const handleUpload = async () => {
+    if (!file) return;
+    setUploading(true);
+    setError("");
+    setResult(null);
+    try {
+      const formData = new FormData();
+      formData.append("csvFile", file);
+      const res = await fetch("/api/admin/csv-import", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Import failed");
+      setResult(data);
+      if (data.imported > 0) onImported();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const downloadSampleCSV = () => {
+    const sampleRows = [
+      CSV_COLUMNS.join(","),
+      '"2024 Toyota Camry XLE",2024,Toyota,Camry,XLE,35999,"15,000 km",Gasoline,Automatic,Sedan,White,Used,"Toronto, ON","Well maintained vehicle",Featured,Great Price,$299,$0 down,true,true,"Sunroof|AWD|Heated Seats"',
+      ',2023,Honda,Civic,,28500,"22,000 km",Gasoline,CVT,Sedan,Black,Used,"Vancouver, BC",,,,,,true,false,',
+    ];
+    const blob = new Blob([sampleRows.join("\n")], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "autobon_cars_template.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  if (!isOpen) return null;
+
+  const previewHeaders = preview.length > 0 ? Object.keys(preview[0]) : [];
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+      <div className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-xl bg-white shadow-2xl mx-4">
+        <div className="sticky top-0 bg-white z-10 flex items-center justify-between border-b p-5">
+          <div>
+            <h2 className="text-xl font-bold text-gray-900">Import Cars from CSV</h2>
+            <p className="text-sm text-gray-500 mt-0.5">Bulk upload car listings from a CSV file</p>
+          </div>
+          <button onClick={onClose} className="rounded-full p-2 hover:bg-gray-100">
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        <div className="p-5 space-y-5">
+          {/* Download Template */}
+          <div className="flex items-center justify-between bg-blue-50 rounded-lg p-4 border border-blue-200">
+            <div className="flex items-center gap-3">
+              <FileText className="h-5 w-5 text-blue-600" />
+              <div>
+                <p className="text-sm font-semibold text-gray-800">Need a template?</p>
+                <p className="text-xs text-gray-500">Download a sample CSV with all column headers</p>
+              </div>
+            </div>
+            <button
+              onClick={downloadSampleCSV}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white border border-blue-300 text-blue-700 text-sm font-medium hover:bg-blue-50 transition-colors"
+            >
+              <Download className="h-3.5 w-3.5" /> Download
+            </button>
+          </div>
+
+          {/* Drop Zone */}
+          {!result && (
+            <div
+              onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+              onDragLeave={() => setDragOver(false)}
+              onDrop={handleDrop}
+              onClick={() => fileInputRef.current?.click()}
+              className={`border-2 border-dashed rounded-xl p-10 text-center cursor-pointer transition-all ${
+                dragOver
+                  ? "border-blue-500 bg-blue-50"
+                  : file
+                    ? "border-green-400 bg-green-50"
+                    : "border-gray-300 hover:border-blue-400 hover:bg-gray-50"
+              }`}
+            >
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".csv"
+                className="hidden"
+                onChange={(e) => handleFileSelect(e.target.files?.[0])}
+              />
+              {file ? (
+                <div className="flex items-center justify-center gap-3">
+                  <CheckCircle2 className="h-8 w-8 text-green-500" />
+                  <div className="text-left">
+                    <p className="font-semibold text-green-800">{file.name}</p>
+                    <p className="text-xs text-green-600">{(file.size / 1024).toFixed(1)} KB — Click or drag to replace</p>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <FileUp className="h-10 w-10 text-gray-400 mx-auto mb-3" />
+                  <p className="font-semibold text-gray-700">Drop your CSV file here</p>
+                  <p className="text-sm text-gray-400 mt-1">or click to browse</p>
+                </>
+              )}
+            </div>
+          )}
+
+          {/* Error */}
+          {error && (
+            <div className="flex items-start gap-3 bg-red-50 rounded-lg p-4 border border-red-200">
+              <AlertCircle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-semibold text-red-800">Import Error</p>
+                <p className="text-sm text-red-600 mt-0.5">{error}</p>
+              </div>
+            </div>
+          )}
+
+          {/* Preview Table */}
+          {preview.length > 0 && !result && (
+            <div>
+              <p className="text-sm font-semibold text-gray-700 mb-2">Preview (first {preview.length} rows)</p>
+              <div className="border rounded-lg overflow-x-auto max-h-[200px]">
+                <table className="min-w-full text-xs">
+                  <thead className="bg-gray-50 sticky top-0">
+                    <tr>
+                      {previewHeaders.map((h) => (
+                        <th key={h} className="px-3 py-2 text-left font-semibold text-gray-600 whitespace-nowrap border-b">{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y">
+                    {preview.map((row, i) => (
+                      <tr key={i} className="hover:bg-gray-50">
+                        {previewHeaders.map((h) => (
+                          <td key={h} className="px-3 py-2 whitespace-nowrap text-gray-700 max-w-[180px] truncate">{row[h] || "—"}</td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* Result */}
+          {result && (
+            <div className="space-y-4">
+              <div className="flex items-start gap-3 bg-green-50 rounded-lg p-4 border border-green-200">
+                <CheckCircle2 className="h-6 w-6 text-green-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-base font-bold text-green-800">Import Complete!</p>
+                  <p className="text-sm text-green-700 mt-1">{result.message}</p>
+                  <div className="flex gap-4 mt-3">
+                    <div className="bg-white rounded-md px-3 py-2 border border-green-200">
+                      <p className="text-lg font-bold text-green-700">{result.imported}</p>
+                      <p className="text-xs text-gray-500">Imported</p>
+                    </div>
+                    <div className="bg-white rounded-md px-3 py-2 border border-green-200">
+                      <p className="text-lg font-bold text-amber-600">{result.skipped}</p>
+                      <p className="text-xs text-gray-500">Skipped</p>
+                    </div>
+                    <div className="bg-white rounded-md px-3 py-2 border border-green-200">
+                      <p className="text-lg font-bold text-gray-700">{result.total}</p>
+                      <p className="text-xs text-gray-500">Total Rows</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {result.errors?.length > 0 && (
+                <div className="bg-amber-50 rounded-lg p-4 border border-amber-200">
+                  <p className="text-sm font-semibold text-amber-800 mb-2">⚠️ Skipped Rows</p>
+                  <div className="max-h-[150px] overflow-y-auto space-y-1">
+                    {result.errors.map((err, i) => (
+                      <p key={i} className="text-xs text-amber-700">
+                        <strong>Row {err.row}:</strong> {err.reason}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <p className="text-xs text-gray-400">
+                💡 Imported cars are set to <strong>Hidden</strong> by default. Go to Listings to add images and make them visible.
+              </p>
+            </div>
+          )}
+
+          {/* Actions */}
+          <div className="flex gap-3 pt-2">
+            <Button type="button" variant="outline" onClick={onClose} className="flex-1">
+              {result ? "Close" : "Cancel"}
+            </Button>
+            {!result && (
+              <Button
+                type="button"
+                disabled={!file || uploading}
+                onClick={handleUpload}
+                className="flex-1 gap-2"
+              >
+                {uploading ? (
+                  <><div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" /> Importing...</>
+                ) : (
+                  <><Upload className="h-4 w-4" /> Import Cars</>
+                )}
+              </Button>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Delete Confirmation Modal ─────────────────────────────────────────────────
 
 function DeleteModal({ isOpen, onClose, onConfirm, carTitle, loading }) {
@@ -543,6 +838,7 @@ export default function DashboardPage() {
   const [showCarForm, setShowCarForm] = React.useState(false);
   const [editingCar, setEditingCar] = React.useState(null);
   const [deleteTarget, setDeleteTarget] = React.useState(null);
+  const [showCsvUpload, setShowCsvUpload] = React.useState(false);
   const [deleteLoading, setDeleteLoading] = React.useState(false);
 
   // Auth guard
@@ -991,9 +1287,14 @@ export default function DashboardPage() {
                   <h1 className="text-3xl font-bold tracking-tight text-gray-900">Car Listings</h1>
                   <p className="text-gray-500">{cars.length} total listings</p>
                 </div>
-                <Button className="gap-2" onClick={() => { setEditingCar(null); setShowCarForm(true); }}>
-                  <Plus className="h-4 w-4" /> Add New Listing
-                </Button>
+                <div className="flex gap-3">
+                  <Button variant="outline" className="gap-2" onClick={() => setShowCsvUpload(true)}>
+                    <Upload className="h-4 w-4" /> Import CSV
+                  </Button>
+                  <Button className="gap-2" onClick={() => { setEditingCar(null); setShowCarForm(true); }}>
+                    <Plus className="h-4 w-4" /> Add New Listing
+                  </Button>
+                </div>
               </div>
 
               {loadingCars ? (
@@ -1578,6 +1879,11 @@ export default function DashboardPage() {
           onConfirm={handleDelete}
           carTitle={deleteTarget?.title}
           loading={deleteLoading}
+        />
+        <CsvUploadModal
+          isOpen={showCsvUpload}
+          onClose={() => setShowCsvUpload(false)}
+          onImported={() => { fetchCars(); fetchStats(); }}
         />
       </SidebarInset>
     </SidebarProvider>
