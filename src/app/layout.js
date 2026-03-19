@@ -18,16 +18,16 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   metadataBase: new URL('https://autobon.ca'),
-  title: "Autobon",
-  description: "Best Dealership to Buy, Sell or Trade Used Cars",
+  title: "Autobon | The Best Place To Purchase A Car",
+  description: "Discover the best dealership to buy, sell, or trade used cars. Get instant approvals, browse top-quality vehicles, and enjoy a seamless experience at Autobon.",
   openGraph: {
-    title: "Autobon",
-    description: "Best Dealership to Buy, Sell or Trade Used Cars",
+    title: "Autobon | The Best Place To Purchase A Car",
+    description: "Discover the best dealership to buy, sell, or trade used cars. Get instant approvals, browse top-quality vehicles, and enjoy a seamless experience at Autobon.",
     url: "https://autobon.ca",
     siteName: "Autobon",
     images: [
       {
-        url: "/deals-pic.jpg",
+        url: "/og-image.jpg",
         width: 1200,
         height: 630,
         alt: "Autobon Cover Image",
@@ -38,9 +38,9 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Autobon",
-    description: "Best Dealership to Buy, Sell or Trade Used Cars",
-    images: ["/deals-pic.jpg"],
+    title: "Autobon | The Best Place To Purchase A Car",
+    description: "Discover the best dealership to buy, sell, or trade used cars. Get instant approvals, browse top-quality vehicles, and enjoy a seamless experience at Autobon.",
+    images: ["/og-image.jpg"],
   },
   icons: {
     icon: "/favicon.jpeg",
