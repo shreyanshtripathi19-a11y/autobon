@@ -1,5 +1,5 @@
 import { initializeApp, getApps } from "firebase/app";
-import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import { getAuth, GoogleAuthProvider, FacebookAuthProvider } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
@@ -16,14 +16,16 @@ const firebaseConfig = {
 let app;
 let auth;
 let googleProvider;
+let facebookProvider;
 let storage;
 
 if (typeof window !== "undefined") {
   app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
   auth = getAuth(app);
   googleProvider = new GoogleAuthProvider();
+  facebookProvider = new FacebookAuthProvider();
   storage = getStorage(app);
 }
 
-export { auth, googleProvider, storage };
+export { auth, googleProvider, facebookProvider, storage };
 export default app;

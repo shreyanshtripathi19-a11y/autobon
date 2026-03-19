@@ -20,7 +20,7 @@ const formSchema = z.object({
 
 const SignUpPage = () => {
   const router = useRouter();
-  const { register: registerUser, loginWithGoogle } = useAuth();
+  const { register: registerUser, loginWithGoogle, loginWithFacebook } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -60,6 +60,24 @@ const SignUpPage = () => {
     setError(null);
     try {
       await loginWithGoogle();
+      toast.success("Registration successful!");
+      setTimeout(() => {
+        router.push("/dashboard");
+      }, 500);
+    } catch (err) {
+      const message = getFirebaseErrorMessage(err.code);
+      setError(message);
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleFacebookSignUp = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      await loginWithFacebook();
       toast.success("Registration successful!");
       setTimeout(() => {
         router.push("/dashboard");
@@ -119,6 +137,7 @@ const SignUpPage = () => {
 
               <button
                 type="button"
+                onClick={handleFacebookSignUp}
                 disabled={loading}
                 className="w-full flex items-center justify-center gap-3 px-4 py-2.5 border border-gray-300 rounded-md bg-[#1877F2] hover:bg-[#166FE5] transition-colors font-medium text-sm text-white disabled:opacity-50"
               >

@@ -9,7 +9,7 @@ import {
   signInWithPopup,
   updateProfile,
 } from "firebase/auth";
-import { auth, googleProvider } from "@/lib/firebase";
+import { auth, googleProvider, facebookProvider } from "@/lib/firebase";
 
 const AuthContext = createContext(null);
 
@@ -144,6 +144,12 @@ export function AuthProvider({ children }) {
     return result.user;
   }, []);
 
+  const loginWithFacebook = useCallback(async () => {
+    if (!auth || !facebookProvider) throw new Error("Auth not initialized");
+    const result = await signInWithPopup(auth, facebookProvider);
+    return result.user;
+  }, []);
+
   const setUserData = useCallback((userData) => {
     setUser(userData);
     localStorage.setItem("user", JSON.stringify(userData));
@@ -157,7 +163,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, loginWithGoogle, logout, setUserData }}>
+    <AuthContext.Provider value={{ user, loading, login, register, loginWithGoogle, loginWithFacebook, logout, setUserData }}>
       {children}
     </AuthContext.Provider>
   );
