@@ -133,3 +133,7 @@ button {
   }
 }
 
+/* Fix Google Maps Autocomplete dropdown z-index to appear above modals */
+.pac-container {
+  z-index: 100005 !important;
+}
