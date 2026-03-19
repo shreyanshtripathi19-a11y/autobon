@@ -859,9 +859,9 @@ export default function Home() {
                     </h1>
                   ) : (
                     <div className="flex flex-col sm:flex-row sm:items-center sm:gap-1.5">
-                      <h1 className="text-[15px] sm:text-[18px] text-gray-800 flex text-left items-center gap-1.5 flex-wrap min-w-0 font-medium">
+                      <h1 className="text-[13px] sm:text-[18px] text-gray-800 flex text-left items-center gap-1 sm:gap-1.5 flex-nowrap min-w-0 font-medium overflow-hidden">
                         <svg className="w-4 h-4 sm:w-5 sm:h-5 text-gray-800 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-                        <span>Used Cars for Sale in</span>
+                        <span className="shrink-0 whitespace-nowrap">Used Cars for Sale in</span>
                         <button
                           onClick={() => setShowLocationModal(true)}
                           className="text-gray-900 underline underline-offset-2 decoration-1 hover:text-[#1a6adb] transition-colors cursor-pointer truncate"
