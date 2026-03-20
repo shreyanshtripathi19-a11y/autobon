@@ -924,7 +924,7 @@ export default function Home() {
                     onKeyDown={(e) => e.key === "Enter" && setSelectedCar(car)}
                   >
                     {/* Card Image */}
-                    <div className="relative w-full bg-white overflow-hidden group/card" style={{ aspectRatio: "356/225", borderBottom: "0.65px solid #E3E3E3" }}>
+                    <div className="relative w-full bg-white overflow-hidden group/card" style={{ aspectRatio: "577/433", borderBottom: "0.65px solid #E3E3E3" }}>
                       {car.noAccident && (
                         <div className="absolute top-2 left-2 z-10 flex items-center gap-1 text-[10px] sm:text-[10px] font-semibold italic text-[#199121]">
                           <IconCheck className="w-4 h-4" />
@@ -1010,7 +1010,7 @@ export default function Home() {
                   <img
                     src={getCarImages(selectedCar)[detailImageIndex % getCarImages(selectedCar).length]}
                     alt={selectedCar.title}
-                    className="w-full h-[280px] object-cover transition-opacity duration-300"
+                    className="w-full aspect-[577/433] object-cover transition-opacity duration-300"
                   />
                   <button
                     className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 bg-[#1a6adb] hover:bg-[#1558b4] rounded-full flex items-center justify-center shadow-md transition-colors duration-200"
@@ -1180,7 +1180,7 @@ export default function Home() {
                 <img
                   src={getCarImages(selectedCar)[mobileDetailImageIndex % getCarImages(selectedCar).length]}
                   alt={selectedCar.title}
-                  className="w-full h-[280px] object-cover transition-opacity duration-300"
+                  className="w-full aspect-[577/433] object-cover transition-opacity duration-300"
                 />
                 <button
                   className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 bg-[#1a6adb] hover:bg-[#1558b4] rounded-full flex items-center justify-center shadow-md transition-colors"

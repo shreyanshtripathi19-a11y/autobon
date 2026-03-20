@@ -445,8 +445,8 @@ const CarCard = ({ car }) => {
   const router = useRouter();
   return (
     <div className="group bg-white rounded-[15px] w-full border border-gray-100 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col h-full">
-      {/* IMAGE SECTION - FIXED TO SUPPORT 433x577 PORTRAIT IMAGES */}
-      <div className="relative aspect-[3/4] bg-gray-100 shrink-0 overflow-hidden">
+      {/* IMAGE SECTION - FIXED TO SUPPORT 577x433 LANDSCAPE IMAGES */}
+      <div className="relative aspect-[577/433] bg-gray-100 shrink-0 overflow-hidden">
         <img
           src={car.img}
           alt={`${car.make} ${car.model}`}
