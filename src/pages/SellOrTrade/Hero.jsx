@@ -66,24 +66,27 @@ const Hero = () => {
       <div className="w-full max-w-[1200px] mx-auto flex flex-col lg:flex-row items-center justify-between px-5 gap-4 lg:gap-12">
         {/* LEFT SIDE: Text + Image */}
         <div className="flex pt-5 md:pt-5 flex-col w-full lg:w-[55%] gap-6 items-center lg:items-start text-center lg:text-left">
-          <div className="flex flex-col gap-3 relative w-full">
-            <div className="absolute xs:-top-24 smg:-top-32 -top-28 xs:right-[20vw] right-[24vw] md:-top-34 smg:right-[110px] md:right-[160px] flex flex-col items-center sm:items-start lg:items-start pointer-events-none z-10 scale-[0.75] sm:scale-90 lg:scale-100 origin-right">
-              <img
-                src={textImage.src}
-                alt="Decorative Text"
-                className="xs:w-36 smg:w-48 sm:w-30 md:w-45 h-auto mb-1 relative rotate-[0deg] md:-rotate-[0deg] left-[120px] xs:left-[120px] sm:left-[70px] md:left-[130px] top-[60px] xs:top-[60px] smg:top-[60px]  smg:left-[140px] sm:top-[50px] md:top-[70px]"
-              />
-              <img
-                src={arrowImage.src}
-                alt="Arrow"
-                className="w-25 xs:w-[100px] smg:w-[120px] sm:w-[60px] md:w-[140px] h-auto rotate-[0deg] lg:rotate-[0deg]"
-              />
-            </div>
-            <h1 className="text-[40px] sm:text-[55px] lg:text-[65px] text-start font-semibold text-black leading-tight">
-              Any Car,
+          <div className="flex flex-col gap-3 w-full">
+            <h1 className="text-[40px] md:text-[55px] lg:text-[65px] text-start font-semibold text-black leading-tight">
+              <span className="relative inline-block">
+                Any Car,
+                {/* Arrow + "We Buy" anchored to "Any Car," text */}
+                <span className="absolute pointer-events-none z-10 flex flex-col items-start" style={{ bottom: '50%', left: '80%' }}>
+                  <img
+                    src={textImage.src}
+                    alt="We Buy"
+                    className="w-[130px] md:w-[170px] lg:w-[200px] h-auto ml-[15px] md:ml-[25px] lg:ml-[40px]"
+                  />
+                  <img
+                    src={arrowImage.src}
+                    alt="Arrow"
+                    className="w-[90px] md:w-[110px] lg:w-[140px] h-auto mt-[-4px]"
+                  />
+                </span>
+              </span>
               <br /> Any Where
             </h1>
-            <p className="text-[#7B7B7B] text-start w-full text-[16px] sm:text-[18px] max-w-[500px]">
+            <p className="text-[#7B7B7B] text-start w-full text-[16px] md:text-[18px] max-w-[500px]">
               Get an instant price for your car!
             </p>
           </div>

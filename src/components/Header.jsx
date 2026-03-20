@@ -66,7 +66,7 @@ const Header = () => {
         {showBanner && !isCarDetailPage && !isDashboard && (
           <div className="w-full bg-primary">
             <div className="max-w-custom mx-auto flex items-center justify-center py-[16px] px-[20px] relative">
-              <p className="text-[16px] sm:text-[18px] text-white font-medium text-center">
+              <p className="text-[16px] md:text-[18px] text-white font-medium text-center">
                 <a href="/pre-qualify" className="font-medium underline">The BEST car</a>
                 &nbsp; deals in Canada.
               </p>
@@ -83,7 +83,7 @@ const Header = () => {
               <img src="/logo.png" alt="Autobon Logo" width={320} height={60} className="object-contain w-[100px] h-[40px] md:w-[160px] md:h-[40px]" />
             </a>
 
-            <nav className="hidden sm:block">
+            <nav className="hidden md:block">
               <ul className="flex cursor-pointer gap-[40px] text-nowrap text-[16px] text-black justify-center items-center">
                 {navLinks.map((link) => (
                   <li key={link.name}>
@@ -94,7 +94,7 @@ const Header = () => {
             </nav>
 
             {/* Desktop Right: Favourites (only on shop) + Auth */}
-            <div className="hidden sm:flex items-center gap-4">
+            <div className="hidden md:flex items-center gap-4">
               {isCheckoutPage && (
                 <div className="flex items-center gap-2 text-primary px-4 py-2">
                   <Timer size={23} className="animate-pulse" />
@@ -150,7 +150,7 @@ const Header = () => {
             </div>
 
             {/* Mobile: Burger */}
-            <div className="flex sm:hidden items-center gap-2">
+            <div className="flex md:hidden items-center gap-2">
               {isShopPage && (
                 <a
                   href="/shop?view=favourites"
@@ -171,12 +171,12 @@ const Header = () => {
             </div>
           </div>
 
-          <div className={`fixed inset-0 bg-black/50 transition-opacity duration-300 sm:hidden z-[1] ${isOpen ? "opacity-100 visible" : "opacity-0 invisible"}`} onClick={() => setIsOpen(false)} />
+          <div className={`fixed inset-0 bg-black/50 transition-opacity duration-300 md:hidden z-[1] ${isOpen ? "opacity-100 visible" : "opacity-0 invisible"}`} onClick={() => setIsOpen(false)} />
 
-          <div className={`fixed top-0 right-0 h-full w-[320px] bg-white z-[120000] shadow-2xl transform transition-transform duration-300 ease-in-out sm:hidden flex flex-col ${isOpen ? "translate-x-0" : "translate-x-full"}`}>
+          <div className={`fixed top-0 right-0 h-full w-[320px] bg-white z-[120000] shadow-2xl transform transition-transform duration-300 ease-in-out md:hidden flex flex-col ${isOpen ? "translate-x-0" : "translate-x-full"}`}>
             <div className="flex items-center justify-between p-5 border-b border-gray-100">
               <div className="flex items-center gap-3">
-                <img src="/logo.png" alt="Autobon Logo" width={220} height={40} className="object-contain w-[80px] h-[30px] sm:w-[220px] sm:h-[40px]" />
+                <img src="/logo.png" alt="Autobon Logo" width={220} height={40} className="object-contain w-[80px] h-[30px] md:w-[220px] md:h-[40px]" />
                 {isCheckoutPage && (
                   <div className="flex items-center gap-1 text-primary px-3 py-1">
                     <Timer size={14} className="animate-pulse" />
@@ -235,7 +235,7 @@ const Header = () => {
         </header>
       </div>
       {showBanner && !isCarDetailPage && !isDashboard ? (
-        <div className="h-[104px] sm:h-[108px] md:h-[124px]" />
+        <div className="h-[104px] md:h-[124px]" />
       ) : (
         <div className="h-[50px] md:h-[70px]" />
       )}
