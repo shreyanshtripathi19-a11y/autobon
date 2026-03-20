@@ -1,4 +1,0 @@
-rembg[cpu]
-Pillow
-firebase-admin
-requests
