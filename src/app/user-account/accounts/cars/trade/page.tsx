@@ -51,7 +51,8 @@ const formSchema = z.object({
   agreeToTerms: z.boolean().refine((val) => val === true, {
     message: "You must agree to the terms and conditions",
   }),
-  verificationCode: z.string(),
+  phoneNumber: z.string().min(10, "Please enter a valid phone number"),
+  verificationCode: z.string().min(4, "Please enter the verification code"),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -128,6 +129,12 @@ export default function CarTradePage() {
   const [formData, setFormData] = useState<Partial<FormData>>({});
   const router = useRouter();
 
+  // OTP state
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpSending, setOtpSending] = useState(false);
+  const [otpError, setOtpError] = useState("");
+  const [otpVerifyError, setOtpVerifyError] = useState("");
+
   const {
     register,
     handleSubmit,
@@ -144,7 +151,54 @@ export default function CarTradePage() {
 
   const selectedVehicleType = watch("vehicleType");
 
-  const processForm = (data: FormData) => {
+  // Send OTP via Twilio
+  const sendOtp = async () => {
+    const phone = watch("phoneNumber") || "";
+    const digitsOnly = phone.replace(/\D/g, "");
+    if (digitsOnly.length < 10) {
+      setOtpError("Please enter a valid phone number");
+      return;
+    }
+    setOtpSending(true);
+    setOtpError("");
+    try {
+      const phoneE164 = digitsOnly.length === 10 ? `+1${digitsOnly}` : `+${digitsOnly}`;
+      const res = await fetch("/api/verify/send-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phoneNumber: phoneE164 }),
+      });
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Failed to send OTP");
+      }
+      setOtpSent(true);
+    } catch (err: any) {
+      setOtpError(err.message || "Failed to send verification code");
+    } finally {
+      setOtpSending(false);
+    }
+  };
+
+  const processForm = async (data: FormData) => {
+    // Verify OTP before submitting
+    setOtpVerifyError("");
+    try {
+      const digitsOnly = (data.phoneNumber || "").replace(/\D/g, "");
+      const phoneE164 = digitsOnly.length === 10 ? `+1${digitsOnly}` : `+${digitsOnly}`;
+      const res = await fetch("/api/verify/check-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phoneNumber: phoneE164, code: data.verificationCode }),
+      });
+      if (!res.ok) {
+        setOtpVerifyError("Invalid verification code. Please try again.");
+        return;
+      }
+    } catch (err) {
+      setOtpVerifyError("Failed to verify code. Please try again.");
+      return;
+    }
     console.log("Form Data:", data);
     setFormData(data);
     router.push("/user-account/accounts/cars");
@@ -654,19 +708,70 @@ export default function CarTradePage() {
                     </div>
                   )}
                   {currentStep === 13 && (
-                    <div>
-                      <p className="mb-2">{steps[currentStep].description1}</p>
+                    <div className="space-y-4">
+                      <p className="mb-2 font-medium">{steps[currentStep].description1}</p>
                       <p className="mb-4 text-sm text-gray-500">
                         {steps[currentStep].description2}
                       </p>
-                      <Input
-                        placeholder="Verification Code"
-                        {...register("verificationCode")}
-                      />
+
+                      {/* Phone Number Input */}
+                      <div>
+                        <Label className="text-xs uppercase font-bold text-gray-400 mb-1.5 block">Phone Number</Label>
+                        <div className="flex gap-2">
+                          <Input
+                            placeholder="+1 (XXX) XXX-XXXX"
+                            {...register("phoneNumber")}
+                            className="flex-1"
+                          />
+                          <button
+                            type="button"
+                            onClick={sendOtp}
+                            disabled={otpSending || otpSent}
+                            className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-none hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                          >
+                            {otpSending ? "Sending..." : otpSent ? "Code Sent" : "Send Code"}
+                          </button>
+                        </div>
+                        {errors.phoneNumber && (
+                          <p className="text-sm text-red-500 mt-1">{errors.phoneNumber.message}</p>
+                        )}
+                        {otpError && (
+                          <p className="text-sm text-red-500 mt-1">{otpError}</p>
+                        )}
+                        {otpSent && (
+                          <p className="text-sm text-green-600 mt-1">Verification code sent to your phone!</p>
+                        )}
+                      </div>
+
+                      {/* Verification Code Input - shows after OTP sent */}
+                      {otpSent && (
+                        <div>
+                          <Label className="text-xs uppercase font-bold text-gray-400 mb-1.5 block">Verification Code</Label>
+                          <Input
+                            placeholder="Enter 6-digit code"
+                            maxLength={6}
+                            {...register("verificationCode")}
+                          />
+                          {errors.verificationCode && (
+                            <p className="text-sm text-red-500 mt-1">{errors.verificationCode.message}</p>
+                          )}
+                          {otpVerifyError && (
+                            <p className="text-sm text-red-500 mt-1">{otpVerifyError}</p>
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => { setOtpSent(false); setOtpError(""); }}
+                            className="text-blue-600 text-xs mt-2 underline hover:text-blue-800"
+                          >
+                            Resend code
+                          </button>
+                        </div>
+                      )}
+
                       <p className="mt-4 text-xs text-gray-500">
-                        By clicking “Submit” I agree to Canada Drives Membership
-                        Rules,General Terms of Service and Privacy Policy. I
-                        give my consent to Canada Drives, car dealers and
+                        By clicking &ldquo;Submit&rdquo; I agree to Autobon&apos;s Membership
+                        Rules, General Terms of Service and Privacy Policy. I
+                        give my consent to Autobon, car dealers and
                         lenders obtaining credit reports about me to facilitate
                         my application for a car loan.
                       </p>
