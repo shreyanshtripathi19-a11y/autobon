@@ -111,8 +111,8 @@ const Hero = () => {
                 type="button"
                 onClick={() => setActiveTab("details")}
                 className={`flex-1 text-[12px] lg:text-[14px] px-4 py-2 rounded-full font-bold transition-all ${activeTab === "details"
-                    ? "bg-primary text-white shadow-sm"
-                    : "text-gray-500 hover:text-black"
+                  ? "bg-primary text-white shadow-sm"
+                  : "text-gray-500 hover:text-black"
                   }`}
               >
                 Details
@@ -121,8 +121,8 @@ const Hero = () => {
                 type="button"
                 onClick={() => setActiveTab("vin")}
                 className={`flex-1 text-[12px] lg:text-[14px] px-4 py-2 rounded-full font-bold transition-all ${activeTab === "vin"
-                    ? "bg-primary text-white shadow-sm"
-                    : "text-gray-500 hover:text-black"
+                  ? "bg-primary text-white shadow-sm"
+                  : "text-gray-500 hover:text-black"
                   }`}
               >
                 VIN

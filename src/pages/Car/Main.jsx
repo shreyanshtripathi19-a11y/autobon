@@ -47,7 +47,7 @@ const Main = () => {
     const element = document.getElementById(targetId);
 
     if (element) {
-      const yOffset = -100; // Adjust based on your sticky header height
+      const yOffset = -120; // Clears 70px header + padding
       const y =
         element.getBoundingClientRect().top + window.pageYOffset + yOffset;
       window.scrollTo({ top: y, behavior: "smooth" });
@@ -58,7 +58,7 @@ const Main = () => {
   const thumbnails = [car1, car2, car3];
 
   return (
-    <div id="photos" className="w-full pb-10 px-4 lg:px-0 scroll-mt-20">
+    <div id="photos" className="w-full pb-10 px-4 lg:px-0 scroll-mt-28">
       {" "}
       {/* Added ID for first tab */}
       <div className="mx-auto max-w-[1200px]">
@@ -193,7 +193,7 @@ const Main = () => {
                 </div>
               </div>
             </div>
-            <div id="price" className="flex flex-col gap-1 scroll-mt-20">
+            <div id="price" className="flex flex-col gap-1 scroll-mt-28">
               {" "}
               {/* Added ID for Price tab */}
               <div className="flex items-baseline gap-2 sm:gap-3">

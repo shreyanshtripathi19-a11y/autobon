@@ -36,7 +36,7 @@ const HistoryAndInspection = () => {
   ];
 
   return (
-    <div id="history-inspection" className="w-full px-4 md:px-0 mt-4 sm:mt-6 font-sans">
+    <div id="history-inspection" className="w-full px-4 md:px-0 mt-4 sm:mt-6 font-sans scroll-mt-28">
       <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-[#272727] text-center mb-6 sm:mb-12">
         History and inspection
       </h2>

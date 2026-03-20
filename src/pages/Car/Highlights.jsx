@@ -43,7 +43,7 @@ const Highlights = () => {
   return (
     <div
       id="overview"
-      className="w-full rounded-[14px] p-4 md:p-8 mt-0 font-sans"
+      className="w-full rounded-[14px] p-4 md:p-8 mt-0 font-sans scroll-mt-28"
     >
       {/* HEADER SECTION */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 sm:mb-6 gap-2">

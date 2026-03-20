@@ -11,7 +11,7 @@ import React from "react";
 
 const page = () => {
   return (
-    <div className="min-h-screen py-4 sm:py-[40px] w-full flex flex-col bg-background overflow-x-hidden">
+    <div className="min-h-screen pt-[70px] sm:pt-[100px] pb-4 sm:pb-[40px] w-full flex flex-col bg-background overflow-x-hidden">
       <SectionWrapper>
         <Main />
         <Highlights />
