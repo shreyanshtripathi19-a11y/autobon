@@ -389,12 +389,16 @@ const MultiStepCarForm = () => {
           throw new Error(errorData.message || "Failed to send OTP");
         }
         
-        // Record that we successfully sent the sms so we know to verify it on step 16
-        setConfirmationResult(true); 
+        // OTP sent successfully
+        setConfirmationResult(true);
+        alert("✅ Verification code sent! Please check your phone for the SMS code.");
       } catch (err) {
         console.error("SMS send error:", err);
-        // Allow proceeding even if SMS fails (for development / testing fallback)
-        setConfirmationResult(true); 
+        // Show error and do NOT proceed
+        setValidationError("Failed to send verification code. Please check your phone number and try again.");
+        alert("❌ Failed to send verification code: " + (err.message || "Please try again."));
+        setSmsSending(false);
+        return;
       } finally {
         setSmsSending(false);
       }
