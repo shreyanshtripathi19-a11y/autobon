@@ -1,0 +1,6 @@
+venv/
+temp_images/
+processed_images/
+firebase-key.json
+__pycache__/
+*.pyc

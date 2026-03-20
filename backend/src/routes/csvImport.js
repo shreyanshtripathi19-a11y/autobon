@@ -134,6 +134,22 @@ router.post("/", requireAdmin, upload.single("csvFile"), async (req, res) => {
 
       try {
         const car = await prisma.car.create({ data: carData });
+
+        // If images column exists, create CarImage records
+        const imageUrls = (row.images || row.image_urls || "").trim();
+        if (imageUrls) {
+          const urls = imageUrls.split("|").map(u => u.trim()).filter(Boolean);
+          if (urls.length > 0) {
+            await prisma.carImage.createMany({
+              data: urls.map((url, position) => ({
+                url,
+                position,
+                carId: car.id,
+              })),
+            });
+          }
+        }
+
         imported.push({ row: rowNum, id: car.id, title: car.title });
       } catch (dbErr) {
         errors.push({

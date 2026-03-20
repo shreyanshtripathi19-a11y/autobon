@@ -266,8 +266,8 @@ function PreQualifyForm() {
           {/* Selected Car Banner */}
           {selectedCar && (
             <div className="mb-4 border border-blue-200 rounded-2xl p-4 bg-blue-50/50 flex items-center gap-3">
-              <div className="w-14 h-10 bg-white rounded-md flex items-center justify-center flex-shrink-0 border border-blue-100 overflow-hidden">
-                <img src="/car-icon.jpeg" alt="Selected Vehicle" className="w-full h-full object-contain mix-blend-multiply" />
+              <div className="w-20 h-14 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                <img src="/car.png" alt="Selected Vehicle" className="w-full h-full object-contain mix-blend-multiply scale-110" />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-[11px] font-semibold text-blue-600 uppercase tracking-wide">Selected Vehicle</p>
