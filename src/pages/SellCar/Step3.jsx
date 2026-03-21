@@ -37,16 +37,16 @@ const Step3_Mileage = ({ onNext, onBack, formData, updateFormData }) => {
       <h2 className="text-2xl font-semibold mb-2">Vehicle Details</h2>
       <p className="text-gray-500 mb-8">Tell us about your {displayYear} {title}</p>
 
-      <div className="border-2 border-primary rounded-none p-6 flex items-center gap-6 relative mb-12 bg-[#F0F7FF]">
-        <img src="/car.png" alt="Car" className="w-52 h-auto object-contain" />
-        <div className="text-left">
-          <h3 className="text-xl font-semibold">{title}</h3>
-          <p className="text-[#8E8E93]">{displayYear}</p>
+      <div className="border-2 border-primary rounded-none p-3 sm:p-6 flex items-center gap-3 sm:gap-6 relative mb-8 sm:mb-12 bg-[#F0F7FF]">
+        <img src="/car.png" alt="Car" className="w-28 sm:w-52 h-auto object-contain flex-shrink-0" />
+        <div className="text-left min-w-0 pr-10 sm:pr-12">
+          <h3 className="text-base sm:text-xl font-semibold break-words">{title}</h3>
+          <p className="text-[#8E8E93] text-sm">{displayYear}</p>
         </div>
         <button
           type="button"
           onClick={onBack}
-          className="absolute top-4 right-6 text-primary font-bold text-sm hover:underline"
+          className="absolute top-3 sm:top-4 right-3 sm:right-6 text-primary font-bold text-sm hover:underline"
         >
           Edit
         </button>
@@ -77,17 +77,15 @@ const Step3_Mileage = ({ onNext, onBack, formData, updateFormData }) => {
                 setCondition(item.label);
                 if (errors.condition) setErrors((p) => ({ ...p, condition: "" }));
               }}
-              className={`p-4 border rounded-none cursor-pointer transition-all ${
-                condition === item.label
+              className={`p-4 border rounded-none cursor-pointer transition-all ${condition === item.label
                   ? "border-primary bg-[#F0F7FF] border-2"
                   : "border-gray-200 hover:border-gray-300"
-              }`}
+                }`}
             >
               <div className="flex items-center gap-2">
                 <div
-                  className={`w-4 h-4 rounded-full border flex items-center justify-center ${
-                    condition === item.label ? "border-primary" : "border-gray-300"
-                  }`}
+                  className={`w-4 h-4 rounded-full border flex items-center justify-center ${condition === item.label ? "border-primary" : "border-gray-300"
+                    }`}
                 >
                   {condition === item.label && (
                     <div className="w-2 h-2 bg-primary rounded-full" />

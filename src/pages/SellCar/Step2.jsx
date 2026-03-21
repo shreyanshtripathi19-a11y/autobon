@@ -19,19 +19,19 @@ const Step2_Confirm = ({ onNext, onBack, formData }) => {
       <h2 className="text-2xl font-semibold mb-2">Confirm Your Vehicle</h2>
       <p className="text-[#8E8E93] mb-10">Is this information correct?</p>
 
-      <div className="border-2 border-primary rounded-none p-6 flex items-center gap-6 relative mb-12 bg-[#F0F7FF]">
-        <img src={getVehicleImage()} alt="Car" className="w-52 h-auto object-contain" />
-        <div className="text-left">
-          <h3 className="text-xl font-semibold">{title}</h3>
-          <p className="text-[#8E8E93]">{displayYear}</p>
+      <div className="border-2 border-primary rounded-none p-3 sm:p-6 flex items-center gap-3 sm:gap-6 relative mb-8 sm:mb-12 bg-[#F0F7FF]">
+        <img src={getVehicleImage()} alt="Car" className="w-28 sm:w-52 h-auto object-contain flex-shrink-0" />
+        <div className="text-left min-w-0 pr-10 sm:pr-12">
+          <h3 className="text-base sm:text-xl font-semibold break-words">{title}</h3>
+          <p className="text-[#8E8E93] text-sm">{displayYear}</p>
           {formData.city && (
-            <p className="text-[#8E8E93] text-sm">{formData.city}</p>
+            <p className="text-[#8E8E93] text-xs sm:text-sm truncate">{formData.city}</p>
           )}
         </div>
         <button
           type="button"
           onClick={onBack}
-          className="absolute top-4 right-6 text-primary font-bold text-sm hover:underline"
+          className="absolute top-3 sm:top-4 right-3 sm:right-6 text-primary font-bold text-sm hover:underline"
         >
           Edit
         </button>

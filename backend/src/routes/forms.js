@@ -2,18 +2,25 @@ const express = require("express");
 
 const router = express.Router();
 
-// POST /api/forms — Submit a form (pre-qualify, finance, get-details, checkout)
+// POST /api/forms — Submit a form (pre-qualify, finance, get-details, sell-car, checkout)
 router.post("/", async (req, res) => {
   try {
     const prisma = req.app.locals.prisma;
-    const {
-      formType, firstName, lastName, email, phone, dob, address, postalCode,
-      vehicleType, preferredVehicle, budget, hasTradeIn,
-      creditRating, employmentStatus, incomeType, annualIncome, monthlyPayment,
-      companyName, jobTitle, homeStatus,
-      carId, carTitle, carPrice,
-      extraData,
-    } = req.body;
+    const body = req.body;
+
+    // Accept either "formType" or "type" field
+    const formType = body.formType || body.type;
+
+    // Some forms (pre-qualify, finance) send a nested "data" object with all fields
+    // while others (sell-car) send fields at the top level.
+    // Merge both so we always find the fields.
+    const d = { ...body, ...(body.data || {}) };
+
+    // Extract fields — try top-level first, fallback to nested "data"
+    const firstName = d.firstName || (body.name || "").split(" ")[0] || "";
+    const lastName = d.lastName || (body.name || "").split(" ").slice(1).join(" ") || "";
+    const email = d.email || "";
+    const phone = d.phone || d.phoneNumber || null;
 
     if (!formType || !firstName || !email) {
       return res.status(400).json({ message: "Form type, first name, and email are required" });
@@ -23,28 +30,28 @@ router.post("/", async (req, res) => {
       data: {
         formType,
         firstName,
-        lastName: lastName || "",
+        lastName,
         email,
-        phone: phone || null,
-        dob: dob || null,
-        address: address || null,
-        postalCode: postalCode || null,
-        vehicleType: vehicleType || null,
-        preferredVehicle: preferredVehicle || null,
-        budget: budget || null,
-        hasTradeIn: hasTradeIn || null,
-        creditRating: creditRating || null,
-        employmentStatus: employmentStatus || null,
-        incomeType: incomeType || null,
-        annualIncome: annualIncome || null,
-        monthlyPayment: monthlyPayment || null,
-        companyName: companyName || null,
-        jobTitle: jobTitle || null,
-        homeStatus: homeStatus || null,
-        carId: carId || null,
-        carTitle: carTitle || null,
-        carPrice: carPrice ? parseFloat(carPrice) : null,
-        extraData: extraData ? JSON.stringify(extraData) : null,
+        phone,
+        dob: d.dob || null,
+        address: d.address || d.streetAddress || null,
+        postalCode: d.postalCode || null,
+        vehicleType: d.vehicleType || null,
+        preferredVehicle: d.preferredVehicle || null,
+        budget: d.budget || null,
+        hasTradeIn: d.hasTradeIn || null,
+        creditRating: d.creditRating || null,
+        employmentStatus: d.employmentStatus || null,
+        incomeType: d.incomeType || null,
+        annualIncome: d.annualIncome || d.annualSalary || null,
+        monthlyPayment: d.monthlyPayment || d.monthlyRent || null,
+        companyName: d.companyName || null,
+        jobTitle: d.jobTitle || null,
+        homeStatus: d.homeStatus || null,
+        carId: d.carId || d.selectedCarId || null,
+        carTitle: d.carTitle || d.selectedCarTitle || null,
+        carPrice: d.carPrice || d.selectedCarPrice ? parseFloat(d.carPrice || d.selectedCarPrice) : null,
+        extraData: d.extraData ? JSON.stringify(d.extraData) : (body.data ? JSON.stringify(body.data) : null),
         status: "new",
       },
     });
@@ -53,6 +60,7 @@ router.post("/", async (req, res) => {
       "pre-qualify": "Pre-Qualification",
       "finance": "Finance Application",
       "get-details": "Get Details Request",
+      "sell-car": "Sell/Trade Request",
       "checkout": "Checkout Request",
     };
 

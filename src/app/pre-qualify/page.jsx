@@ -174,11 +174,10 @@ const RadioStep = ({
         {options.map((opt) => (
           <label
             key={opt}
-            className={`flex items-center p-4 py-6 md:py-4 border rounded-none cursor-pointer transition-all ${
-              formData?.[field] === opt
+            className={`flex items-center p-4 py-6 md:py-4 border rounded-none cursor-pointer transition-all ${formData?.[field] === opt
                 ? "bg-blue-100 border-[#1969DB] ring-1 ring-[#1969DB]"
                 : "border-[#9BA5AD] hover:bg-gray-50"
-            }`}
+              }`}
           >
             <input
               type="radio"
@@ -388,7 +387,7 @@ const MultiStepCarForm = () => {
           const errorData = await res.json();
           throw new Error(errorData.message || "Failed to send OTP");
         }
-        
+
         // OTP sent successfully
         setConfirmationResult(true);
         alert("✅ Verification code sent! Please check your phone for the SMS code.");
@@ -513,20 +512,20 @@ const MultiStepCarForm = () => {
       }
     };
     return (
-      <div className="w-[300px] md:w-[calc(100%-2rem)] max-w-[490px] relative border border-[#DEDEDE] p-0 md:px-0 md:py-0 md:p-4 mb-8 flex items-center justify-between rounded-none bg-white flex-col mx-0">
-        <div className="flex h-full w-full mb-1 items-center gap-3 pt-3 md:gap-4 overflow-hidden px-3 md:px-4">
+      <div className="w-full max-w-[490px] relative border border-[#DEDEDE] p-0 mb-8 flex items-center justify-between rounded-none bg-white flex-col mx-auto">
+        <div className="flex h-full w-full mb-1 items-center gap-3 md:gap-4 overflow-hidden px-3 md:px-4 pt-3">
           <img
             src={getVehicleImage()}
             alt="Selected Car"
-            className="w-[115px] md:w-[280px] h-auto object-cover"
+            className="w-[100px] sm:w-[140px] md:w-[280px] h-auto object-cover flex-shrink-0"
           />
-          <div className="w-full flex justify-center mx-2 items-start flex-col">
-            <h4 className="font-medium text-[#3F3F3F] text-md mb-1 md:text-base truncate">
+          <div className="w-full flex justify-center mx-1 sm:mx-2 items-start flex-col min-w-0 pr-8 sm:pr-10">
+            <h4 className="font-medium text-[#3F3F3F] text-sm sm:text-md md:text-base mb-1 break-words">
               {formData.preferredVehicle
                 ? `${formData.vehicleType}, ${formData.preferredVehicle}`
                 : formData.vehicleType}
             </h4>
-            <p className="text-[#8E8E93] text-xs mb-1 truncate">
+            <p className="text-[#8E8E93] text-xs mb-1 truncate w-full">
               {formData.budget ? `$Under ${formData.budget}` : "Budget not set"}
             </p>
             <div className="flex items-baseline gap-2 mt-1">
@@ -773,11 +772,10 @@ function renderStepContent(step, formData, setFormData, nextStep, stepErrors = {
             {["Rent", "Own"].map((opt) => (
               <label
                 key={opt}
-                className={`flex-1 flex items-center justify-center p-4 border cursor-pointer transition-all ${
-                  formData?.homeStatus === opt
+                className={`flex-1 flex items-center justify-center p-4 border cursor-pointer transition-all ${formData?.homeStatus === opt
                     ? "bg-blue-50 border-blue-400 ring-1 ring-blue-400"
                     : "border-[#9BA5AD]"
-                }`}
+                  }`}
               >
                 <input
                   type="radio"
@@ -825,11 +823,10 @@ function renderStepContent(step, formData, setFormData, nextStep, stepErrors = {
                 {["YES", "NO"].map((opt) => (
                   <label
                     key={opt}
-                    className={`flex-1 p-3 border cursor-pointer flex items-center justify-center ${
-                      formData?.[item.f] === (opt === "YES")
+                    className={`flex-1 p-3 border cursor-pointer flex items-center justify-center ${formData?.[item.f] === (opt === "YES")
                         ? "bg-blue-50 border-blue-400"
                         : "border-[#9BA5AD]"
-                    }`}
+                      }`}
                   >
                     <input
                       type="radio"

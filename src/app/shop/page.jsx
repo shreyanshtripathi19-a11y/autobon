@@ -647,7 +647,27 @@ export default function Home() {
     setFpMinYear("Min. Year");
     setFpMaxYear("Max. Year");
     setSelectedMake(null);
+    setMinYear("");
+    setMaxYear("");
+    setMinPrice("");
+    setMaxPrice("");
   };
+
+  // Build active filter chips for display
+  const activeFilters = [];
+  if (selectedMake) activeFilters.push({ label: selectedMake, clear: () => { setSelectedMake(null); setSelectedCar(cars[0]); } });
+  if (fpMake !== "All Makes") activeFilters.push({ label: fpMake, clear: () => setFpMake("All Makes") });
+  if (fpModel !== "All Models") activeFilters.push({ label: fpModel, clear: () => setFpModel("All Models") });
+  if (fpTrim !== "All Trims") activeFilters.push({ label: fpTrim, clear: () => setFpTrim("All Trims") });
+  if (fpMaxPrice !== "Max Price") activeFilters.push({ label: `Under ${fpMaxPrice}`, clear: () => setFpMaxPrice("Max Price") });
+  if (fpPriceRating !== "All Ratings") activeFilters.push({ label: fpPriceRating, clear: () => setFpPriceRating("All Ratings") });
+  if (fpCondition !== "All Conditions") activeFilters.push({ label: fpCondition, clear: () => setFpCondition("All Conditions") });
+  if (fpBodyType !== "All Body Types") activeFilters.push({ label: fpBodyType, clear: () => setFpBodyType("All Body Types") });
+  if (fpColor !== "All Colors") activeFilters.push({ label: fpColor, clear: () => setFpColor("All Colors") });
+  if (fpMinYear !== "Min. Year" || fpMaxYear !== "Max. Year") activeFilters.push({ label: `${fpMinYear !== "Min. Year" ? fpMinYear : "..."} - ${fpMaxYear !== "Max. Year" ? fpMaxYear : "..."}`, clear: () => { setFpMinYear("Min. Year"); setFpMaxYear("Max. Year"); } });
+  if (minYear || maxYear) activeFilters.push({ label: `Year: ${minYear || "..."}–${maxYear || "..."}`, clear: () => { setMinYear(""); setMaxYear(""); } });
+  if (minPrice || maxPrice) activeFilters.push({ label: `Price: ${minPrice ? "$"+minPrice : "..."}–${maxPrice ? "$"+maxPrice : "..."}`, clear: () => { setMinPrice(""); setMaxPrice(""); } });
+
 
   return (
     <>
@@ -904,6 +924,47 @@ export default function Home() {
                 </div>
               </div>
 
+              {/* Active Filter Chips */}
+              {activeFilters.length > 0 && (
+                <div className="flex flex-wrap items-center gap-2 mb-4">
+                  <button
+                    onClick={clearAllFilters}
+                    className="inline-flex items-center gap-1.5 h-[30px] sm:h-[34px] px-3 sm:px-4 text-[11px] sm:text-[13px] font-semibold text-white bg-[#EF4444] rounded-full hover:bg-red-600 transition-colors whitespace-nowrap"
+                  >
+                    Clear all filters
+                  </button>
+                  {activeFilters.map((f, i) => (
+                    <button
+                      key={i}
+                      onClick={f.clear}
+                      className="inline-flex items-center gap-1.5 h-[30px] sm:h-[34px] px-3 sm:px-4 text-[11px] sm:text-[13px] font-medium text-gray-800 bg-gray-100 border border-gray-300 rounded-full hover:bg-gray-200 transition-colors whitespace-nowrap group"
+                    >
+                      {f.label}
+                      <svg className="w-3.5 h-3.5 text-gray-500 group-hover:text-red-500 transition-colors" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* No Results Empty State */}
+              {sortedCars.length === 0 && !loadingCars ? (
+                <div className="flex flex-col items-center justify-center py-16 sm:py-24 px-4 text-center">
+                  <svg className="w-16 h-16 sm:w-20 sm:h-20 text-gray-300 mb-4" fill="none" stroke="currentColor" strokeWidth="1.2" viewBox="0 0 24 24">
+                    <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                  </svg>
+                  <h3 className="text-lg sm:text-xl font-bold text-gray-700 mb-2">No cars found</h3>
+                  <p className="text-sm text-gray-500 mb-6 max-w-md">
+                    We couldn't find any cars matching your current filters. Try adjusting or clearing your filters to see more results.
+                  </p>
+                  <button
+                    onClick={clearAllFilters}
+                    className="inline-flex items-center gap-2 px-6 py-2.5 text-sm font-semibold text-white bg-[#4079ED] rounded-full hover:bg-[#2a5fd4] transition-colors shadow-sm"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg>
+                    Clear All Filters
+                  </button>
+                </div>
+              ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-4" id="car-listings" aria-label="Car listings">
                 {sortedCars.map((car) => (
                   <div
@@ -993,9 +1054,10 @@ export default function Home() {
                   </div>
                 ))}
               </div>
+              )}
             </div>
 
-            {selectedCar && (
+            {selectedCar && sortedCars.length > 0 && (
             <aside className="hidden lg:block w-[480px] flex-shrink-0" aria-label="Car detail panel">
               <div className="sticky top-[20px] bg-white rounded-2xl overflow-hidden shadow-sm overflow-y-auto max-h-[calc(100vh-40px)] border-2 border-[#1a6adb]">
                 {/* Hero Image Carousel */}

@@ -149,8 +149,8 @@ const AddressAutocomplete = ({
           autoComplete="off"
           className={
             floatingLabel
-              ? `peer w-full border border-[#9BA5AD] p-4 pt-6 pb-2 rounded-none outline-none focus:border-blue-400 transition-all text-gray-700 ${inputClassName}`
-              : `w-full border rounded-md p-3.5 text-sm outline-none transition-all ${
+              ? `peer w-full border border-[#9BA5AD] p-4 pt-6 pb-2 rounded-none outline-none focus:border-blue-400 transition-all text-gray-700 text-[16px] ${inputClassName}`
+              : `w-full border rounded-md p-3.5 text-[16px] sm:text-sm outline-none transition-all ${
                   error
                     ? "border-red-500 focus:border-red-500 focus:ring-4 focus:ring-red-100"
                     : isFocused

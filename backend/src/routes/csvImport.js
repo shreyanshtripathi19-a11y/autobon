@@ -255,7 +255,7 @@ router.post("/", requireAdmin, upload.single("csvFile"), async (req, res) => {
         isVisible:
           toBool(rawIsVisible) !== undefined
             ? toBool(rawIsVisible)
-            : false, // Default to hidden so admin can add images first
+            : true, // Default to visible
         features: parseFeatures(rawFeatures),
       };
 

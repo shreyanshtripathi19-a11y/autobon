@@ -374,7 +374,7 @@ function CarFormModal({ isOpen, onClose, onSaved, editCar }) {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-5 space-y-5">
+        <form onSubmit={handleSubmit} className="p-3 sm:p-5 space-y-4 sm:space-y-5">
           {error && <p className="rounded-lg bg-red-50 p-3 text-sm text-red-600">{error}</p>}
 
           {/* Basic Info */}
@@ -423,7 +423,7 @@ function CarFormModal({ isOpen, onClose, onSaved, editCar }) {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Fuel Type</label>
               <select name="fuelType" value={form.fuelType} onChange={handleChange} className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -510,7 +510,7 @@ function CarFormModal({ isOpen, onClose, onSaved, editCar }) {
                 {existingImages.map((img, i) => (
                   <div key={img.id || i} className="relative group">
                     <img src={img.url} alt="" className="h-20 w-20 rounded-lg object-cover border" />
-                    <button type="button" onClick={() => setExistingImages((p) => p.filter((_, idx) => idx !== i))} className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button type="button" onClick={() => setExistingImages((p) => p.filter((_, idx) => idx !== i))} className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white flex items-center justify-center sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                       <X className="h-3 w-3" />
                     </button>
                   </div>
@@ -1238,7 +1238,7 @@ export default function DashboardPage() {
               </div>
 
               {/* Stats Grid */}
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
                 {statsData.map((stat, index) => {
                   const Icon = stat.icon;
                   return (
@@ -1494,8 +1494,8 @@ export default function DashboardPage() {
             <>
               <div className="flex items-center justify-between">
                 <div>
-                  <h1 className="text-3xl font-bold tracking-tight text-gray-900">Users</h1>
-                  <p className="text-gray-500">{adminUsers.length} registered users</p>
+                  <h1 className="text-xl sm:text-3xl font-bold tracking-tight text-gray-900">Users</h1>
+                  <p className="text-gray-500 text-sm">{adminUsers.length} registered users</p>
                 </div>
               </div>
 
@@ -1569,8 +1569,8 @@ export default function DashboardPage() {
             <>
               <div className="flex items-center justify-between">
                 <div>
-                  <h1 className="text-3xl font-bold tracking-tight text-gray-900">Contact Submissions</h1>
-                  <p className="text-gray-500">{contacts.length} messages from customers</p>
+                  <h1 className="text-xl sm:text-3xl font-bold tracking-tight text-gray-900">Contact Submissions</h1>
+                  <p className="text-gray-500 text-sm">{contacts.length} messages from customers</p>
                 </div>
               </div>
 
@@ -1588,20 +1588,20 @@ export default function DashboardPage() {
                 <div className="grid gap-4">
                   {contacts.map((c) => (
                     <Card key={c.id} className={`transition-all ${expandedContact === c.id ? "ring-2 ring-blue-200" : ""}`}>
-                      <div className="p-5">
-                        <div className="flex items-start justify-between">
-                          <div className="flex items-start gap-3">
+                      <div className="p-3 sm:p-5">
+                        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
+                          <div className="flex items-start gap-3 min-w-0">
                             <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center text-green-600 font-medium text-sm flex-shrink-0 mt-0.5">
                               {c.firstName?.[0]?.toUpperCase()}{c.lastName?.[0]?.toUpperCase()}
                             </div>
-                            <div>
-                              <h4 className="font-semibold text-gray-900">{c.firstName} {c.lastName}</h4>
-                              <p className="text-sm text-gray-500">{c.email}{c.phone ? ` • ${c.phone}` : ""}</p>
-                              {c.carTitle && <p className="text-xs text-blue-600 mt-1">Re: {c.carTitle}</p>}
+                            <div className="min-w-0">
+                              <h4 className="font-semibold text-gray-900 text-sm sm:text-base">{c.firstName} {c.lastName}</h4>
+                              <p className="text-xs sm:text-sm text-gray-500 truncate">{c.email}{c.phone ? ` • ${c.phone}` : ""}</p>
+                              {c.carTitle && <p className="text-xs text-blue-600 mt-1 truncate">Re: {c.carTitle}</p>}
                             </div>
                           </div>
-                          <div className="flex items-center gap-2">
-                            <span className="text-xs text-gray-400 flex items-center gap-1"><Clock className="h-3 w-3" />{new Date(c.createdAt).toLocaleDateString()}</span>
+                          <div className="flex items-center gap-1 sm:gap-2 ml-auto sm:ml-0 flex-shrink-0">
+                            <span className="text-xs text-gray-400 hidden sm:flex items-center gap-1"><Clock className="h-3 w-3" />{new Date(c.createdAt).toLocaleDateString()}</span>
                             <Button size="sm" variant="ghost" onClick={() => setExpandedContact(expandedContact === c.id ? null : c.id)}>
                               <MessageSquare className="h-4 w-4" />
                             </Button>
@@ -1634,15 +1634,15 @@ export default function DashboardPage() {
           {/* Forms Tab */}
           {activeTab === "forms" && (
             <>
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                  <h1 className="text-3xl font-bold tracking-tight text-gray-900">Form Submissions</h1>
-                  <p className="text-gray-500">{forms.length} total submissions{stats?.newForms > 0 && <span className="ml-2 text-blue-600 font-medium">({stats.newForms} new)</span>}</p>
+                  <h1 className="text-xl sm:text-3xl font-bold tracking-tight text-gray-900">Form Submissions</h1>
+                  <p className="text-gray-500 text-sm">{forms.length} total submissions{stats?.newForms > 0 && <span className="ml-2 text-blue-600 font-medium">({stats.newForms} new)</span>}</p>
                 </div>
-                <div className="flex gap-2">
-                  {["all", "pre-qualify", "finance", "get-details"].map((f) => (
-                    <Button key={f} size="sm" variant={formFilter === f ? "default" : "outline"} onClick={() => setFormFilter(f)}>
-                      {f === "all" ? "All" : f.replace("-", " ").replace(/\b\w/g, l => l.toUpperCase())}
+                <div className="flex gap-1.5 sm:gap-2 overflow-x-auto pb-1 -mx-1 px-1">
+                  {["all", "pre-qualify", "finance", "sell-car", "get-details"].map((f) => (
+                    <Button key={f} size="sm" variant={formFilter === f ? "default" : "outline"} className="whitespace-nowrap text-xs sm:text-sm flex-shrink-0" onClick={() => setFormFilter(f)}>
+                      {f === "all" ? "All" : f.replace(/-/g, " ").replace(/\b\w/g, l => l.toUpperCase())}
                     </Button>
                   ))}
                 </div>
@@ -1656,26 +1656,27 @@ export default function DashboardPage() {
                 <div className="grid gap-3">
                   {forms.filter(f => formFilter === "all" || f.formType === formFilter).map((f) => (
                     <Card key={f.id} className={`transition-all ${expandedForm === f.id ? "ring-2 ring-blue-200" : ""}`}>
-                      <div className="p-4">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <div className={`h-10 w-10 rounded-full flex items-center justify-center font-medium text-sm flex-shrink-0 ${
+                      <div className="p-3 sm:p-4">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className={`h-9 w-9 sm:h-10 sm:w-10 rounded-full flex items-center justify-center font-medium text-sm flex-shrink-0 ${
                               f.formType === "pre-qualify" ? "bg-blue-100 text-blue-600" :
                               f.formType === "finance" ? "bg-green-100 text-green-600" :
+                              f.formType === "sell-car" ? "bg-orange-100 text-orange-600" :
                               "bg-purple-100 text-purple-600"
                             }`}>
-                              <FileText className="h-5 w-5" />
+                              <FileText className="h-4 w-4 sm:h-5 sm:w-5" />
                             </div>
-                            <div>
-                              <h4 className="font-semibold text-gray-900">{f.firstName} {f.lastName}</h4>
-                              <p className="text-sm text-gray-500">{f.email}{f.phone ? ` • ${f.phone}` : ""}</p>
+                            <div className="min-w-0">
+                              <h4 className="font-semibold text-gray-900 text-sm sm:text-base">{f.firstName} {f.lastName}</h4>
+                              <p className="text-xs sm:text-sm text-gray-500 truncate">{f.email}{f.phone ? ` • ${f.phone}` : ""}</p>
                             </div>
                           </div>
-                          <div className="flex items-center gap-2">
-                            <Badge variant={f.formType === "pre-qualify" ? "default" : f.formType === "finance" ? "success" : "secondary"}>
-                              {f.formType}
+                          <div className="flex items-center gap-1.5 sm:gap-2 ml-auto sm:ml-0 flex-shrink-0">
+                            <Badge variant={f.formType === "pre-qualify" ? "default" : f.formType === "finance" ? "success" : f.formType === "sell-car" ? "warning" : "secondary"} className="text-xs">
+                              {f.formType || "unknown"}
                             </Badge>
-                            <Badge variant={f.status === "new" ? "default" : f.status === "reviewed" ? "secondary" : f.status === "contacted" ? "success" : "outline"}>
+                            <Badge variant={f.status === "new" ? "default" : f.status === "reviewed" ? "secondary" : f.status === "contacted" ? "success" : "outline"} className="text-xs">
                               {f.status}
                             </Badge>
                             <span className="text-xs text-gray-400 hidden md:flex items-center gap-1"><Clock className="h-3 w-3" />{new Date(f.createdAt).toLocaleDateString()}</span>
@@ -1705,10 +1706,10 @@ export default function DashboardPage() {
                               {f.address && <div className="col-span-2"><span className="text-gray-400">Address:</span> <span className="font-medium text-gray-900">{f.address}{f.postalCode ? `, ${f.postalCode}` : ""}</span></div>}
                               {f.carTitle && <div><span className="text-gray-400">Car:</span> <span className="font-medium text-blue-600">{f.carTitle}{f.carPrice ? ` ($${f.carPrice.toLocaleString()})` : ""}</span></div>}
                             </div>
-                            <div className="flex items-center gap-2 mt-4">
+                            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mt-4">
                               <span className="text-xs text-gray-500">Status:</span>
                               {["new", "reviewed", "contacted", "closed"].map((s) => (
-                                <Button key={s} size="sm" variant={f.status === s ? "default" : "outline"} onClick={() => updateFormStatus(f.id, s)}>
+                                <Button key={s} size="sm" variant={f.status === s ? "default" : "outline"} className="text-xs" onClick={() => updateFormStatus(f.id, s)}>
                                   {s.charAt(0).toUpperCase() + s.slice(1)}
                                 </Button>
                               ))}
@@ -1733,12 +1734,12 @@ export default function DashboardPage() {
           {/* Reviews Tab */}
           {activeTab === "reviews" && (
             <>
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                  <h1 className="text-3xl font-bold tracking-tight text-gray-900">Reviews</h1>
-                  <p className="text-gray-500">{adminReviews.length} reviews ({adminReviews.filter(r => r.isVisible).length} visible on website)</p>
+                  <h1 className="text-xl sm:text-3xl font-bold tracking-tight text-gray-900">Reviews</h1>
+                  <p className="text-gray-500 text-sm">{adminReviews.length} reviews ({adminReviews.filter(r => r.isVisible).length} visible)</p>
                 </div>
-                <Button onClick={() => openReviewModal()}>
+                <Button onClick={() => openReviewModal()} className="self-start">
                   <Plus className="h-4 w-4 mr-2" /> Add Review
                 </Button>
               </div>
@@ -1751,48 +1752,48 @@ export default function DashboardPage() {
                 <div className="grid gap-4">
                   {adminReviews.map((r, idx) => (
                     <Card key={r.id} className={`transition-all ${!r.isVisible ? "opacity-60" : ""}`}>
-                      <div className="p-5">
-                        <div className="flex items-start justify-between">
-                          <div className="flex items-start gap-4">
+                      <div className="p-3 sm:p-5">
+                        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
+                          <div className="flex items-start gap-2 sm:gap-4 min-w-0">
                             {/* Position number */}
-                            <div className="flex flex-col items-center gap-1 pt-1 flex-shrink-0">
+                            <div className="flex flex-col items-center gap-0.5 sm:gap-1 pt-1 flex-shrink-0">
                               <button
                                 onClick={() => moveReview(idx, "up")}
                                 disabled={idx === 0}
-                                className={`p-1 rounded hover:bg-gray-100 transition-colors ${idx === 0 ? "opacity-30 cursor-not-allowed" : "cursor-pointer"}`}
+                                className={`p-0.5 sm:p-1 rounded hover:bg-gray-100 transition-colors ${idx === 0 ? "opacity-30 cursor-not-allowed" : "cursor-pointer"}`}
                                 title="Move up"
                               >
-                                <ChevronDown className="h-4 w-4 rotate-180 text-gray-500" />
+                                <ChevronDown className="h-3.5 w-3.5 sm:h-4 sm:w-4 rotate-180 text-gray-500" />
                               </button>
                               <span className="text-xs font-bold text-gray-400 w-5 text-center">{idx + 1}</span>
                               <button
                                 onClick={() => moveReview(idx, "down")}
                                 disabled={idx === adminReviews.length - 1}
-                                className={`p-1 rounded hover:bg-gray-100 transition-colors ${idx === adminReviews.length - 1 ? "opacity-30 cursor-not-allowed" : "cursor-pointer"}`}
+                                className={`p-0.5 sm:p-1 rounded hover:bg-gray-100 transition-colors ${idx === adminReviews.length - 1 ? "opacity-30 cursor-not-allowed" : "cursor-pointer"}`}
                                 title="Move down"
                               >
-                                <ChevronDown className="h-4 w-4 text-gray-500" />
+                                <ChevronDown className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-gray-500" />
                               </button>
                             </div>
                             {r.imageUrl ? (
-                              <img src={r.imageUrl} alt={r.name} className="h-14 w-14 rounded-full object-cover flex-shrink-0" />
+                              <img src={r.imageUrl} alt={r.name} className="h-10 w-10 sm:h-14 sm:w-14 rounded-full object-cover flex-shrink-0" />
                             ) : (
-                              <div className="h-14 w-14 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-lg flex-shrink-0">
+                              <div className="h-10 w-10 sm:h-14 sm:w-14 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-sm sm:text-lg flex-shrink-0">
                                 {r.name?.[0]?.toUpperCase()}
                               </div>
                             )}
-                            <div>
-                              <h4 className="font-semibold text-gray-900">{r.name}</h4>
-                              <p className="text-sm text-gray-500">{r.role}</p>
+                            <div className="min-w-0">
+                              <h4 className="font-semibold text-gray-900 text-sm sm:text-base">{r.name}</h4>
+                              <p className="text-xs sm:text-sm text-gray-500">{r.role}</p>
                               <div className="flex gap-0.5 mt-1">
                                 {[...Array(5)].map((_, i) => (
-                                  <StarIcon key={i} className={`h-4 w-4 ${i < r.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}`} />
+                                  <StarIcon key={i} className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${i < r.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}`} />
                                 ))}
                               </div>
-                              <p className="text-sm text-gray-700 mt-2 line-clamp-2">{r.text}</p>
+                              <p className="text-xs sm:text-sm text-gray-700 mt-1 sm:mt-2 line-clamp-2">{r.text}</p>
                             </div>
                           </div>
-                          <div className="flex items-center gap-1 flex-shrink-0">
+                          <div className="flex items-center gap-1 flex-shrink-0 ml-auto sm:ml-0">
                             <Button size="sm" variant="ghost" onClick={() => toggleReviewVisibility(r)} title={r.isVisible ? "Hide from website" : "Show on website"}>
                               {r.isVisible ? <Eye className="h-4 w-4 text-green-500" /> : <EyeOff className="h-4 w-4 text-gray-400" />}
                             </Button>
@@ -1864,7 +1865,7 @@ export default function DashboardPage() {
                             <button
                               type="button"
                               onClick={() => setReviewForm({...reviewForm, imageUrl: ""})}
-                              className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                              className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-red-500 text-white flex items-center justify-center sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
                             >
                               <X className="h-3 w-3" />
                             </button>
@@ -1928,8 +1929,8 @@ export default function DashboardPage() {
           {activeTab === "settings" && (
             <>
               <div>
-                <h1 className="text-3xl font-bold tracking-tight text-gray-900">Settings</h1>
-                <p className="text-gray-500">Manage your account and preferences</p>
+                <h1 className="text-xl sm:text-3xl font-bold tracking-tight text-gray-900">Settings</h1>
+                <p className="text-gray-500 text-sm">Manage your account and preferences</p>
               </div>
               <div className="grid gap-4 md:grid-cols-2">
                 <Card>
