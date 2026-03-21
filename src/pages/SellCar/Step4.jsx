@@ -35,7 +35,9 @@ const Step4_Contact = ({ onNext, onBack, formData, updateContactInfo }) => {
     setErrors((prev) => ({ ...prev, [field]: err }));
   };
 
-  const handleContinue = () => {
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleContinue = async () => {
     const { errors: newErrors, isValid } = validateAll({
       firstName: () => validators.name(localData.firstName, "First name"),
       lastName: () => validators.name(localData.lastName, "Last name"),
@@ -47,6 +49,34 @@ const Step4_Contact = ({ onNext, onBack, formData, updateContactInfo }) => {
 
     // Push to parent
     if (updateContactInfo) updateContactInfo(localData);
+
+    setSubmitting(true);
+    try {
+      await fetch("/api/forms", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          formType: "sell-car",
+          firstName: localData.firstName,
+          lastName: localData.lastName,
+          email: localData.email,
+          phone: localData.phone,
+          extraData: {
+            year: formData?.year,
+            make: formData?.make,
+            model: formData?.model,
+            city: formData?.city,
+            vin: formData?.vin,
+            mileage: formData?.mileage,
+            condition: formData?.condition,
+          },
+        }),
+      });
+    } catch (err) {
+      console.error("Sell-car submission error:", err);
+    }
+    setSubmitting(false);
+
     onNext();
   };
 
@@ -125,9 +155,10 @@ const Step4_Contact = ({ onNext, onBack, formData, updateContactInfo }) => {
         </button>
         <button
           onClick={handleContinue}
-          className="flex-1 bg-primary text-white py-4 rounded-none font-bold hover:bg-primary/90 transition-colors"
+          disabled={submitting}
+          className="flex-1 bg-primary text-white py-4 rounded-none font-bold hover:bg-primary/90 transition-colors disabled:opacity-50"
         >
-          Continue
+          {submitting ? "Submitting..." : "Submit"}
         </button>
       </div>
       <p className="text-[10px] text-gray-400 mt-4">

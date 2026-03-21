@@ -4,7 +4,6 @@ import { useSearchParams } from "next/navigation";
 import Step2_Confirm from "../../pages/SellCar/Step2";
 import Step3_Mileage from "../../pages/SellCar/Step3";
 import Step4_Contact from "../../pages/SellCar/Step4";
-import Step5_Offer from "../../pages/SellCar/Step5";
 import Step1_Details from "@/pages/SellCar/Step1";
 import ApplicationSubmitted from "@/components/ApplicationSubmitted";
 
@@ -101,21 +100,13 @@ const SellCarPageInner = () => {
           />
         );
       case 6:
-        return (
-          <Step5_Offer
-            onNext={() => setCurrentScreen(7)}
-            onBack={() => setCurrentScreen(5)}
-            formData={formData}
-          />
-        );
-      case 7:
         return <ApplicationSubmitted email={formData.contact?.email} />;
       default:
         return <Step1_Details />;
     }
   };
 
-  const showProgressBar = currentScreen !== 7;
+  const showProgressBar = currentScreen !== 6;
 
   return (
     <div className="min-h-screen bg-white py-12 px-4">
@@ -128,15 +119,15 @@ const SellCarPageInner = () => {
                 currentScreen === 2
                   ? 1
                   : currentScreen - (currentScreen > 2 ? 1 : 0),
-                6,
+                5,
               )}{" "}
-              of 6
+              of 5
             </p>
             <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
               <div
                 className="bg-primary h-full transition-all duration-500"
                 style={{
-                  width: `${(Math.min(currentScreen === 2 ? 1 : currentScreen - (currentScreen > 2 ? 1 : 0), 6) / 6) * 100}%`,
+                  width: `${(Math.min(currentScreen === 2 ? 1 : currentScreen - (currentScreen > 2 ? 1 : 0), 5) / 5) * 100}%`,
                 }}
               />
             </div>
