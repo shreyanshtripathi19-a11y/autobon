@@ -1069,7 +1069,7 @@ export default function Home() {
                     <span className="text-gray-300">|</span>
                     <span className="flex items-center gap-1 text-[#1a6adb] font-medium"><IconPrice />{selectedCar.priceRating || "Market Price"}</span>
                   </div>
-                  <p className="text-sm text-gray-600 mb-6 leading-relaxed">{selectedCar.description || "Quality vehicle with great features and excellent condition."}</p>
+
 
                   {/* Overview */}
                   <h3 className="text-lg font-bold text-gray-900 mb-4">Overview</h3>

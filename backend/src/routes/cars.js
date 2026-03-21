@@ -216,6 +216,27 @@ router.put("/:id", requireAdmin, async (req, res) => {
   }
 });
 
+// POST /api/cars/bulk-delete — Admin: delete multiple cars
+router.post("/bulk-delete", requireAdmin, async (req, res) => {
+  try {
+    const prisma = req.app.locals.prisma;
+    const { ids } = req.body;
+
+    if (!ids || !Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ message: "No car IDs provided" });
+    }
+
+    // Delete all images first (cascade should handle this, but be safe)
+    await prisma.carImage.deleteMany({ where: { carId: { in: ids } } });
+    const result = await prisma.car.deleteMany({ where: { id: { in: ids } } });
+
+    res.json({ message: `${result.count} car(s) deleted successfully`, deleted: result.count });
+  } catch (error) {
+    console.error("Bulk delete error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 // DELETE /api/cars/:id — Admin: delete a car
 router.delete("/:id", requireAdmin, async (req, res) => {
   try {

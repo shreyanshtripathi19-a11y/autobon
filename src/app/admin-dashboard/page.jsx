@@ -127,8 +127,9 @@ const SidebarContext = React.createContext({ collapsed: false, setCollapsed: () 
 
 const SidebarProvider = ({ children }) => {
   const [collapsed, setCollapsed] = React.useState(false);
+  const [mobileOpen, setMobileOpen] = React.useState(false);
   return (
-    <SidebarContext.Provider value={{ collapsed, setCollapsed }}>
+    <SidebarContext.Provider value={{ collapsed, setCollapsed, mobileOpen, setMobileOpen }}>
       <div className="flex min-h-screen">{children}</div>
     </SidebarContext.Provider>
   );
@@ -136,20 +137,26 @@ const SidebarProvider = ({ children }) => {
 
 const SidebarInset = ({ className = "", children }) => {
   const { collapsed } = React.useContext(SidebarContext);
-  return <main className={`flex-1 transition-all duration-300 ${collapsed ? "ml-16" : "ml-64"} ${className}`}>{children}</main>;
+  return <main className={`flex-1 transition-all duration-300 ml-0 ${collapsed ? "lg:ml-16" : "lg:ml-64"} ${className}`}>{children}</main>;
 };
 
 const SidebarTrigger = ({ className = "" }) => {
-  const { collapsed, setCollapsed } = React.useContext(SidebarContext);
+  const { collapsed, setCollapsed, mobileOpen, setMobileOpen } = React.useContext(SidebarContext);
   return (
-    <Button variant="ghost" size="icon" className={className} onClick={() => setCollapsed(!collapsed)}>
+    <Button variant="ghost" size="icon" className={className} onClick={() => {
+      if (window.innerWidth < 1024) {
+        setMobileOpen(!mobileOpen);
+      } else {
+        setCollapsed(!collapsed);
+      }
+    }}>
       <Menu className="h-4 w-4" />
     </Button>
   );
 };
 
 const AppSidebar = ({ activeTab, onTabChange }) => {
-  const { collapsed } = React.useContext(SidebarContext);
+  const { collapsed, mobileOpen, setMobileOpen } = React.useContext(SidebarContext);
   const navItems = [
     { key: "dashboard", label: "Dashboard", icon: Home },
     { key: "listings", label: "Listings", icon: Car },
@@ -159,10 +166,16 @@ const AppSidebar = ({ activeTab, onTabChange }) => {
     { key: "reviews", label: "Reviews", icon: StarIcon },
     { key: "settings", label: "Settings", icon: Settings },
   ];
-  return (
-    <aside className={`fixed left-0 top-0 h-full bg-blue-600 text-white transition-all duration-300 z-20 ${collapsed ? "w-16" : "w-64"}`}>
-      <div className="flex h-16 items-center justify-center border-b border-blue-500">
-        {collapsed ? <Car className="h-8 w-8" /> : <span className="text-xl font-bold">Autobon</span>}
+
+  const sidebarContent = (
+    <>
+      <div className="flex h-16 items-center justify-between border-b border-blue-500 px-4">
+        {collapsed && !mobileOpen ? <Car className="h-8 w-8 mx-auto" /> : <span className="text-xl font-bold">Autobon</span>}
+        {mobileOpen && (
+          <button onClick={() => setMobileOpen(false)} className="lg:hidden p-1 rounded hover:bg-blue-700">
+            <X className="h-5 w-5" />
+          </button>
+        )}
       </div>
       <nav className="p-4">
         <ul className="space-y-2">
@@ -171,18 +184,37 @@ const AppSidebar = ({ activeTab, onTabChange }) => {
             return (
               <li key={item.key}>
                 <button
-                  onClick={() => onTabChange(item.key)}
+                  onClick={() => { onTabChange(item.key); if (mobileOpen) setMobileOpen(false); }}
                   className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-white transition-colors ${activeTab === item.key ? "bg-blue-700 font-semibold" : "hover:bg-blue-700"}`}
                 >
                   <Icon className="h-5 w-5" />
-                  {!collapsed && <span>{item.label}</span>}
+                  {(!collapsed || mobileOpen) && <span>{item.label}</span>}
                 </button>
               </li>
             );
           })}
         </ul>
       </nav>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* Desktop sidebar */}
+      <aside className={`hidden lg:block fixed left-0 top-0 h-full bg-blue-600 text-white transition-all duration-300 z-20 ${collapsed ? "w-16" : "w-64"}`}>
+        {sidebarContent}
+      </aside>
+
+      {/* Mobile overlay sidebar */}
+      {mobileOpen && (
+        <>
+          <div className="lg:hidden fixed inset-0 bg-black/50 z-30" onClick={() => setMobileOpen(false)} />
+          <aside className="lg:hidden fixed left-0 top-0 h-full w-64 bg-blue-600 text-white z-40 animate-[slideInLeft_0.2s_ease-out]">
+            {sidebarContent}
+          </aside>
+        </>
+      )}
+    </>
   );
 };
 
@@ -840,6 +872,8 @@ export default function DashboardPage() {
   const [deleteTarget, setDeleteTarget] = React.useState(null);
   const [showCsvUpload, setShowCsvUpload] = React.useState(false);
   const [deleteLoading, setDeleteLoading] = React.useState(false);
+  const [selectedCars, setSelectedCars] = React.useState([]);
+  const [bulkDeleting, setBulkDeleting] = React.useState(false);
 
   // Auth guard
   React.useEffect(() => {
@@ -1080,6 +1114,43 @@ export default function DashboardPage() {
     }
   };
 
+  // Bulk delete
+  const handleBulkDelete = async () => {
+    if (selectedCars.length === 0) return;
+    if (!confirm(`Are you sure you want to delete ${selectedCars.length} car(s)? This cannot be undone.`)) return;
+    setBulkDeleting(true);
+    try {
+      const res = await fetch("/api/cars/bulk-delete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: selectedCars }),
+      });
+      if (res.ok) {
+        setSelectedCars([]);
+        fetchCars();
+        fetchStats();
+      }
+    } catch (err) {
+      console.error("Bulk delete failed:", err);
+    } finally {
+      setBulkDeleting(false);
+    }
+  };
+
+  const toggleSelectCar = (carId) => {
+    setSelectedCars((prev) =>
+      prev.includes(carId) ? prev.filter((id) => id !== carId) : [...prev, carId]
+    );
+  };
+
+  const selectAllCars = () => {
+    if (selectedCars.length === filteredCars.length) {
+      setSelectedCars([]);
+    } else {
+      setSelectedCars(filteredCars.map((c) => c.id));
+    }
+  };
+
   const handleLogout = async () => {
     await logout();
     router.push("/login");
@@ -1115,10 +1186,10 @@ export default function DashboardPage() {
       <AppSidebar activeTab={activeTab} onTabChange={setActiveTab} />
       <SidebarInset>
         {/* Header */}
-        <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b bg-white px-6">
+        <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b bg-white px-3 sm:px-6">
           <div className="flex items-center gap-2">
             <SidebarTrigger className="-ml-1" />
-            <Separator orientation="vertical" className="mx-2 h-4" />
+            <Separator orientation="vertical" className="mx-2 h-4 hidden sm:block" />
             <nav aria-label="breadcrumb">
               <ol className="flex flex-wrap items-center gap-1.5 text-sm text-gray-500">
                 <li className="hidden md:block">
@@ -1129,12 +1200,12 @@ export default function DashboardPage() {
               </ol>
             </nav>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <div className="relative hidden md:block">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-              <Input placeholder="Search cars..." className="w-[300px] pl-9" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+              <Input placeholder="Search cars..." className="w-[200px] lg:w-[300px] pl-9" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
             </div>
-            <div className="flex items-center gap-2 px-2">
+            <div className="flex items-center gap-2 px-1 sm:px-2">
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-white text-sm font-medium">
                 {user.name?.[0]?.toUpperCase() || "A"}
               </div>
@@ -1144,24 +1215,24 @@ export default function DashboardPage() {
               </div>
             </div>
             <Button variant="ghost" size="sm" onClick={handleLogout} className="text-red-600 hover:text-red-700 hover:bg-red-50">
-              <LogOut className="h-4 w-4 mr-1" /> Logout
+              <LogOut className="h-4 w-4 sm:mr-1" /><span className="hidden sm:inline">Logout</span>
             </Button>
           </div>
         </header>
 
         {/* Main Content */}
-        <div className="flex-1 space-y-6 bg-gray-50 p-6">
+        <div className="flex-1 space-y-4 sm:space-y-6 bg-gray-50 p-3 sm:p-6">
           {/* Dashboard Tab */}
           {activeTab === "dashboard" && (
             <>
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                  <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+                  <h1 className="text-xl sm:text-3xl font-bold tracking-tight text-gray-900">
                     Welcome back, {user.name}! 👋
                   </h1>
-                  <p className="text-gray-500">Here&apos;s what&apos;s happening with your car inventory today.</p>
+                  <p className="text-gray-500 text-sm">Here&apos;s what&apos;s happening with your car inventory today.</p>
                 </div>
-                <Button className="gap-2" onClick={() => { setEditingCar(null); setShowCarForm(true); }}>
+                <Button className="gap-2 self-start" onClick={() => { setEditingCar(null); setShowCarForm(true); }}>
                   <Plus className="h-4 w-4" /> Add New Listing
                 </Button>
               </div>
@@ -1282,27 +1353,52 @@ export default function DashboardPage() {
           {/* Listings Tab */}
           {activeTab === "listings" && (
             <>
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                  <h1 className="text-3xl font-bold tracking-tight text-gray-900">Car Listings</h1>
-                  <p className="text-gray-500">{cars.length} total listings</p>
+                  <h1 className="text-xl sm:text-3xl font-bold tracking-tight text-gray-900">Car Listings</h1>
+                  <p className="text-gray-500 text-sm">{cars.length} total listings</p>
                 </div>
-                <div className="flex gap-3">
-                  <Button variant="outline" className="gap-2" onClick={() => setShowCsvUpload(true)}>
-                    <Upload className="h-4 w-4" /> Import CSV
+                <div className="flex gap-2 sm:gap-3">
+                  <Button variant="outline" className="gap-2 text-xs sm:text-sm" onClick={() => setShowCsvUpload(true)}>
+                    <Upload className="h-4 w-4" /> <span className="hidden sm:inline">Import</span> CSV
                   </Button>
-                  <Button className="gap-2" onClick={() => { setEditingCar(null); setShowCarForm(true); }}>
-                    <Plus className="h-4 w-4" /> Add New Listing
+                  <Button className="gap-2 text-xs sm:text-sm" onClick={() => { setEditingCar(null); setShowCarForm(true); }}>
+                    <Plus className="h-4 w-4" /> <span className="hidden sm:inline">Add New</span><span className="sm:hidden">Add</span>
                   </Button>
                 </div>
               </div>
+
+              {/* Mobile search */}
+              <div className="md:hidden">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                  <Input placeholder="Search cars..." className="pl-9" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+                </div>
+              </div>
+
+              {/* Bulk action bar */}
+              {selectedCars.length > 0 && (
+                <div className="flex items-center gap-3 bg-blue-50 border border-blue-200 rounded-lg px-3 sm:px-4 py-3">
+                  <Check className="h-5 w-5 text-blue-600 flex-shrink-0" />
+                  <span className="text-sm font-semibold text-blue-800">{selectedCars.length} selected</span>
+                  <div className="ml-auto flex gap-2">
+                    <Button size="sm" variant="outline" onClick={() => setSelectedCars([])}>
+                      <span className="hidden sm:inline">Deselect All</span><span className="sm:hidden">Clear</span>
+                    </Button>
+                    <Button size="sm" variant="destructive" onClick={handleBulkDelete} disabled={bulkDeleting}>
+                      <Trash2 className="h-4 w-4 mr-1" />
+                      {bulkDeleting ? "..." : `Delete (${selectedCars.length})`}
+                    </Button>
+                  </div>
+                </div>
+              )}
 
               {loadingCars ? (
                 <div className="flex justify-center py-16">
                   <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
                 </div>
               ) : filteredCars.length === 0 ? (
-                <Card className="p-12 text-center">
+                <Card className="p-8 sm:p-12 text-center">
                   <Car className="h-12 w-12 mx-auto text-gray-300 mb-4" />
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">No listings found</h3>
                   <p className="text-sm text-gray-500 mb-4">
@@ -1315,58 +1411,80 @@ export default function DashboardPage() {
                   )}
                 </Card>
               ) : (
-                <div className="grid gap-4">
-                  {filteredCars.map((car) => (
-                    <Card key={car.id} className="flex flex-col md:flex-row overflow-hidden">
-                      <div className="relative md:w-56 shrink-0">
-                        <img
-                          src={car.images?.[0]?.url || "https://via.placeholder.com/400x200?text=No+Image"}
-                          alt={car.title}
-                          className="h-40 md:h-full w-full object-cover"
-                        />
-                        {car.badge && <Badge className="absolute left-3 top-3">{car.badge}</Badge>}
-                      </div>
-                      <div className="flex-1 p-5">
-                        <div className="flex items-start justify-between mb-2">
-                          <div>
-                            <h3 className="text-lg font-bold text-gray-900">{car.title}</h3>
-                            <div className="flex flex-wrap items-center gap-2 mt-1 text-sm text-gray-500">
-                              {car.location && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{car.location}</span>}
-                              {car.mileage && <span className="flex items-center gap-1"><Gauge className="h-3 w-3" />{car.mileage}</span>}
-                              {car.fuelType && <span className="flex items-center gap-1"><Fuel className="h-3 w-3" />{car.fuelType}</span>}
-                              {car.transmission && <span className="flex items-center gap-1"><Settings className="h-3 w-3" />{car.transmission}</span>}
+                <>
+                  {/* Select all */}
+                  <div className="flex items-center gap-3 px-1">
+                    <label className="flex items-center gap-2 cursor-pointer text-sm text-gray-600">
+                      <input
+                        type="checkbox"
+                        checked={selectedCars.length === filteredCars.length && filteredCars.length > 0}
+                        onChange={selectAllCars}
+                        className="h-4 w-4 rounded border-gray-300 text-blue-600"
+                      />
+                      Select All ({filteredCars.length})
+                    </label>
+                  </div>
+                  <div className="grid gap-3 sm:gap-4">
+                    {filteredCars.map((car) => (
+                      <Card key={car.id} className={`flex flex-col sm:flex-row overflow-hidden transition-all ${selectedCars.includes(car.id) ? "ring-2 ring-blue-400 bg-blue-50/30" : ""}`}>
+                        <div className="relative sm:w-44 md:w-56 shrink-0">
+                          {/* Checkbox overlay */}
+                          <label className="absolute left-2 top-2 z-10 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={selectedCars.includes(car.id)}
+                              onChange={() => toggleSelectCar(car.id)}
+                              className="h-5 w-5 rounded border-2 border-white shadow text-blue-600 cursor-pointer"
+                            />
+                          </label>
+                          <img
+                            src={car.images?.[0]?.url || "https://via.placeholder.com/400x200?text=No+Image"}
+                            alt={car.title}
+                            className="h-40 sm:h-full w-full object-cover"
+                          />
+                          {car.badge && <Badge className="absolute right-2 top-2">{car.badge}</Badge>}
+                        </div>
+                        <div className="flex-1 p-3 sm:p-5">
+                          <div className="flex items-start justify-between mb-2 gap-2">
+                            <div className="min-w-0">
+                              <h3 className="text-sm sm:text-lg font-bold text-gray-900 truncate">{car.title}</h3>
+                              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mt-1 text-xs sm:text-sm text-gray-500">
+                                {car.location && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{car.location}</span>}
+                                {car.mileage && <span className="flex items-center gap-1"><Gauge className="h-3 w-3" />{car.mileage}</span>}
+                                <span className="hidden sm:flex items-center gap-1">{car.fuelType && <><Fuel className="h-3 w-3" />{car.fuelType}</>}</span>
+                              </div>
+                            </div>
+                            <div className="text-right flex-shrink-0">
+                              <p className="text-base sm:text-xl font-bold text-gray-900">${car.price?.toLocaleString()}</p>
+                              {car.biWeekly && <p className="text-xs text-gray-500">{car.biWeekly}/bi-weekly</p>}
                             </div>
                           </div>
-                          <div className="text-right">
-                            <p className="text-xl font-bold text-gray-900">${car.price?.toLocaleString()}</p>
-                            {car.biWeekly && <p className="text-xs text-gray-500">{car.biWeekly}/bi-weekly</p>}
+                          {car.description && (
+                            <p className="text-xs sm:text-sm text-gray-500 line-clamp-1 sm:line-clamp-2 mb-2 sm:mb-3">{car.description}</p>
+                          )}
+                          <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                            <Badge variant={car.isVisible ? "success" : "warning"}>
+                              {car.isVisible ? "Visible" : "Hidden"}
+                            </Badge>
+                            {car.condition && <Badge variant="secondary" className="hidden sm:inline-flex">{car.condition}</Badge>}
+                            {car.bodyType && <Badge variant="outline" className="hidden sm:inline-flex">{car.bodyType}</Badge>}
+                            <div className="ml-auto flex gap-1">
+                              <Button size="sm" variant="ghost" onClick={() => toggleVisibility(car)} title={car.isVisible ? "Hide" : "Show"}>
+                                {car.isVisible ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                              </Button>
+                              <Button size="sm" variant="ghost" onClick={() => { setEditingCar(car); setShowCarForm(true); }}>
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button size="sm" variant="ghost" className="text-red-600 hover:bg-red-50" onClick={() => setDeleteTarget(car)}>
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
                           </div>
                         </div>
-                        {car.description && (
-                          <p className="text-sm text-gray-500 line-clamp-2 mb-3">{car.description}</p>
-                        )}
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <Badge variant={car.isVisible ? "success" : "warning"}>
-                            {car.isVisible ? "Visible" : "Hidden"}
-                          </Badge>
-                          {car.condition && <Badge variant="secondary">{car.condition}</Badge>}
-                          {car.bodyType && <Badge variant="outline">{car.bodyType}</Badge>}
-                          <div className="ml-auto flex gap-2">
-                            <Button size="sm" variant="ghost" onClick={() => toggleVisibility(car)} title={car.isVisible ? "Hide" : "Show"}>
-                              {car.isVisible ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                            </Button>
-                            <Button size="sm" variant="ghost" onClick={() => { setEditingCar(car); setShowCarForm(true); }}>
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button size="sm" variant="ghost" className="text-red-600 hover:bg-red-50" onClick={() => setDeleteTarget(car)}>
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    </Card>
-                  ))}
-                </div>
+                      </Card>
+                    ))}
+                  </div>
+                </>
               )}
             </>
           )}
