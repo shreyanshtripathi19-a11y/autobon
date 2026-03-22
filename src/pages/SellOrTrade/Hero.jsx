@@ -66,21 +66,26 @@ const Hero = () => {
       <div className="w-full max-w-[1200px] mx-auto flex flex-col lg:flex-row items-center justify-between px-5 gap-4 lg:gap-12">
         {/* LEFT SIDE: Text + Image */}
         <div className="flex pt-5 md:pt-5 flex-col w-full lg:w-[55%] gap-6 items-center lg:items-start text-center lg:text-left">
-          <div className="flex flex-col gap-3 relative w-full">
-            <div className="hidden lg:flex absolute xs:-top-24 smg:-top-32 -top-28 xs:right-[20vw] right-[24vw] md:-top-34 smg:right-[110px] md:right-[160px] flex-col items-center sm:items-start lg:items-start pointer-events-none z-10 scale-[0.75] sm:scale-90 lg:scale-100 origin-right">
-              <img
-                src={textImage.src}
-                alt="Decorative Text"
-                className="xs:w-36 smg:w-48 sm:w-30 md:w-45 h-auto mb-1 relative rotate-[0deg] md:-rotate-[0deg] left-[120px] xs:left-[120px] sm:left-[70px] md:left-[130px] top-[60px] xs:top-[60px] smg:top-[60px]  smg:left-[140px] sm:top-[50px] md:top-[70px]"
-              />
-              <img
-                src={arrowImage.src}
-                alt="Arrow"
-                className="w-25 xs:w-[100px] smg:w-[120px] sm:w-[60px] md:w-[140px] h-auto rotate-[0deg] lg:rotate-[0deg]"
-              />
-            </div>
+          <div className="flex flex-col gap-3 w-full">
             <h1 className="text-[40px] sm:text-[55px] md:text-[50px] lg:text-[65px] text-start font-semibold text-black leading-tight">
-              Any Car,
+              <span className="relative inline-block">
+                Any Car,
+                {/* We Buy + Arrow — positioned relative to "Any Car," using em units */}
+                <span className="absolute pointer-events-none z-10" style={{ top: '-1em', right: '-2.5em' }}>
+                  <img
+                    src={textImage.src}
+                    alt="We Buy"
+                    className="h-auto"
+                    style={{ width: '2.2em' }}
+                  />
+                  <img
+                    src={arrowImage.src}
+                    alt=""
+                    className="h-auto"
+                    style={{ width: '1.3em', marginTop: '-0.05em' }}
+                  />
+                </span>
+              </span>
               <br /> Any Where
             </h1>
             <p className="text-[#7B7B7B] text-start w-full text-[16px] sm:text-[18px] max-w-[500px]">

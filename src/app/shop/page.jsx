@@ -679,15 +679,14 @@ export default function Home() {
 
   const formatMileage = (m) => {
     if (!m) return "N/A";
-    const str = m.toString();
-    const numMatch = str.match(/(\d+)/);
-    if (numMatch) {
-      const formattedNum = Number(numMatch[1]).toLocaleString();
-      let res = str.replace(numMatch[1], formattedNum);
-      if (!res.toLowerCase().includes('km')) res += ' km';
-      return res;
+    const str = m.toString().trim();
+    // Extract all digits (handles "39,269 km", "39269", "39269km", etc.)
+    const cleaned = str.replace(/[^\d]/g, '');
+    if (cleaned) {
+      const formattedNum = Number(cleaned).toLocaleString();
+      return formattedNum + ' km';
     }
-    return str + (str.toLowerCase().includes('km') ? '' : ' km');
+    return str;
   };
 
   return (
@@ -696,7 +695,7 @@ export default function Home() {
         {/* FILTER BAR */}
         <div className="bg-white py-3 sm:py-4 border-b border-[#E5E7EB]">
           <div className="mx-auto px-3 sm:px-8 lg:px-[120px]" style={{ maxWidth: "1600px" }}>
-            <div className="flex items-center gap-2 sm:gap-[10px] overflow-x-auto sm:overflow-x-visible no-scrollbar pb-1 sm:pb-0 sm:flex-wrap">
+            <div className="flex items-center gap-2 sm:gap-[10px] overflow-x-auto no-scrollbar pb-1 sm:pb-0 flex-nowrap">
               <button
                 className="inline-flex items-center gap-1.5 sm:gap-2 h-[34px] sm:h-[46px] px-3 sm:px-5 text-[12px] sm:text-[15px] font-semibold text-[#4079ED] border border-[#3D8BFF] rounded-lg hover:bg-[#EEF4FF] transition-colors whitespace-nowrap justify-center flex-shrink-0"
                 style={{ backgroundColor: "rgba(64, 121, 237, 0.17)" }}
@@ -891,7 +890,7 @@ export default function Home() {
           <div className="flex flex-col xl:flex-row gap-6">
             {/* LEFT: LISTINGS */}
             <div className="flex-1 min-w-0">
-              <div className="flex items-start justify-between mb-4 sm:mb-6 gap-2">
+              <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-4 sm:mb-6 gap-2">
                 <div className="flex-1 min-w-0">
                   {viewParam === "favourites" ? (
                     <h1 className="text-[14px] sm:text-[18px] font-bold text-gray-900 flex text-left items-center gap-1.5 min-w-0">
@@ -899,24 +898,25 @@ export default function Home() {
                       Your Favourites ({sortedCars.length})
                     </h1>
                   ) : (
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:gap-1.5">
-                      <h1 className="text-[13px] sm:text-[18px] text-gray-800 flex text-left items-center gap-1 sm:gap-1.5 flex-nowrap min-w-0 font-medium overflow-hidden">
-                        <svg className="w-4 h-4 sm:w-5 sm:h-5 text-gray-800 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-                        <span className="shrink-0 whitespace-nowrap">Used Cars for Sale in</span>
+                    <div>
+                      <h1 className="text-[14px] sm:text-[18px] text-gray-800 font-medium leading-snug">
+                        <svg className="w-4 h-4 sm:w-5 sm:h-5 text-gray-800 inline-block align-text-bottom mr-0.5 sm:mr-1" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                        Used Cars for Sale in{" "}
                         <button
                           onClick={() => setShowLocationModal(true)}
-                          className="text-gray-900 underline underline-offset-2 decoration-1 hover:text-[#1a6adb] transition-colors cursor-pointer truncate"
+                          className="text-gray-900 underline underline-offset-2 decoration-1 hover:text-[#1a6adb] transition-colors cursor-pointer"
                         >
                           {locationParam}
                         </button>
+                        <span className="hidden sm:inline font-bold text-gray-900"> : {sortedCars.length.toLocaleString()} results</span>
                       </h1>
-                      <div className="text-[14px] sm:text-[18px] font-bold text-gray-900 mt-0.5 sm:mt-0">
-                        <span className="hidden sm:inline">: </span>{sortedCars.length.toLocaleString()} results
-                      </div>
+                      <p className="sm:hidden text-[14px] font-bold text-gray-900 mt-1">
+                        {sortedCars.length.toLocaleString()} results
+                      </p>
                     </div>
                   )}
                 </div>
-                <div className="relative flex-shrink-0">
+                <div className="relative flex-shrink-0 self-end sm:self-start">
                   <button
                     onClick={() => setShowSortDropdown(!showSortDropdown)}
                     className="flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm border border-gray-300 rounded-full hover:border-blue-600 transition-colors bg-white whitespace-nowrap"
@@ -986,7 +986,7 @@ export default function Home() {
                   </button>
                 </div>
               ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-4" id="car-listings" aria-label="Car listings">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-4" id="car-listings" aria-label="Car listings">
                 {sortedCars.map((car) => (
                   <div
                     key={car.id}
@@ -1252,14 +1252,14 @@ export default function Home() {
                 onTouchStart={handleTouchStart}
                 onTouchEnd={createTouchEndHandler(setMobileDetailImageIndex, getCarImages(selectedCar).length)}
               >
-                <div className="flex items-center justify-between absolute top-3 left-3 right-3 z-10">
-                  {selectedCar.noAccident && (
-                    <span className="flex items-center gap-1.5 px-3 py-1.5 bg-white/90 text-green-600 text-xs font-semibold rounded-full shadow-sm backdrop-blur-sm">
-                      <IconCheck className="w-4 h-4" /> No accident
-                    </span>
-                  )}
-                  <button className="ml-auto p-2.5 bg-white rounded-full shadow-md"><IconHeart className="text-gray-400" /></button>
+                <div className="absolute top-3 right-3 z-10">
+                  <button className="p-2.5 bg-white rounded-full shadow-md"><IconHeart className="text-gray-400" /></button>
                 </div>
+                {selectedCar.noAccident && (
+                  <div className="absolute bottom-3 right-3 z-10 flex items-center gap-1 px-2.5 py-1 bg-white/90 backdrop-blur-sm text-[#199121] text-[11px] font-semibold rounded-md shadow-sm">
+                    <IconCheck className="w-3.5 h-3.5" /> No accident
+                  </div>
+                )}
                 <img
                   src={getCarImages(selectedCar)[mobileDetailImageIndex % getCarImages(selectedCar).length]}
                   alt={selectedCar.title}
