@@ -16,13 +16,13 @@ const Hero = () => {
             5.0 Star Rating from Thousands of Customers
           </p>
 
-          <h1 className="text-[40px] sm:text-[55px] lg:text-[75px] font-[600] text-black leading-[50px] sm:leading-[70px] lg:leading-[96px] tracking-[-4%]">
+          <h1 className="text-[40px] sm:text-[55px] md:text-[60px] lg:text-[75px] font-[600] text-black leading-[50px] sm:leading-[70px] md:leading-[80px] lg:leading-[96px] tracking-[-4%]">
             Any Car,
             <br /> Any Where
           </h1>
 
           <div className="flex flex-col gap-[30px]">
-            <p className="font-[400] text-[#7B7B7B] text-[14px] sm:text-[20px] max-w-[400px]">
+            <p className="font-[400] text-[#7B7B7B] text-[14px] sm:text-[18px] md:text-[20px] max-w-[400px]">
               No Used Car lots, No pressure. Shop the nations inventory.
             </p>
 
@@ -31,7 +31,7 @@ const Hero = () => {
                 onClick={() => {
                   router.push("/pre-qualify");
                 }}
-                className="w-[140px] lg:w-[220px] h-[45px] sm:h-[60px] font-[500] text-[13px] lg:text-[20px] rounded-full bg-primary text-white cursor-pointer hover:bg-primary-hover hover:scale-105 transition-all duration-300 shadow-md"
+                className="w-[140px] md:w-[180px] lg:w-[220px] h-[45px] sm:h-[55px] lg:h-[60px] font-[500] text-[13px] md:text-[16px] lg:text-[20px] rounded-full bg-primary text-white cursor-pointer hover:bg-primary-hover hover:scale-105 transition-all duration-300 shadow-md"
               >
                 Get Instant Offer
               </button>
@@ -39,7 +39,7 @@ const Hero = () => {
                 onClick={() => {
                   router.push("/shop");
                 }}
-                className="w-[140px] lg:w-[220px] h-[45px] sm:h-[60px] font-[500] text-[13px] lg:text-[20px] rounded-full bg-black text-white cursor-pointer hover:bg-gray-800 hover:scale-105 transition-all duration-300 shadow-md"
+                className="w-[140px] md:w-[180px] lg:w-[220px] h-[45px] sm:h-[55px] lg:h-[60px] font-[500] text-[13px] md:text-[16px] lg:text-[20px] rounded-full bg-black text-white cursor-pointer hover:bg-gray-800 hover:scale-105 transition-all duration-300 shadow-md"
               >
                 Browse Cars
               </button>

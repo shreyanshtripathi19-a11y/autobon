@@ -83,8 +83,8 @@ const Header = () => {
               <img src="/logo.png" alt="Autobon Logo" width={320} height={60} className="object-contain w-[100px] h-[40px] md:w-[160px] md:h-[40px]" />
             </a>
 
-            <nav className="hidden md:block">
-              <ul className="flex cursor-pointer gap-[40px] text-nowrap text-[16px] text-black justify-center items-center">
+            <nav className="hidden lg:block">
+              <ul className="flex cursor-pointer gap-6 xl:gap-10 text-nowrap text-[14px] xl:text-[16px] text-black justify-center items-center">
                 {navLinks.map((link) => (
                   <li key={link.name}>
                     <a href={link.href} className="transition-colors duration-300 hover:text-primary active:text-primary hover:underline">{link.name}</a>
@@ -94,7 +94,7 @@ const Header = () => {
             </nav>
 
             {/* Desktop Right: Favourites (only on shop) + Auth */}
-            <div className="hidden md:flex items-center gap-4">
+            <div className="hidden lg:flex items-center gap-4">
               {isCheckoutPage && (
                 <div className="flex items-center gap-2 text-primary px-4 py-2">
                   <Timer size={23} className="animate-pulse" />
@@ -105,11 +105,11 @@ const Header = () => {
               {isShopPage && (
                 <a
                   href="/shop?view=favourites"
-                  className="flex items-center gap-2 text-gray-600 hover:text-primary transition-colors px-3 py-1.5"
+                  className="flex items-center gap-1.5 lg:gap-2 text-gray-600 hover:text-primary transition-colors px-2 lg:px-3 py-1.5"
                   title="View Favourites"
                 >
                   <Heart size={20} className="text-gray-400" />
-                  <span className="text-[15px] font-medium">
+                  <span className="text-[13px] xl:text-[15px] font-medium">
                     Favourites ({favCount})
                   </span>
                 </a>
@@ -150,7 +150,7 @@ const Header = () => {
             </div>
 
             {/* Mobile: Burger */}
-            <div className="flex md:hidden items-center gap-2">
+            <div className="flex lg:hidden items-center gap-2">
               {isShopPage && (
                 <a
                   href="/shop?view=favourites"
@@ -171,9 +171,9 @@ const Header = () => {
             </div>
           </div>
 
-          <div className={`fixed inset-0 bg-black/50 transition-opacity duration-300 md:hidden z-[1] ${isOpen ? "opacity-100 visible" : "opacity-0 invisible"}`} onClick={() => setIsOpen(false)} />
+          <div className={`fixed inset-0 bg-black/50 transition-opacity duration-300 lg:hidden z-[1] ${isOpen ? "opacity-100 visible" : "opacity-0 invisible"}`} onClick={() => setIsOpen(false)} />
 
-          <div className={`fixed top-0 right-0 h-full w-[320px] bg-white z-[120000] shadow-2xl transform transition-transform duration-300 ease-in-out md:hidden flex flex-col ${isOpen ? "translate-x-0" : "translate-x-full"}`}>
+          <div className={`fixed top-0 right-0 h-full w-[320px] bg-white z-[120000] shadow-2xl transform transition-transform duration-300 ease-in-out lg:hidden flex flex-col ${isOpen ? "translate-x-0" : "translate-x-full"}`}>
             <div className="flex items-center justify-between p-5 border-b border-gray-100">
               <div className="flex items-center gap-3">
                 <img src="/logo.png" alt="Autobon Logo" width={220} height={40} className="object-contain w-[80px] h-[30px] md:w-[220px] md:h-[40px]" />

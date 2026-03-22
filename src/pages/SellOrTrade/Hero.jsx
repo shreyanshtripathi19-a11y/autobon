@@ -67,7 +67,7 @@ const Hero = () => {
         {/* LEFT SIDE: Text + Image */}
         <div className="flex pt-5 md:pt-5 flex-col w-full lg:w-[55%] gap-6 items-center lg:items-start text-center lg:text-left">
           <div className="flex flex-col gap-3 relative w-full">
-            <div className="absolute xs:-top-24 smg:-top-32 -top-28 xs:right-[20vw] right-[24vw] md:-top-34 smg:right-[110px] md:right-[160px] flex flex-col items-center sm:items-start lg:items-start pointer-events-none z-10 scale-[0.75] sm:scale-90 lg:scale-100 origin-right">
+            <div className="hidden lg:flex absolute xs:-top-24 smg:-top-32 -top-28 xs:right-[20vw] right-[24vw] md:-top-34 smg:right-[110px] md:right-[160px] flex-col items-center sm:items-start lg:items-start pointer-events-none z-10 scale-[0.75] sm:scale-90 lg:scale-100 origin-right">
               <img
                 src={textImage.src}
                 alt="Decorative Text"
@@ -79,7 +79,7 @@ const Hero = () => {
                 className="w-25 xs:w-[100px] smg:w-[120px] sm:w-[60px] md:w-[140px] h-auto rotate-[0deg] lg:rotate-[0deg]"
               />
             </div>
-            <h1 className="text-[40px] sm:text-[55px] lg:text-[65px] text-start font-semibold text-black leading-tight">
+            <h1 className="text-[40px] sm:text-[55px] md:text-[50px] lg:text-[65px] text-start font-semibold text-black leading-tight">
               Any Car,
               <br /> Any Where
             </h1>

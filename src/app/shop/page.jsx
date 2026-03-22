@@ -585,9 +585,17 @@ export default function Home() {
     if (viewParam === "favourites" && !savedCars.includes(c.id)) return false;
     // Location filter from URL param
     if (locationParam && c.location) {
-      const paramCity = locationParam.split(',')[0].trim().toLowerCase();
-      const carCity = c.location.split(',')[0].trim().toLowerCase();
-      if (paramCity !== carCity) return false;
+      const paramStr = locationParam.toLowerCase();
+      const carStr = c.location.toLowerCase();
+      
+      // If car location is simply "Ontario" and filter includes "Ontario", accept it
+      if (carStr === "ontario" && paramStr.includes("ontario")) {
+        // Match!
+      } else {
+        const paramCity = locationParam.split(',')[0].trim().toLowerCase();
+        const carCity = c.location.split(',')[0].trim().toLowerCase();
+        if (paramCity !== carCity && paramStr !== carStr) return false;
+      }
     }
     if (selectedMake && c.make !== selectedMake) return false;
     if (fpMake !== "All Makes" && c.make !== fpMake) return false;
@@ -668,6 +676,19 @@ export default function Home() {
   if (minYear || maxYear) activeFilters.push({ label: `Year: ${minYear || "..."}–${maxYear || "..."}`, clear: () => { setMinYear(""); setMaxYear(""); } });
   if (minPrice || maxPrice) activeFilters.push({ label: `Price: ${minPrice ? "$"+minPrice : "..."}–${maxPrice ? "$"+maxPrice : "..."}`, clear: () => { setMinPrice(""); setMaxPrice(""); } });
 
+
+  const formatMileage = (m) => {
+    if (!m) return "N/A";
+    const str = m.toString();
+    const numMatch = str.match(/(\d+)/);
+    if (numMatch) {
+      const formattedNum = Number(numMatch[1]).toLocaleString();
+      let res = str.replace(numMatch[1], formattedNum);
+      if (!res.toLowerCase().includes('km')) res += ' km';
+      return res;
+    }
+    return str + (str.toLowerCase().includes('km') ? '' : ' km');
+  };
 
   return (
     <>
@@ -867,7 +888,7 @@ export default function Home() {
             <Link href="#" className="text-[#1a6adb] hover:underline font-medium">Cars for Sale in {locationParam || "Canada"}</Link>
           </div>
 
-          <div className="flex flex-col lg:flex-row gap-6">
+          <div className="flex flex-col xl:flex-row gap-6">
             {/* LEFT: LISTINGS */}
             <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between mb-4 sm:mb-6 gap-2">
@@ -965,7 +986,7 @@ export default function Home() {
                   </button>
                 </div>
               ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-4" id="car-listings" aria-label="Car listings">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-4" id="car-listings" aria-label="Car listings">
                 {sortedCars.map((car) => (
                   <div
                     key={car.id}
@@ -974,7 +995,7 @@ export default function Home() {
                     onClick={() => {
                       setSelectedCar(car);
                       setShowForm(false);
-                      if (window.innerWidth < 1024) {
+                      if (window.innerWidth < 1280) {
                         setIsMobileDetailView(true);
                         window.scrollTo(0, 0);
                       }
@@ -987,8 +1008,8 @@ export default function Home() {
                     {/* Card Image */}
                     <div className="relative w-full bg-white overflow-hidden group/card" style={{ aspectRatio: "577/433", borderBottom: "0.65px solid #E3E3E3" }}>
                       {car.noAccident && (
-                        <div className="absolute top-2 left-2 z-10 flex items-center gap-1 text-[10px] sm:text-[10px] font-semibold italic text-[#199121]">
-                          <IconCheck className="w-4 h-4" />
+                        <div className="absolute bottom-1.5 right-1.5 z-10 flex items-center gap-0.5 px-1.5 py-0.5 bg-white/90 backdrop-blur-[2px] rounded-sm shadow-sm text-[9px] sm:text-[9px] font-semibold text-[#199121]">
+                          <IconCheck className="w-3 h-3" />
                           No accident
                         </div>
                       )}
@@ -1014,12 +1035,12 @@ export default function Home() {
                       <div className="flex items-center gap-2 sm:gap-1.5 text-[11px] sm:text-[9px] font-semibold text-black mb-2 sm:mb-2 pb-2 sm:pb-2" style={{ borderBottom: "1px solid #E3E3E3", marginLeft: "-12px", marginRight: "-12px", paddingLeft: "12px", paddingRight: "12px" }}>
                         <span className="flex items-center gap-1 whitespace-nowrap">
                           <IconSpeed />
-                          {car.mileage || "N/A"}
+                          {formatMileage(car.mileage)}
                         </span>
                         <span className="text-gray-200 font-light">|</span>
-                        <span className="flex items-center gap-1 whitespace-nowrap">
+                        <span className="flex items-center gap-1 whitespace-nowrap text-[#1a6adb]">
                           <IconPrice />
-                          {car.priceRating || "Market Price"}
+                          {car.priceRating || "Great Price"}
                         </span>
                       </div>
                       <p className="text-[11px] sm:text-[9px] text-[#595959] mb-2 sm:mb-2 line-clamp-2" style={{ lineHeight: 1.6 }}>{car.description || "Quality vehicle with great features and excellent condition."}</p>
@@ -1041,7 +1062,7 @@ export default function Home() {
                             e.stopPropagation();
                             setSelectedCar(car);
                             setShowForm(false);
-                            if (window.innerWidth < 1024) {
+                            if (window.innerWidth < 1280) {
                               setIsMobileDetailView(true);
                               window.scrollTo(0, 0);
                             }
@@ -1058,15 +1079,15 @@ export default function Home() {
             </div>
 
             {selectedCar && sortedCars.length > 0 && (
-            <aside className="hidden lg:block w-[480px] flex-shrink-0" aria-label="Car detail panel">
+            <aside className="hidden xl:block w-[380px] 2xl:w-[480px] flex-shrink-0" aria-label="Car detail panel">
               <div className="sticky top-[20px] bg-white rounded-2xl overflow-hidden shadow-sm overflow-y-auto max-h-[calc(100vh-40px)] border-2 border-[#1a6adb]">
                 {/* Hero Image Carousel */}
                 <div className="relative bg-white group/detail"
                   onTouchStart={handleTouchStart}
                   onTouchEnd={createTouchEndHandler(setDetailImageIndex, getCarImages(selectedCar).length)}
                 >
-                  <div className="absolute top-3 left-3 z-10 flex items-center gap-1 px-2.5 py-1 bg-white text-green-600 text-xs font-medium rounded-full shadow-sm">
-                    <IconCheck className="w-4 h-4" />
+                  <div className="absolute bottom-2.5 right-2.5 z-10 flex items-center gap-1 px-2 py-1 bg-white/90 backdrop-blur-sm text-[#199121] text-[10px] font-semibold rounded-md shadow-sm">
+                    <IconCheck className="w-3.5 h-3.5" />
                     No accident
                   </div>
                   <img
@@ -1127,9 +1148,9 @@ export default function Home() {
                   {/* Car Info */}
                   <h2 className="text-2xl font-bold text-gray-900 mb-3">{selectedCar.title}</h2>
                   <div className="flex items-center gap-3 text-sm mb-5">
-                    <span className="flex items-center gap-1 text-gray-600"><IconSpeed />{selectedCar.mileage || "N/A"}</span>
+                    <span className="flex items-center gap-1 text-gray-600"><IconSpeed />{formatMileage(selectedCar.mileage)}</span>
                     <span className="text-gray-300">|</span>
-                    <span className="flex items-center gap-1 text-[#1a6adb] font-medium"><IconPrice />{selectedCar.priceRating || "Market Price"}</span>
+                    <span className="flex items-center gap-1 text-[#1a6adb] font-medium"><IconPrice />{selectedCar.priceRating || "Great Price"}</span>
                   </div>
 
 
@@ -1137,7 +1158,7 @@ export default function Home() {
                   <h3 className="text-lg font-bold text-gray-900 mb-4">Overview</h3>
                   <div className="grid grid-cols-2 gap-0 mb-6">
                     {[
-                      { label: "Mileage", val: selectedCar.mileage || "N/A" },
+                      { label: "Mileage", val: formatMileage(selectedCar.mileage) },
                       { label: "Condition", val: selectedCar.condition || "Used" },
                       { label: "Body Type", val: selectedCar.bodyType || "-" },
                       { label: "Transmission", val: selectedCar.transmission || "Automatic" },
@@ -1281,9 +1302,9 @@ export default function Home() {
 
               {/* Mileage + Price Status */}
               <div className="flex items-center gap-3 text-sm mb-4 pb-4 border-b border-gray-100">
-                <span className="flex items-center gap-1.5 text-gray-700 font-medium"><IconSpeed /> {selectedCar.mileage}</span>
+                <span className="flex items-center gap-1.5 text-gray-700 font-medium"><IconSpeed /> {formatMileage(selectedCar.mileage)}</span>
                 <span className="text-gray-300">|</span>
-                <span className="flex items-center gap-1.5 text-[#1a6adb] font-semibold"><IconPrice /> {selectedCar.priceRating || "Market Price"}</span>
+                <span className="flex items-center gap-1.5 text-[#1a6adb] font-semibold"><IconPrice /> {selectedCar.priceRating || "Great Price"}</span>
               </div>
 
               {/* Description */}
